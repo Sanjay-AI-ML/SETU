@@ -1,0 +1,71 @@
+# ─────────────────────────────────────────────────────────────
+#  DEMO MEDIA — NEVER COMMIT
+#  Audio/video of a child must never enter git history.
+#  Removing it later requires rewriting history on a repo that
+#  may already be public at submission time. Keep it out.
+# ─────────────────────────────────────────────────────────────
+media/
+recordings/
+demo-media/
+captures/
+*.webm
+*.mp4
+*.mov
+*.avi
+*.wav
+*.m4a
+*.mp3
+*.ogg
+
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Build output
+dist/
+dist-ssr/
+build/
+*.local
+
+# Capacitor / Android build artifacts
+android/build/
+android/app/build/
+android/.gradle/
+android/local.properties
+android/app/release/
+*.apk
+*.aab
+
+# Signing keys — never commit
+*.keystore
+*.jks
+keystore.properties
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# IDE / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Test output
+coverage/
+
+# NOTE: MediaPipe model files (public/models/*.task, *.wasm) are
+# deliberately NOT ignored. They must be committed so the build is
+# reproducible and the app works offline — that is a core claim of
+# this project. They are single-digit MB and will not change.
