@@ -1,0 +1,42 @@
+:root {
+  color-scheme: light;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #f7f7f5;
+  color: #1a1a1a;
+}
+
+main {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+main h1 {
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+}
+
+main button {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  margin-top: 12px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: none;
+  background: #1d4e6b;
+  color: white;
+}
+
+main button:disabled {
+  background: #b8bfc4;
+}
