@@ -1,0 +1,15 @@
+{
+  "consent": {
+    "title": "Before you begin",
+    "notDiagnostic": "SETU is not a diagnostic tool. It does not detect, diagnose, or rule out any condition.",
+    "demoDataNotice": "This is a hackathon prototype. Any sample data you see is self-recorded or simulated, never real clinical data.",
+    "clinicianReviewNotice": "SETU produces structured observations for a qualified clinician to review — it is screening support, not a result.",
+    "acknowledgeButton": "I understand, continue"
+  },
+  "home": {
+    "title": "SETU",
+    "startSession": "Start new session",
+    "resumeSession": "Resume session",
+    "viewHistory": "View history"
+  }
+}
