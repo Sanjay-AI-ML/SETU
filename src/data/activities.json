@@ -1,0 +1,42 @@
+[
+  {
+    "id": "bubble-time",
+    "name": "Bubble Time",
+    "purposes": ["obtain", "social"],
+    "parentScript": "Blow a few bubbles together, then pause with the wand held still and wait quietly for your child to ask for more.",
+    "materials": ["Bubble solution and wand"],
+    "trialCount": 3,
+    "expectedBehaviours": ["reach", "point", "vocalise", "gaze-to-parent", "word"],
+    "reviewTags": ["reached-for-bubbles", "pointed-at-wand", "vocalised", "looked-at-parent", "said-word"]
+  },
+  {
+    "id": "peek-a-boo",
+    "name": "Peek-a-boo",
+    "purposes": ["social"],
+    "parentScript": "Play peek-a-boo through a few rounds, then pause mid-reveal with your hands still covering your face and wait.",
+    "materials": ["None — just your hands or a small cloth"],
+    "trialCount": 3,
+    "expectedBehaviours": ["gaze-to-face", "vocalise", "smile", "anticipatory-movement"],
+    "reviewTags": ["looked-at-face", "vocalised", "smiled", "anticipated-reveal"]
+  },
+  {
+    "id": "not-this-one",
+    "name": "Not-This-One",
+    "purposes": ["refuse"],
+    "parentScript": "Offer your child an item you know they dislike, hold it within reach, and wait for their reaction before taking it away.",
+    "materials": ["A clearly non-preferred toy, food, or object"],
+    "trialCount": 3,
+    "expectedBehaviours": ["push-away", "head-turn", "vocal-protest", "word-no"],
+    "reviewTags": ["pushed-away", "turned-head", "protested", "said-no"]
+  },
+  {
+    "id": "whats-in-the-box",
+    "name": "What's In The Box?",
+    "purposes": ["information"],
+    "parentScript": "Reveal an object or picture from the box and ask \"What's this?\", then wait for your child to respond before naming it yourself.",
+    "materials": ["A small box", "3-4 familiar objects or picture cards"],
+    "trialCount": 3,
+    "expectedBehaviours": ["point", "label", "comment", "show"],
+    "reviewTags": ["pointed-at-object", "named-object", "commented", "showed-object"]
+  }
+]

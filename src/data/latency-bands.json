@@ -1,0 +1,11 @@
+{
+  "version": "0.1.0",
+  "unvalidated": true,
+  "disclaimer": "Demo heuristic thresholds, not clinically validated. Require calibration by a qualified clinician before any real-world use.",
+  "ageMonthsDefault": 24,
+  "bands": [
+    { "id": "within", "label": "Within expected range", "maxMs": 2000 },
+    { "id": "borderline", "label": "Borderline", "maxMs": 3500 },
+    { "id": "delayed", "label": "Delayed", "maxMs": null }
+  ]
+}

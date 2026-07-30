@@ -1,0 +1,17 @@
+{
+  "levels": [
+    { "level": 1, "name": "Pre-Intentional", "descriptor": "Behaviour reflects internal states (comfort, discomfort, arousal) without any intent to communicate with another person." },
+    { "level": 2, "name": "Intentional", "descriptor": "Behaviour is intentional but not yet a deliberate signal — a caregiver interprets it, but the child does not yet direct it at anyone." },
+    { "level": 3, "name": "Unconventional Communication", "descriptor": "Clear pre-symbolic signals directed at another person — reaching, pulling, pushing, vocalising, facial expression." },
+    { "level": 4, "name": "Conventional Communication", "descriptor": "Socially accepted gestures directed at another person — pointing, nodding, shaking head, giving, showing." },
+    { "level": 5, "name": "Concrete Symbols", "descriptor": "Symbols that resemble their meaning — pictures, objects, or signs that look or feel like what they represent." },
+    { "level": 6, "name": "Abstract Symbols", "descriptor": "Symbols with no physical resemblance to their meaning — spoken words, printed words, or abstract signs." },
+    { "level": 7, "name": "Language", "descriptor": "Symbols combined by grammatical rules into original, multi-word statements." }
+  ],
+  "purposes": [
+    { "id": "refuse", "name": "Refuse", "descriptor": "Rejecting or protesting something unwanted." },
+    { "id": "obtain", "name": "Obtain", "descriptor": "Requesting a wanted object, action, or more of something." },
+    { "id": "social", "name": "Social", "descriptor": "Engaging another person for its own sake — greeting, showing off, seeking attention or comfort." },
+    { "id": "information", "name": "Information", "descriptor": "Commenting, labelling, asking, or sharing information about the world." }
+  ]
+}
