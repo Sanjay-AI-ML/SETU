@@ -17,6 +17,7 @@
   "home": {
     "title": "SETU",
     "startSession": "Start new session",
+    "tryDemo": "Try demo (no child needed)",
     "resumeSession": "Resume session",
     "viewHistory": "View history"
   },

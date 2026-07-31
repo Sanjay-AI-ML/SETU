@@ -9,6 +9,9 @@ function sessionReducer(state, action) {
     case 'START_SESSION':
       return { session: createSession({ childId: action.childId }), activityRun: null };
 
+    case 'LOAD_DEMO_SESSION':
+      return { session: action.session, activityRun: null };
+
     case 'START_ACTIVITY_RUN':
       return { ...state, activityRun: createActivityRun({ activityId: action.activityId }) };
 
