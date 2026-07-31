@@ -1,16 +1,26 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import activities from '../data/activities.json';
+import { useSessionState } from '../state/SessionContext.jsx';
 import { getAudioContext, getDetector } from '../core/latency/audioSession.js';
 import strings from '../i18n/en.json';
 
-const bubbleTime = activities.find((activity) => activity.id === 'bubble-time');
 const CALIBRATION_MS = 1500;
 const CALIBRATION_TIMEOUT_MS = 8000;
 
 export default function ActivityPrebriefPage() {
   const navigate = useNavigate();
+  const { session } = useSessionState();
   const [calibrating, setCalibrating] = useState(false);
+
+  if (!session) {
+    return <Navigate to="/" replace />;
+  }
+
+  const currentActivity = activities[session.activityRuns.length];
+  if (!currentActivity) {
+    return <Navigate to="/session/results" replace />;
+  }
 
   async function handleStart() {
     setCalibrating(true);
@@ -36,11 +46,11 @@ export default function ActivityPrebriefPage() {
 
   return (
     <main>
-      <h1>{bubbleTime.name}</h1>
-      <p>{bubbleTime.parentScript}</p>
+      <h1>{currentActivity.name}</h1>
+      <p>{currentActivity.parentScript}</p>
       <h2>{strings.activityPrebrief.materialsLabel}</h2>
       <ul>
-        {bubbleTime.materials.map((material) => (
+        {currentActivity.materials.map((material) => (
           <li key={material}>{material}</li>
         ))}
       </ul>
