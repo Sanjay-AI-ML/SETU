@@ -33,5 +33,10 @@
     "noResponseButton": "No response",
     "trialLabel": "Trial {current} of {total}",
     "waitingLabel": "Waiting for response…"
+  },
+  "activityReview": {
+    "title": "What did you notice?",
+    "instructions": "Check anything your child did during the activity.",
+    "confirmButton": "Confirm and see results"
   }
 }
