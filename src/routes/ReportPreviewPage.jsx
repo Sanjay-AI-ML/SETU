@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Navigate } from 'react-router-dom';
 import { useSessionState } from '../state/SessionContext.jsx';
 import { getChildProfile } from '../core/storage/index.js';
 import { applyRules } from '../core/matrix/index.js';
@@ -23,6 +24,10 @@ export default function ReportPreviewPage() {
       setReport(generateReport({ session, child, cells, flags, trials: activityRun.trials }));
     });
   }, [session]);
+
+  if (!session?.activityRuns?.length) {
+    return <Navigate to="/" replace />;
+  }
 
   if (!report) return null;
 

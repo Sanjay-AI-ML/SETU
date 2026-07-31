@@ -31,8 +31,11 @@ export default function ActivityRunPage() {
     };
   }, [dispatch]);
 
-  function handleServe() {
+  async function handleServe() {
     const audioContext = audioContextRef.current;
+    if (audioContext.state === 'suspended') {
+      await audioContext.resume();
+    }
     playServeTone(audioContext);
     setPendingServeAt(markTime(audioContext));
     setPhase('waiting');

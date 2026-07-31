@@ -68,6 +68,10 @@ export default function MatrixProfileGrid({ cells, taxonomy }) {
           </Fragment>
         ))}
       </div>
+      <p>
+        Mapped to Charity Rowland's Communication Matrix framework (OHSU, communicationmatrix.org).
+        SETU maps to this framework — it is not the Communication Matrix itself.
+      </p>
       <ul>
         {Object.entries(STATE_LABELS).map(([state, label]) => (
           <li key={state}>

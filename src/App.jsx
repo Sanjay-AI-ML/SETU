@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import ConsentPage from './routes/ConsentPage.jsx';
 import ChildProfilePage from './routes/ChildProfilePage.jsx';
 import HomePage from './routes/HomePage.jsx';
@@ -17,6 +17,7 @@ export default function App() {
     <SessionProvider>
       <Routes>
         <Route path="/consent" element={<ConsentPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
         <Route element={<ConsentGate />}>
           <Route path="/child-profile" element={<ChildProfilePage />} />
           <Route element={<RequireChildProfile />}>

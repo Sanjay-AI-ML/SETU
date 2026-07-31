@@ -5,6 +5,8 @@
     { "id": "rule-obtain-l3-reach", "level": 3, "purpose": "obtain", "state": "mastered", "requiredObservations": ["reach"] },
     { "id": "rule-obtain-l4-point", "level": 4, "purpose": "obtain", "state": "mastered", "requiredObservations": ["point"] },
     { "id": "rule-social-l3-vocalise", "level": 3, "purpose": "social", "state": "mastered", "requiredObservations": ["vocalise"] },
-    { "id": "rule-information-l4-label", "level": 4, "purpose": "information", "state": "mastered", "requiredObservations": ["label"] }
+    { "id": "rule-information-l4-label", "level": 4, "purpose": "information", "state": "mastered", "requiredObservations": ["label"] },
+    { "id": "rule-social-l4-gaze-to-parent", "level": 4, "purpose": "social", "state": "mastered", "requiredObservations": ["gaze-to-parent"] },
+    { "id": "rule-social-l6-word", "level": 6, "purpose": "social", "state": "mastered", "requiredObservations": ["word"] }
   ]
 }

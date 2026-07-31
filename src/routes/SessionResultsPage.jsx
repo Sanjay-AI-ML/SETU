@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { useSessionState } from '../state/SessionContext.jsx';
 import { applyRules } from '../core/matrix/index.js';
 import { computeFlags } from '../core/matrix/flags.js';
@@ -12,6 +12,11 @@ import strings from '../i18n/en.json';
 export default function SessionResultsPage() {
   const navigate = useNavigate();
   const { session } = useSessionState();
+
+  if (!session?.activityRuns?.length) {
+    return <Navigate to="/" replace />;
+  }
+
   const activityRun = session.activityRuns[session.activityRuns.length - 1];
 
   const cells = applyRules(activityRun.observations, rulesConfig, {
@@ -24,6 +29,7 @@ export default function SessionResultsPage() {
     <main>
       <h1>{strings.sessionResults.title}</h1>
       <ResponseTimeRibbon trials={activityRun.trials} bands={latencyBandsConfig} />
+      <p>{latencyBandsConfig.disclaimer}</p>
       <MatrixProfileGrid cells={cells} taxonomy={taxonomy} />
       <h2>{strings.sessionResults.flagsTitle}</h2>
       {flags.length === 0 && <p>{strings.sessionResults.noFlags}</p>}
