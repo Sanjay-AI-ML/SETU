@@ -26,5 +26,12 @@
   "activityPrebrief": {
     "materialsLabel": "You'll need",
     "startButton": "Start activity"
+  },
+  "activityRun": {
+    "serveButton": "Blow bubbles",
+    "respondedButton": "Child responded",
+    "noResponseButton": "No response",
+    "trialLabel": "Trial {current} of {total}",
+    "waitingLabel": "Waiting for response…"
   }
 }
