@@ -20,9 +20,12 @@
 - Full manual browser walkthrough (chrome-devtools MCP, `npm run dev`) of the entire flow end-to-end: consent → child profile → session → prebrief → 3 trials (mixed responded/no-response) → review (checked `gaze-to-parent` + `word`) → results (confirmed Social column shows Level 4 & 6 Mastered, lower levels correctly Surpassed, only the latency flag fired — no false flag) → report → reload on `/session/report` and direct deep-link both redirect cleanly to Home with zero console errors, confirming C1 is fully closed
 - 21 commits total, SDD workspace (`.superpowers/sdd/2026-07-31-setu-phase1-implementation-plan/`) cleaned up per the skill ("git history is the record now")
 
-**Deferred (not fixed this session — needs a scope decision):**
-- **P1** — Report Preview doesn't render the computed matrix profile or flags, only child info + fixed disclaimers. This is a plan-level gap (Task 17 was built exactly as specified), not an implementation defect — the plan simply didn't ask for it.
-- **P2** — Child Profile form is thinner than the architecture doc's original spec (name + age only).
+**Also done — user chose "fix now" for both plan-level scope gaps:**
+- **P1** — Report Preview now renders the computed Communication Matrix profile grid and flags (reused `MatrixProfileGrid` + the same `applyRules`/`computeFlags` pipeline as Session Results), not just child info + fixed disclaimers
+- **P2** — Child Profile form now captures home languages (English/Tamil/Hindi checkboxes) and optional notes/known diagnoses, matching the architecture doc's original field list — the `core/model` factory already supported both fields, only the form UI was missing them
+- Verified live via full browser walkthrough (two full session run-throughs — one with mixed responses tagging `gaze-to-parent`/`word`, one all-no-response to exercise both concern flags): matrix profile and flags now appear identically on both Results and Report pages, 28/28 tests still passing, no console errors, reload/deep-link redirect still clean
+
+**Deferred (not fixed this session — lower priority, no user scope decision requested yet):**
 - **I3** — `core/matrix`, `core/report`, etc. still have some hardcoded English strings not yet routed through `i18n/`; too broad for the one allowed fix wave.
 - **I5** — `ResponseTimeRibbon` SVG scaling/viewBox and no-response-dot positioning is cosmetic/polish, not demo-breaking.
 - Several Minor findings (style/polish) from the final review, not tracked individually — git history has the full review if needed.
@@ -31,7 +34,7 @@
 - The `useEffect`-before-render-body-guard footgun: a render-body early return (`if (!x) return <Navigate/>`) does NOT stop a `useEffect` declared earlier in the same component from running on that same render — the effect body needs its own guard if it dereferences state that can be null on first mount. Bit us once in `ReportPreviewPage.jsx`, worth remembering for any future async-effect-driven page here.
 - Do not `taskkill //F //IM node.exe` — kills all Node processes system-wide including MCP tool servers, not just the dev server (this actually happened again this session's predecessor; background dev servers were simply left running rather than force-killed).
 
-**Next up:** get the user's scope decision on P1/P2/I3/I5, decide whether to push Phase 1 commits to `origin/main`, then move to Phase 2 per the architecture doc's build order (audio-onset detection / MediaPipe, replacing the parent-tap-only interaction).
+**Next up:** Phase 1 (including P1/P2) pushed to `origin/main`. Move to Phase 2 per the architecture doc's build order (audio-onset detection / MediaPipe, replacing the parent-tap-only interaction). I3/I5/Minor findings remain open for whenever it's convenient to pick them up.
 
 ---
 
