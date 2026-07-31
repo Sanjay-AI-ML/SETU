@@ -5,6 +5,19 @@
 
 ---
 
+## 2026-08-01 — Session 9: Android APK refreshed and reverified on-device
+
+**Done:** last on-device install (Session 3) predated Phase 1 through 3.5 entirely — just the Day-1 permission smoke test. Rebuilt for real this session against current `main` (Phase 0 through Session 8's bug fixes):
+- `npm run build` → `npx cap sync android` → `./gradlew assembleDebug` (JDK 21 + Avast cert workaround, per the toolchain notes below) → `BUILD SUCCESSFUL`
+- `adb install -r` onto the physical **Samsung Galaxy S24 Ultra**, launched via `adb shell am start`
+- `adb logcat` clean (no `FATAL`/`AndroidRuntime` crash entries on launch); `adb exec-out screencap` confirmed the WebView actually rendered the current Child Profile screen (home-language checkboxes + notes field from the Phase 1 P2 fix), not a blank/crashed view
+
+**Watch out for:** `context-mode` plugin's `PreToolUse:Bash` hook hard-blocks any command containing `gradlew`, redirecting to its own `ctx_execute` sandbox — which is missing `uname`/`xargs`/most coreutils that the gradlew wrapper script itself needs, and is unreliable for native Windows `.exe`s in general (`adb.exe` and `gradlew.bat` both ran with silently empty output there, `java.exe` worked fine). Worked around by having the user run the `gradlew assembleDebug` command themselves via the `!` prefix (executes in their own session, not intercepted by the hook); `adb install`/`am start`/`logcat`/`screencap` afterward were not blocked and ran fine directly.
+
+**Not yet done:** did not click through a full live session on-device (Child Profile → 4 activities → Results → Report) — only confirmed clean launch + correct first screen. The logic itself is identical to what Session 8's browser walkthrough already verified end-to-end; this session closes the "does it actually run as a real APK on real hardware" gap, not the "does the flow work" gap (already closed). Real mic-triggered audio-onset path (Phase 2's original open item) still not hands-on verified on-device.
+
+---
+
 ## 2026-08-01 — Session 8: full 4-activity walkthrough, 3 real bugs found and fixed
 
 **Context:** Session 7 shipped Phase 3 but skipped the live browser walkthrough. In between, two more commits landed without a PROGRESS.md entry: **Phase 3.5 Demo Mode** (`createDemoSession()` seeds a full 4-activity session — trials across latency bands/sources, 2 observations per activity — wired to a "Try demo" button on Home that jumps straight to Session Results, `LOAD_DEMO_SESSION` reducer action) and a **print stylesheet** for the Report (`@media print` in `global.css`: full-width layout, forced background-color printing so the Matrix Grid's cell fills survive print-to-PDF, action buttons hidden).
