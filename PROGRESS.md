@@ -5,6 +5,18 @@
 
 ---
 
+## 2026-08-01 — Session 10: Phase 5 — Report polish
+
+**Done:** Phase 5's print-CSS half was already done (Session 8's `main > button` fix); the remaining gap was that the printable Clinician Report showed the Matrix profile and flags but not the actual latency evidence a clinician needs alongside it. Added:
+- `ResponseTimeRibbon` (same component and same session-wide pooled `trials` as Session Results) under a new "Response times" heading, plus the same latency-bands disclaimer
+- A human-readable "Generated {date}" line from `report.generatedAt`, which `core/report`'s `generateReport()` already computed but the page never rendered
+
+Verified live (dev server, Demo Mode → Results → View report): ribbon and date render correctly, matrix/flags unchanged, console clean, 47/47 tests + production build still clean. Deliberately left `core/report/index.js` untouched — `generateReport()`'s existing tested contract for `report.sections.trials` (index/latencyMs/responded only, no `returnSource`) doesn't carry what the Ribbon needs to draw the audio-onset ring, so the page recomputes `allTrials` from `session.activityRuns` directly, same pattern as `SessionResultsPage`.
+
+**Not yet done:** no export format other than browser print-to-PDF (no JSON download / share-sheet). Not pursued further — the architecture doc's Phase 5 success criterion is just "a clean PDF comes out," which this satisfies.
+
+---
+
 ## 2026-08-01 — Session 9: Android APK refreshed and reverified on-device
 
 **Done:** last on-device install (Session 3) predated Phase 1 through 3.5 entirely — just the Day-1 permission smoke test. Rebuilt for real this session against current `main` (Phase 0 through Session 8's bug fixes):
