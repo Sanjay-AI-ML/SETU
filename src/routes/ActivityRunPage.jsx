@@ -127,7 +127,7 @@ export default function ActivityRunPage() {
           .replace('{total}', currentActivity.trialCount)}
       </p>
       {!audioAvailable && <p>{strings.activityRun.micUnavailableLabel}</p>}
-      {phase === 'ready' && <button onClick={handleServe}>{strings.activityRun.serveButton}</button>}
+      {phase === 'ready' && <button onClick={handleServe}>{currentActivity.serveButtonLabel}</button>}
       {phase === 'waiting' && (
         <>
           <p>{strings.activityRun.waitingLabel}</p>

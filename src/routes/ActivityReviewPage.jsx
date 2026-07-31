@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import activities from '../data/activities.json';
 import { useSessionDispatch, useSessionState } from '../state/SessionContext.jsx';
@@ -9,9 +9,13 @@ export default function ActivityReviewPage() {
   const dispatch = useSessionDispatch();
   const { session, activityRun } = useSessionState();
   const [checked, setChecked] = useState({});
+  const submittedRef = useRef(false);
 
-  if (!session || !activityRun) {
+  if (!session || (!activityRun && !submittedRef.current)) {
     return <Navigate to="/" replace />;
+  }
+  if (submittedRef.current) {
+    return null;
   }
 
   const currentActivity = activities.find((activity) => activity.id === activityRun.activityId);
@@ -25,6 +29,7 @@ export default function ActivityReviewPage() {
   }
 
   function handleConfirm() {
+    submittedRef.current = true;
     for (const option of tagOptions) {
       if (checked[option.code]) {
         dispatch({ type: 'ADD_OBSERVATION', code: option.code, source: 'parent' });

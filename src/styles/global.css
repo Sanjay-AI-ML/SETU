@@ -56,7 +56,7 @@ main button:disabled {
     padding: 0;
   }
 
-  main button {
+  main > button {
     display: none;
   }
 }

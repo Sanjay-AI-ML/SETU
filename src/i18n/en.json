@@ -34,7 +34,6 @@
     "calibratingLabel": "Listening to your room…"
   },
   "activityRun": {
-    "serveButton": "Blow bubbles",
     "respondedButton": "Child responded",
     "noResponseButton": "No response",
     "trialLabel": "Trial {current} of {total}",
