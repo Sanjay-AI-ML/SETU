@@ -36,16 +36,30 @@ export function createVisionDetector() {
   let rafId = null;
   let lastVideoTime = -1;
   let prevHandLandmarks = null;
+  let stopped = false;
 
   async function start(videoElement, onFrameCallback) {
+    stopped = false;
+    lastVideoTime = -1;
     if (!faceLandmarker || !handLandmarker) {
       await loadModels();
     }
+    if (stopped) return;
     videoEl = videoElement;
     onFrame = onFrameCallback;
     stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    if (stopped) {
+      stream.getTracks().forEach((track) => track.stop());
+      stream = null;
+      return;
+    }
     videoEl.srcObject = stream;
     await videoEl.play();
+    if (stopped) {
+      stream.getTracks().forEach((track) => track.stop());
+      stream = null;
+      return;
+    }
     prevHandLandmarks = null;
     loop();
   }
@@ -86,6 +100,7 @@ export function createVisionDetector() {
   }
 
   function stop() {
+    stopped = true;
     if (rafId) cancelAnimationFrame(rafId);
     rafId = null;
     if (stream) {
