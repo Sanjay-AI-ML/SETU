@@ -21,8 +21,6 @@
 - 8 commits made locally on `main`
 
 **Not yet done**
-- Manual browser click-through of the consent flow — no browser automation tool was available this session. **Verify yourself**: `npm run dev`, open `http://localhost:5173` in an incognito window, confirm Consent blocks first, acknowledging navigates to Home, reloading stays on Home.
-- Push to GitHub — 8 local commits on `main` not yet pushed to `origin/main`, waiting on go-ahead
 - Android Studio install (Track A) — in progress, not yet confirmed (`adb devices` should list your phone)
 - Capacitor init + Android platform, manifest permissions, and the Day-1 throwaway camera/mic permission smoke test (Tasks 10–12 in the Phase 0 plan) — blocked on Android Studio finishing
 
@@ -31,6 +29,29 @@
 - Windows Git warns about LF→CRLF line-ending conversion on every commit — cosmetic, not yet addressed with a `.gitattributes`
 
 **Next up:** confirm Android Studio + `adb devices`, then Capacitor init → Android platform → permissions → Day-1 smoke test (Tasks 10–12).
+
+---
+
+## 2026-07-31 — Session 3: verification + status check
+
+**Done**
+- Confirmed all 8 Session 2 commits are actually already on `origin/main` (previous note about "waiting on go-ahead" was stale — push had already happened)
+- Re-ran full test suite (3/3 passing) and production build (clean) — no regressions
+- Manual browser click-through of the consent flow, done via automated browser tooling in a genuinely fresh storage context: confirmed `/` redirects to `/consent` when unacknowledged, clicking "I understand, continue" navigates to `/` (Home), and reloading stays on Home (consent persisted in IndexedDB) — the one open verification item from Session 2 is now closed
+- Checked Android SDK status: Android Studio is installed (`C:\Program Files\Android\Android Studio`) but the first-run Setup Wizard has not been completed — no `%LOCALAPPDATA%\Android\Sdk`, `adb` not on PATH. Tasks 10–12 remain blocked on this (Task 0 in the Phase 0 plan).
+
+**Also done — Task 0 (Android SDK), headless instead of via Android Studio's GUI wizard:**
+- Downloaded and installed Android SDK command-line tools to `%LOCALAPPDATA%\Android\Sdk` (the standard location `ANDROID_HOME` is expected to point at)
+- Installed `platform-tools` (adb 1.0.41), `build-tools;34.0.0`, `platforms;android-34` via `sdkmanager` (plus `build-tools;36.0.0`, `emulator`, `platforms;android-37.0` which came along via the existing Android Studio SDK config)
+- Set `ANDROID_HOME` and appended `%ANDROID_HOME%\platform-tools` to the **User** PATH via `[Environment]::SetEnvironmentVariable` (not `setx`, which silently truncates PATH at 1024 chars) — verified in registry, will be live in any newly-opened terminal
+- `adb version` confirmed working
+
+**Watch out for**
+- Do not run `taskkill /IM node.exe` (or any blanket kill-by-image-name) to stop a dev server — it kills every Node process system-wide, including MCP tool servers and any unrelated Node apps. Target the specific PID instead.
+- **Avast Antivirus's "Web/Mail Shield" does HTTPS interception on this machine** — it MITMs TLS connections (e.g. `dl.google.com`) with a self-signed `Avast Web/Mail Shield Root` CA that's trusted by Windows but NOT by Java's bundled `cacerts` truststore. This broke `sdkmanager` with `PKIX path building failed`. Fixed by exporting the Avast root CA from the Windows cert store and importing it into a writable copy of the JBR's cacerts at `%LOCALAPPDATA%\Android\setu-cacerts` (password `changeit`), then passing `-Djavax.net.ssl.trustStore=...` via the `SDKMANAGER_OPTS` env var. **This will very likely bite Task 12 too** — `./gradlew assembleDebug` downloads the Gradle distribution and dependencies over HTTPS and will probably hit the same PKIX error. If so, point Gradle at the same patched trust store (`GRADLE_OPTS="-Djavax.net.ssl.trustStore=%LOCALAPPDATA%\Android\setu-cacerts -Djavax.net.ssl.trustStorePassword=changeit"`, or add the equivalent to `gradle.properties`) rather than re-deriving this from scratch.
+- Also note: `curl.exe` on this machine needs `--ssl-no-revoke` for the same reason (schannel revocation-check failures against the Avast-intercepted chain).
+
+**Next up:** the one remaining piece of Task 0 needs the user physically — enable USB debugging on the test phone (Settings → About phone → tap Build number 7× → Developer options → USB debugging), plug it in via USB, accept the "Allow USB debugging?" prompt, then confirm `adb devices` lists it with `device` status (not `unauthorized`). Once that's done, Tasks 10–12 (Capacitor init → Android platform → permissions → Day-1 smoke test) are unblocked. Tasks 0–9 are otherwise fully done.
 
 ---
 
