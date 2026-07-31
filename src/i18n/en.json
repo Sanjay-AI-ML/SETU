@@ -6,6 +6,12 @@
     "clinicianReviewNotice": "SETU produces structured observations for a qualified clinician to review — it is screening support, not a result.",
     "acknowledgeButton": "I understand, continue"
   },
+  "childProfile": {
+    "title": "Tell us about your child",
+    "displayNameLabel": "Child's name or initials",
+    "ageMonthsLabel": "Age in months",
+    "saveButton": "Save and continue"
+  },
   "home": {
     "title": "SETU",
     "startSession": "Start new session",
