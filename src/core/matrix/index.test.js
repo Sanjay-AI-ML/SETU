@@ -53,4 +53,15 @@ describe('core/matrix applySurpassed', () => {
     const refuseCells = cells.filter((c) => c.purpose === 'refuse');
     expect(refuseCells.every((c) => c.state === 'not-used')).toBe(true);
   });
+
+  it('does not surpass levels in unrelated columns when a different column has mastered cells', () => {
+    const observations = [{ code: 'reach', source: 'parent' }];
+    const cells = applyRules(observations, rulesConfig, {});
+    const refuseL1 = cells.find((c) => c.level === 1 && c.purpose === 'refuse');
+    const refuseL2 = cells.find((c) => c.level === 2 && c.purpose === 'refuse');
+    const obtainL3 = cells.find((c) => c.level === 3 && c.purpose === 'obtain');
+    expect(obtainL3.state).toBe('mastered');
+    expect(refuseL1.state).toBe('not-used');
+    expect(refuseL2.state).toBe('not-used');
+  });
 });
