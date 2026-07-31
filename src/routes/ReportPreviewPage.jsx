@@ -14,6 +14,7 @@ export default function ReportPreviewPage() {
   const [report, setReport] = useState(null);
 
   useEffect(() => {
+    if (!session?.activityRuns?.length) return;
     getChildProfile().then((child) => {
       const activityRun = session.activityRuns[session.activityRuns.length - 1];
       const cells = applyRules(activityRun.observations, rulesConfig, {
