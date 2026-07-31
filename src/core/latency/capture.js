@@ -1,4 +1,7 @@
 import { computeRmsEnergy, calibrateNoiseFloor } from './onset.js';
+import workletUrl from './onset-processor.worklet.js?url';
+
+const MIN_NOISE_FLOOR = 0.001;
 
 export function createOnsetDetector(audioContext) {
   let stream = null;
@@ -6,10 +9,10 @@ export function createOnsetDetector(audioContext) {
   let workletNode = null;
 
   async function calibrate(durationMs) {
+    release();
     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     sourceNode = audioContext.createMediaStreamSource(stream);
 
-    const workletUrl = new URL('./onset-processor.worklet.js', import.meta.url);
     await audioContext.audioWorklet.addModule(workletUrl);
 
     const analyser = audioContext.createAnalyser();
@@ -35,7 +38,7 @@ export function createOnsetDetector(audioContext) {
     });
 
     sourceNode.disconnect(analyser);
-    const noiseFloor = calibrateNoiseFloor(rmsBlocks);
+    const noiseFloor = Math.max(calibrateNoiseFloor(rmsBlocks), MIN_NOISE_FLOOR);
 
     workletNode = new AudioWorkletNode(audioContext, 'onset-processor', {
       processorOptions: { noiseFloor },

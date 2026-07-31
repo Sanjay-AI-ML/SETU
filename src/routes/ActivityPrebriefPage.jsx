@@ -6,6 +6,7 @@ import strings from '../i18n/en.json';
 
 const bubbleTime = activities.find((activity) => activity.id === 'bubble-time');
 const CALIBRATION_MS = 1500;
+const CALIBRATION_TIMEOUT_MS = 8000;
 
 export default function ActivityPrebriefPage() {
   const navigate = useNavigate();
@@ -13,16 +14,21 @@ export default function ActivityPrebriefPage() {
 
   async function handleStart() {
     setCalibrating(true);
-    const audioContext = getAudioContext();
-    if (audioContext.state === 'suspended') {
-      await audioContext.resume();
-    }
-
     let audioAvailable = true;
     try {
-      await getDetector().calibrate(CALIBRATION_MS);
+      const audioContext = getAudioContext();
+      if (audioContext.state === 'suspended') {
+        await audioContext.resume();
+      }
+
+      await Promise.race([
+        getDetector().calibrate(CALIBRATION_MS),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('calibration-timeout')), CALIBRATION_TIMEOUT_MS)),
+      ]);
     } catch (error) {
       audioAvailable = false;
+    } finally {
+      setCalibrating(false);
     }
 
     navigate('/session/activity/run', { state: { audioAvailable } });

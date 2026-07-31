@@ -1,4 +1,26 @@
-import { computeRmsEnergy, shouldTriggerOnset } from './onset.js';
+// NOTE: computeRmsEnergy/shouldTriggerOnset are intentionally duplicated
+// here rather than imported from './onset.js'. AudioWorkletGlobalScope
+// loads this file via audioContext.audioWorklet.addModule(), which in a
+// production (Vite-built) bundle may serve this script from a `data:`
+// URL or a standalone emitted asset — neither of which can reliably
+// resolve a relative import back to './onset.js'. Duplicating the (tiny,
+// pure) logic here makes this worklet fully self-contained regardless of
+// how the build pipeline packages it. The canonical, tested versions of
+// these functions live in './onset.js' and are used everywhere else
+// (capture.js, tests) — keep both copies in sync if the algorithm changes.
+function computeRmsEnergy(samples) {
+  if (samples.length === 0) return 0;
+  let sumSquares = 0;
+  for (let i = 0; i < samples.length; i++) {
+    sumSquares += samples[i] * samples[i];
+  }
+  return Math.sqrt(sumSquares / samples.length);
+}
+
+function shouldTriggerOnset({ rms, noiseFloor, thresholdMultiplier, elapsedMsSinceArm, listenDelayMs }) {
+  if (elapsedMsSinceArm < listenDelayMs) return false;
+  return rms > noiseFloor * thresholdMultiplier;
+}
 
 const DEFAULT_THRESHOLD_MULTIPLIER = 3;
 const DEFAULT_LISTEN_DELAY_MS = 300;

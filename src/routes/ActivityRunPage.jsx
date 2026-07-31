@@ -32,6 +32,21 @@ export default function ActivityRunPage() {
     audioContextRef.current = getAudioContext();
   }, [dispatch]);
 
+  // Separate from the mount effect above (which intentionally has no
+  // cleanup — see its comment in recordTrial). This effect only disarms
+  // the detector on unmount (e.g. hardware/browser back mid-activity) so
+  // a stray sound can't fire a phantom trial into an unmounted page. It
+  // does NOT call resetAudioSession(), which would reintroduce the
+  // StrictMode double-invoke hazard the mount effect's comment guards
+  // against.
+  useEffect(() => {
+    return () => {
+      if (audioAvailable) {
+        getDetector().disarm();
+      }
+    };
+  }, [audioAvailable]);
+
   async function handleServe() {
     const audioContext = audioContextRef.current;
     if (audioContext.state === 'suspended') {

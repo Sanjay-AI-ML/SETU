@@ -63,4 +63,20 @@ describe('shouldTriggerOnset', () => {
     });
     expect(result).toBe(false);
   });
+
+  it('is permissive when noiseFloor is 0, documenting why callers must never pass an uncalibrated zero floor', () => {
+    // A zero noiseFloor makes any positive rms exceed noiseFloor * thresholdMultiplier,
+    // so shouldTriggerOnset itself will trigger on essentially any sound. This is
+    // correct/expected behavior for this pure function; the caller (capture.js) is
+    // responsible for clamping calibrateNoiseFloor's result to a sane minimum before
+    // it ever reaches here.
+    const result = shouldTriggerOnset({
+      rms: 0.0005,
+      noiseFloor: 0,
+      thresholdMultiplier: 3,
+      elapsedMsSinceArm: 500,
+      listenDelayMs: 300,
+    });
+    expect(result).toBe(true);
+  });
 });
