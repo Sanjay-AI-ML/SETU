@@ -10,6 +10,8 @@
     "title": "Tell us about your child",
     "displayNameLabel": "Child's name or initials",
     "ageMonthsLabel": "Age in months",
+    "homeLanguagesLabel": "Home languages",
+    "notesLabel": "Known diagnoses or notes (optional)",
     "saveButton": "Save and continue"
   },
   "home": {
@@ -48,6 +50,9 @@
   "reportPreview": {
     "title": "Clinician report",
     "printButton": "Print / Save as PDF",
-    "disclaimersTitle": "Important notes"
+    "disclaimersTitle": "Important notes",
+    "matrixTitle": "Communication Matrix profile",
+    "flagsTitle": "Points to review with a clinician",
+    "noFlags": "No concerns flagged by the demo heuristics."
   }
 }

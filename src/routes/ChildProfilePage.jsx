@@ -4,14 +4,29 @@ import { createChildProfile } from '../core/model/index.js';
 import { setChildProfile } from '../core/storage/index.js';
 import strings from '../i18n/en.json';
 
+const AVAILABLE_LANGUAGES = ['English', 'Tamil', 'Hindi'];
+
 export default function ChildProfilePage() {
   const navigate = useNavigate();
   const [displayName, setDisplayName] = useState('');
   const [ageMonths, setAgeMonths] = useState('');
+  const [homeLanguages, setHomeLanguages] = useState([]);
+  const [notes, setNotes] = useState('');
+
+  function toggleLanguage(language) {
+    setHomeLanguages((current) =>
+      current.includes(language) ? current.filter((l) => l !== language) : [...current, language]
+    );
+  }
 
   async function handleSubmit(event) {
     event.preventDefault();
-    const profile = createChildProfile({ displayName, ageMonths: Number(ageMonths) });
+    const profile = createChildProfile({
+      displayName,
+      ageMonths: Number(ageMonths),
+      homeLanguages,
+      notes,
+    });
     await setChildProfile(profile);
     navigate('/', { replace: true });
   }
@@ -37,6 +52,21 @@ export default function ChildProfilePage() {
           value={ageMonths}
           onChange={(event) => setAgeMonths(event.target.value)}
         />
+        <fieldset>
+          <legend>{strings.childProfile.homeLanguagesLabel}</legend>
+          {AVAILABLE_LANGUAGES.map((language) => (
+            <label key={language}>
+              <input
+                type="checkbox"
+                checked={homeLanguages.includes(language)}
+                onChange={() => toggleLanguage(language)}
+              />
+              {language}
+            </label>
+          ))}
+        </fieldset>
+        <label htmlFor="notes">{strings.childProfile.notesLabel}</label>
+        <textarea id="notes" value={notes} onChange={(event) => setNotes(event.target.value)} />
         <button type="submit">{strings.childProfile.saveButton}</button>
       </form>
     </main>

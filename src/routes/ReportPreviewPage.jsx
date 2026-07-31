@@ -5,8 +5,10 @@ import { getChildProfile } from '../core/storage/index.js';
 import { applyRules } from '../core/matrix/index.js';
 import { computeFlags } from '../core/matrix/flags.js';
 import { generateReport } from '../core/report/index.js';
+import MatrixProfileGrid from '../components/matrix/MatrixProfileGrid.jsx';
 import rulesConfig from '../data/matrix-rules.json';
 import latencyBandsConfig from '../data/latency-bands.json';
+import taxonomy from '../data/matrix-taxonomy.json';
 import strings from '../i18n/en.json';
 
 export default function ReportPreviewPage() {
@@ -40,6 +42,15 @@ export default function ReportPreviewPage() {
       <ul>
         {report.disclaimers.map((disclaimer, index) => (
           <li key={index}>{disclaimer}</li>
+        ))}
+      </ul>
+      <h2>{strings.reportPreview.matrixTitle}</h2>
+      <MatrixProfileGrid cells={report.sections.matrixProfile} taxonomy={taxonomy} />
+      <h2>{strings.reportPreview.flagsTitle}</h2>
+      {report.sections.flags.length === 0 && <p>{strings.reportPreview.noFlags}</p>}
+      <ul>
+        {report.sections.flags.map((flag) => (
+          <li key={flag.id}>{flag.label}</li>
         ))}
       </ul>
       <button onClick={() => window.print()}>{strings.reportPreview.printButton}</button>
