@@ -30,4 +30,12 @@ describe('mapObservations', () => {
   it('returns an empty array for an unknown activityId', () => {
     expect(mapObservations({ activityId: 'not-a-real-activity', facing: 'camera' })).toEqual([]);
   });
+
+  it('does not fire reach without both handPose open AND motionDirection toward', () => {
+    expect(mapObservations({ activityId: 'bubble-time', handPose: 'open', motionDirection: null })).toEqual([]);
+  });
+
+  it('does not fire push-away without both handPose open AND motionDirection away', () => {
+    expect(mapObservations({ activityId: 'not-this-one', handPose: 'open', motionDirection: null })).toEqual([]);
+  });
 });
