@@ -40,3 +40,23 @@ main button {
 main button:disabled {
   background: #b8bfc4;
 }
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body {
+    background: white;
+  }
+
+  main {
+    max-width: none;
+    padding: 0;
+  }
+
+  main button {
+    display: none;
+  }
+}
