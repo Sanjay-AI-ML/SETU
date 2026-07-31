@@ -44,5 +44,10 @@
     "flagsTitle": "Points to review with a clinician",
     "noFlags": "No concerns flagged by the demo heuristics.",
     "reportButton": "View report"
+  },
+  "reportPreview": {
+    "title": "Clinician report",
+    "printButton": "Print / Save as PDF",
+    "disclaimersTitle": "Important notes"
   }
 }
