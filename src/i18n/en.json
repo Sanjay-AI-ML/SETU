@@ -22,8 +22,10 @@
   },
   "sessionOverview": {
     "title": "Today's session",
-    "activityCount": "1 activity",
-    "beginButton": "Begin"
+    "progressLabel": "{completed} of {total} activities done",
+    "continueButton": "Continue",
+    "seeResultsButton": "See results",
+    "doneLabel": "Done"
   },
   "activityPrebrief": {
     "materialsLabel": "You'll need",
