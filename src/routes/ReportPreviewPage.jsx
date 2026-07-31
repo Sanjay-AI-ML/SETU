@@ -6,6 +6,7 @@ import { matchRules, mergeCells, applySurpassed } from '../core/matrix/index.js'
 import { computeFlags } from '../core/matrix/flags.js';
 import { generateReport } from '../core/report/index.js';
 import MatrixProfileGrid from '../components/matrix/MatrixProfileGrid.jsx';
+import ResponseTimeRibbon from '../components/ribbon/ResponseTimeRibbon.jsx';
 import rulesConfig from '../data/matrix-rules.json';
 import latencyBandsConfig from '../data/latency-bands.json';
 import taxonomy from '../data/matrix-taxonomy.json';
@@ -37,16 +38,22 @@ export default function ReportPreviewPage() {
 
   if (!report) return null;
 
+  const allTrials = session.activityRuns.flatMap((run) => run.trials);
+
   return (
     <main>
       <h1>{strings.reportPreview.title}</h1>
       <p>{report.sections.child.displayName} — {report.sections.child.ageMonths} months</p>
+      <p>{strings.reportPreview.generatedLabel.replace('{date}', new Date(report.generatedAt).toLocaleString())}</p>
       <h2>{strings.reportPreview.disclaimersTitle}</h2>
       <ul>
         {report.disclaimers.map((disclaimer, index) => (
           <li key={index}>{disclaimer}</li>
         ))}
       </ul>
+      <h2>{strings.reportPreview.ribbonTitle}</h2>
+      <ResponseTimeRibbon trials={allTrials} bands={latencyBandsConfig} />
+      <p>{latencyBandsConfig.disclaimer}</p>
       <h2>{strings.reportPreview.matrixTitle}</h2>
       <MatrixProfileGrid cells={report.sections.matrixProfile} taxonomy={taxonomy} />
       <h2>{strings.reportPreview.flagsTitle}</h2>

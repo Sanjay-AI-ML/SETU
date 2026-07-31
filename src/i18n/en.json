@@ -53,8 +53,10 @@
   },
   "reportPreview": {
     "title": "Clinician report",
+    "generatedLabel": "Generated {date}",
     "printButton": "Print / Save as PDF",
     "disclaimersTitle": "Important notes",
+    "ribbonTitle": "Response times",
     "matrixTitle": "Communication Matrix profile",
     "flagsTitle": "Points to review with a clinician",
     "noFlags": "No concerns flagged by the demo heuristics."
