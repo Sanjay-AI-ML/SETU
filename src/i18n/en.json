@@ -17,5 +17,14 @@
     "startSession": "Start new session",
     "resumeSession": "Resume session",
     "viewHistory": "View history"
+  },
+  "sessionOverview": {
+    "title": "Today's session",
+    "activityCount": "1 activity",
+    "beginButton": "Begin"
+  },
+  "activityPrebrief": {
+    "materialsLabel": "You'll need",
+    "startButton": "Start activity"
   }
 }
