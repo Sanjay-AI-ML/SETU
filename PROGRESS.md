@@ -5,6 +5,36 @@
 
 ---
 
+## 2026-07-31 — Session 4: Phase 1 — Bubble Time vertical slice
+
+**Done — full 18-task Phase 1 plan (`docs/plans/2026-07-31-setu-phase1-implementation-plan.md`), built via subagent-driven development, task-by-task review, staying on `main` throughout:**
+- `core/model`, `core/latency` (Web Audio `currentTime`-anchored timing, never `Date.now()`), `core/matrix` (rule engine + per-purpose-column-scoped "surpassed" logic), `core/matrix/flags` (3 concern flags), `core/report` — all TDD'd, 28/28 tests passing
+- `core/storage` extended with child profile persistence
+- `SessionContext` (React Context + `useReducer`, 5 actions) replacing the old `children`-prop gate pattern with `<Outlet/>`-based `ConsentGate`/`RequireChildProfile` layout routes
+- Full route tree: Child Profile → Home → Session Overview → Activity Prebrief → Activity Run (serve tone, tap-to-respond, per-trial latency) → Activity Review (behaviour checklist) → Session Results (Ribbon + 7×4 Matrix grid + flags) → Report Preview (disclaimers + print)
+- `ResponseTimeRibbon` (pure SVG) and `MatrixProfileGrid` (tappable cells with evidence, Communication Matrix attribution) presentational components
+- Final whole-branch review (opus) found 2 Critical + 3 Important findings; one fix wave addressed all 5:
+  - **C1** — null-session crash on reload/deep-link into session routes. `SessionResultsPage` fixed correctly first pass; `ReportPreviewPage`'s `useEffect` needed a second pass (effect body ran unconditionally before the render-body guard could stop it) — caught by scoped re-review, fixed directly, re-verified clean
+  - **C2** — false "no behaviour above Level II" flag for a child who said a word or gazed at parent, because no matrix rule mapped those observations above Level II. Added `rule-social-l4-gaze-to-parent` and `rule-social-l6-word`
+  - **I1** catch-all route added; **I2** latency-bands disclaimer now rendered on Results; **I4** `ActivityRunPage` now resumes a suspended `AudioContext` before marking serve time (was silently freezing latency math at 0)
+- Full manual browser walkthrough (chrome-devtools MCP, `npm run dev`) of the entire flow end-to-end: consent → child profile → session → prebrief → 3 trials (mixed responded/no-response) → review (checked `gaze-to-parent` + `word`) → results (confirmed Social column shows Level 4 & 6 Mastered, lower levels correctly Surpassed, only the latency flag fired — no false flag) → report → reload on `/session/report` and direct deep-link both redirect cleanly to Home with zero console errors, confirming C1 is fully closed
+- 21 commits total, SDD workspace (`.superpowers/sdd/2026-07-31-setu-phase1-implementation-plan/`) cleaned up per the skill ("git history is the record now")
+
+**Deferred (not fixed this session — needs a scope decision):**
+- **P1** — Report Preview doesn't render the computed matrix profile or flags, only child info + fixed disclaimers. This is a plan-level gap (Task 17 was built exactly as specified), not an implementation defect — the plan simply didn't ask for it.
+- **P2** — Child Profile form is thinner than the architecture doc's original spec (name + age only).
+- **I3** — `core/matrix`, `core/report`, etc. still have some hardcoded English strings not yet routed through `i18n/`; too broad for the one allowed fix wave.
+- **I5** — `ResponseTimeRibbon` SVG scaling/viewBox and no-response-dot positioning is cosmetic/polish, not demo-breaking.
+- Several Minor findings (style/polish) from the final review, not tracked individually — git history has the full review if needed.
+
+**Watch out for**
+- The `useEffect`-before-render-body-guard footgun: a render-body early return (`if (!x) return <Navigate/>`) does NOT stop a `useEffect` declared earlier in the same component from running on that same render — the effect body needs its own guard if it dereferences state that can be null on first mount. Bit us once in `ReportPreviewPage.jsx`, worth remembering for any future async-effect-driven page here.
+- Do not `taskkill //F //IM node.exe` — kills all Node processes system-wide including MCP tool servers, not just the dev server (this actually happened again this session's predecessor; background dev servers were simply left running rather than force-killed).
+
+**Next up:** get the user's scope decision on P1/P2/I3/I5, decide whether to push Phase 1 commits to `origin/main`, then move to Phase 2 per the architecture doc's build order (audio-onset detection / MediaPipe, replacing the parent-tap-only interaction).
+
+---
+
 ## 2026-07-31 — Session 2: Phase 0 scaffold
 
 **Done**
