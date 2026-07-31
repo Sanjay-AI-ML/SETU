@@ -38,5 +38,11 @@
     "title": "What did you notice?",
     "instructions": "Check anything your child did during the activity.",
     "confirmButton": "Confirm and see results"
+  },
+  "sessionResults": {
+    "title": "Session results",
+    "flagsTitle": "Points to review with a clinician",
+    "noFlags": "No concerns flagged by the demo heuristics.",
+    "reportButton": "View report"
   }
 }
