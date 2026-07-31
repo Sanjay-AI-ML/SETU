@@ -43,6 +43,9 @@ export default function ResponseTimeRibbon({ trials, bands, width = 320 }) {
         return (
           <g key={trial.index}>
             <line x1={slotCenter} y1={TRACK_Y} x2={slotCenter} y2={dotY} stroke={bandColor(bandId)} strokeWidth={2} />
+            {trial.returnSource === 'audio-onset' && (
+              <circle cx={slotCenter} cy={dotY} r={9} fill="none" stroke="#fff" strokeWidth={2} />
+            )}
             <circle cx={slotCenter} cy={dotY} r={6} fill={bandColor(bandId)}>
               <title>{`Trial ${index + 1}: ${trial.latencyMs}ms (${bandId}, ${trial.returnSource})`}</title>
             </circle>
