@@ -5,6 +5,24 @@
 
 ---
 
+## 2026-08-01 — Session 7: Phase 3 — Full content
+
+**Done — all 4 activities wired into a fixed-order session loop, results/report pooled session-wide:**
+- `core/matrix`: `applyRules` split into `matchRules` (raw rule-matching) + `applySurpassed`; new `mergeCells` combines several activity runs' raw cells into one 28-cell profile (highest-ranked state per cell, evidence concatenated) before a single session-wide `applySurpassed` pass — merging already-surpassed per-run states would be meaningless, so raw states must merge first
+- `matrix-rules.json`: 8 new rules covering every previously-uncovered observation code across Peek-a-boo, Not-This-One, and What's-In-The-Box (anticipatory-movement, smile, gaze-to-face, head-turn, vocal-protest, word-no, show, comment) — 15 rules total, levels chosen from the taxonomy's own descriptor text
+- `SessionOverviewPage`: lists all 4 activities with progress (`{completed} of {total} done`), "Continue" to the next undone activity or "See results" once all 4 are done
+- `ActivityPrebriefPage`/`ActivityRunPage`: current activity derived from `session.activityRuns.length` (no new reducer state — the in-progress run lives separately until `COMPLETE_ACTIVITY_RUN`, so the array length is always exactly the completed count); both guard against a null session and against all 4 activities already being done
+- `ActivityReviewPage`: tags derived from the in-progress `activityRun`'s own `activityId`; navigates to Results directly on the last activity, otherwise back to Overview for the loop
+- `SessionResultsPage`/`ReportPreviewPage`: pool trials and matrix cells across every completed activity run instead of just the last one
+- `ResponseTimeRibbon`: React key switched from `trial.index` (which repeats across pooled activities — 0/1/2 per activity) to the list's own map index
+- 47/47 tests passing (up from 38 at the end of Phase 2); production build verified clean, worklet still emits as its own asset
+
+**Not yet done:** full manual 4-activity browser walkthrough (skipped this session under time pressure — verified via tests + build only, not a live click-through). Worth doing before the actual demo.
+
+**Next up:** Phase 3.5 (Demo Mode — seeded session, no camera/child/props needed) or Phase 4 (Vision/MediaPipe), per the architecture doc's build order and the 7 AM deadline.
+
+---
+
 ## 2026-07-31 — Session 5: Phase 2 — Audio onset detection
 
 **Done — 8-task implementation plan (`.superpowers/sdd/2026-07-31-phase2-audio-onset-detection/`), task-by-task, reviewed clean, plus a final whole-branch review and fix wave:**
