@@ -56,6 +56,16 @@ createOnsetDetector(audioContext)
 // -> { calibrate(durationMs): Promise<noiseFloor>, arm(onDetected), disarm(), release() }
 ```
 
+**`src/core/latency/audioSession.js`** — module-level singleton holding one
+`AudioContext`/detector pair (`getAudioContext()`, `getDetector()`,
+`resetAudioSession()`). Added during implementation planning: `AudioContext`
+and the detector's live nodes are not structured-cloneable, so they cannot
+travel through React Router's `navigate(path, { state })`. Calibration
+happens on Prebrief but detection happens on Run — this singleton is what's
+actually shared across that route transition (only the boolean
+`audioAvailable` goes through router state). It also guarantees `serveAt`
+and `returnAt` always read from the same `AudioContext` clock.
+
 ## UI flow
 
 **`ActivityPrebriefPage`:** On mount, request mic permission and run
