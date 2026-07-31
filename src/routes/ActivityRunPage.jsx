@@ -1,12 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import activities from '../data/activities.json';
 import { markTime, computeLatencyMs } from '../core/latency/index.js';
 import { getAudioContext, getDetector, hasActiveSession, resetAudioSession } from '../core/latency/audioSession.js';
-import { useSessionDispatch } from '../state/SessionContext.jsx';
+import { useSessionDispatch, useSessionState } from '../state/SessionContext.jsx';
 import strings from '../i18n/en.json';
-
-const bubbleTime = activities.find((activity) => activity.id === 'bubble-time');
 
 function playServeTone(audioContext) {
   const oscillator = audioContext.createOscillator();
@@ -20,6 +18,7 @@ export default function ActivityRunPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useSessionDispatch();
+  const { session } = useSessionState();
   const audioAvailable = Boolean(location.state?.audioAvailable);
   const audioContextRef = useRef(null);
   const recordedRef = useRef(false);
@@ -27,9 +26,16 @@ export default function ActivityRunPage() {
   const [phase, setPhase] = useState('ready'); // 'ready' | 'waiting'
   const [pendingServeAt, setPendingServeAt] = useState(null);
 
+  const currentActivity = session ? activities[session.activityRuns.length] : null;
+
   useEffect(() => {
-    dispatch({ type: 'START_ACTIVITY_RUN', activityId: bubbleTime.id });
+    if (!currentActivity) return;
+    dispatch({ type: 'START_ACTIVITY_RUN', activityId: currentActivity.id });
     audioContextRef.current = getAudioContext();
+    // currentActivity intentionally omitted: this must run exactly once per
+    // page mount (one activity run per visit to this route), the same reason
+    // the audio-session mount effect below has no cleanup.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
   // Separate from the mount effect above (which intentionally has no
@@ -49,6 +55,13 @@ export default function ActivityRunPage() {
       }
     };
   }, [audioAvailable]);
+
+  if (!session) {
+    return <Navigate to="/" replace />;
+  }
+  if (!currentActivity) {
+    return <Navigate to="/session/results" replace />;
+  }
 
   async function handleServe() {
     const audioContext = audioContextRef.current;
@@ -91,7 +104,7 @@ export default function ActivityRunPage() {
     });
 
     const nextIndex = trialIndex + 1;
-    if (nextIndex >= bubbleTime.trialCount) {
+    if (nextIndex >= currentActivity.trialCount) {
       // Torn down here (end of activity) rather than in an effect cleanup:
       // React StrictMode double-invokes mount effects in dev, and an effect
       // cleanup would release the freshly-calibrated singleton session
@@ -107,11 +120,11 @@ export default function ActivityRunPage() {
 
   return (
     <main>
-      <h1>{bubbleTime.name}</h1>
+      <h1>{currentActivity.name}</h1>
       <p>
         {strings.activityRun.trialLabel
           .replace('{current}', trialIndex + 1)
-          .replace('{total}', bubbleTime.trialCount)}
+          .replace('{total}', currentActivity.trialCount)}
       </p>
       {!audioAvailable && <p>{strings.activityRun.micUnavailableLabel}</p>}
       {phase === 'ready' && <button onClick={handleServe}>{strings.activityRun.serveButton}</button>}

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useSessionState } from '../state/SessionContext.jsx';
 import { getChildProfile } from '../core/storage/index.js';
-import { applyRules } from '../core/matrix/index.js';
+import { matchRules, mergeCells, applySurpassed } from '../core/matrix/index.js';
 import { computeFlags } from '../core/matrix/flags.js';
 import { generateReport } from '../core/report/index.js';
 import MatrixProfileGrid from '../components/matrix/MatrixProfileGrid.jsx';
@@ -18,13 +18,16 @@ export default function ReportPreviewPage() {
   useEffect(() => {
     if (!session?.activityRuns?.length) return;
     getChildProfile().then((child) => {
-      const activityRun = session.activityRuns[session.activityRuns.length - 1];
-      const cells = applyRules(activityRun.observations, rulesConfig, {
-        sessionId: session.id,
-        activityRunId: activityRun.id,
-      });
-      const flags = computeFlags({ trials: activityRun.trials, cells, latencyBandsConfig });
-      setReport(generateReport({ session, child, cells, flags, trials: activityRun.trials }));
+      // Same session-wide aggregation as Session Results: match rules per
+      // activity run (no per-run surpassed), merge to the highest state per
+      // cell across the whole session, then apply surpassed once globally.
+      const allTrials = session.activityRuns.flatMap((run) => run.trials);
+      const cellsPerRun = session.activityRuns.map((run) =>
+        matchRules(run.observations, rulesConfig, { sessionId: session.id, activityRunId: run.id })
+      );
+      const cells = applySurpassed(mergeCells(cellsPerRun));
+      const flags = computeFlags({ trials: allTrials, cells, latencyBandsConfig });
+      setReport(generateReport({ session, child, cells, flags, trials: allTrials }));
     });
   }, [session]);
 

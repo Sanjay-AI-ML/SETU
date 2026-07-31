@@ -25,7 +25,7 @@ export default function ResponseTimeRibbon({ trials, bands, width = 320 }) {
         if (!trial.responded) {
           return (
             <circle
-              key={trial.index}
+              key={index}
               cx={slotCenter}
               cy={TRACK_Y}
               r={8}
@@ -41,7 +41,7 @@ export default function ResponseTimeRibbon({ trials, bands, width = 320 }) {
         const bandId = classifyForDisplay(trial.latencyMs, bands);
         const dotY = TRACK_Y - Math.min((trial.latencyMs / maxMs) * (HEIGHT / 2 - 10), HEIGHT / 2 - 10);
         return (
-          <g key={trial.index}>
+          <g key={index}>
             <line x1={slotCenter} y1={TRACK_Y} x2={slotCenter} y2={dotY} stroke={bandColor(bandId)} strokeWidth={2} />
             {trial.returnSource === 'audio-onset' && (
               <circle cx={slotCenter} cy={dotY} r={9} fill="none" stroke="#1a1a1a" strokeWidth={2} />

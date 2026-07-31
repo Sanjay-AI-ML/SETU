@@ -1,19 +1,24 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import activities from '../data/activities.json';
-import { useSessionDispatch } from '../state/SessionContext.jsx';
+import { useSessionDispatch, useSessionState } from '../state/SessionContext.jsx';
 import strings from '../i18n/en.json';
-
-const bubbleTime = activities.find((activity) => activity.id === 'bubble-time');
-const tagOptions = bubbleTime.expectedBehaviours.map((code, index) => ({
-  code,
-  label: bubbleTime.reviewTags[index],
-}));
 
 export default function ActivityReviewPage() {
   const navigate = useNavigate();
   const dispatch = useSessionDispatch();
+  const { session, activityRun } = useSessionState();
   const [checked, setChecked] = useState({});
+
+  if (!session || !activityRun) {
+    return <Navigate to="/" replace />;
+  }
+
+  const currentActivity = activities.find((activity) => activity.id === activityRun.activityId);
+  const tagOptions = currentActivity.expectedBehaviours.map((code, index) => ({
+    code,
+    label: currentActivity.reviewTags[index],
+  }));
 
   function toggle(code) {
     setChecked((prev) => ({ ...prev, [code]: !prev[code] }));
@@ -26,7 +31,10 @@ export default function ActivityReviewPage() {
       }
     }
     dispatch({ type: 'COMPLETE_ACTIVITY_RUN' });
-    navigate('/session/results');
+
+    const completedCount = session.activityRuns.length + 1;
+    const moreActivitiesRemain = completedCount < activities.length;
+    navigate(moreActivitiesRemain ? '/session/overview' : '/session/results');
   }
 
   return (
