@@ -7,6 +7,14 @@
     { "id": "rule-social-l3-vocalise", "level": 3, "purpose": "social", "state": "mastered", "requiredObservations": ["vocalise"] },
     { "id": "rule-information-l4-label", "level": 4, "purpose": "information", "state": "mastered", "requiredObservations": ["label"] },
     { "id": "rule-social-l4-gaze-to-parent", "level": 4, "purpose": "social", "state": "mastered", "requiredObservations": ["gaze-to-parent"] },
-    { "id": "rule-social-l6-word", "level": 6, "purpose": "social", "state": "mastered", "requiredObservations": ["word"] }
+    { "id": "rule-social-l6-word", "level": 6, "purpose": "social", "state": "mastered", "requiredObservations": ["word"] },
+    { "id": "rule-social-l1-anticipatory-movement", "level": 1, "purpose": "social", "state": "mastered", "requiredObservations": ["anticipatory-movement"] },
+    { "id": "rule-social-l2-smile", "level": 2, "purpose": "social", "state": "mastered", "requiredObservations": ["smile"] },
+    { "id": "rule-social-l3-gaze-to-face", "level": 3, "purpose": "social", "state": "mastered", "requiredObservations": ["gaze-to-face"] },
+    { "id": "rule-refuse-l2-head-turn", "level": 2, "purpose": "refuse", "state": "mastered", "requiredObservations": ["head-turn"] },
+    { "id": "rule-refuse-l3-vocal-protest", "level": 3, "purpose": "refuse", "state": "mastered", "requiredObservations": ["vocal-protest"] },
+    { "id": "rule-refuse-l6-word-no", "level": 6, "purpose": "refuse", "state": "mastered", "requiredObservations": ["word-no"] },
+    { "id": "rule-information-l4-show", "level": 4, "purpose": "information", "state": "mastered", "requiredObservations": ["show"] },
+    { "id": "rule-information-l6-comment", "level": 6, "purpose": "information", "state": "mastered", "requiredObservations": ["comment"] }
   ]
 }

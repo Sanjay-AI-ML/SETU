@@ -132,3 +132,48 @@ describe('core/matrix mergeCells', () => {
     expect(obtainL1.state).toBe('surpassed');
   });
 });
+
+describe('core/matrix rules coverage for Phase 3 activities', () => {
+  it('maps peek-a-boo observations to their expected cells', () => {
+    const cells = matchRules(
+      [
+        { code: 'anticipatory-movement', source: 'parent' },
+        { code: 'smile', source: 'parent' },
+        { code: 'gaze-to-face', source: 'parent' },
+      ],
+      rulesConfig,
+      {}
+    );
+    expect(cells.find((c) => c.level === 1 && c.purpose === 'social').state).toBe('mastered');
+    expect(cells.find((c) => c.level === 2 && c.purpose === 'social').state).toBe('mastered');
+    expect(cells.find((c) => c.level === 3 && c.purpose === 'social').state).toBe('mastered');
+  });
+
+  it('maps not-this-one observations to their expected cells', () => {
+    const cells = matchRules(
+      [
+        { code: 'head-turn', source: 'parent' },
+        { code: 'vocal-protest', source: 'parent' },
+        { code: 'word-no', source: 'parent' },
+      ],
+      rulesConfig,
+      {}
+    );
+    expect(cells.find((c) => c.level === 2 && c.purpose === 'refuse').state).toBe('mastered');
+    expect(cells.find((c) => c.level === 3 && c.purpose === 'refuse').state).toBe('mastered');
+    expect(cells.find((c) => c.level === 6 && c.purpose === 'refuse').state).toBe('mastered');
+  });
+
+  it('maps whats-in-the-box observations to their expected cells', () => {
+    const cells = matchRules(
+      [
+        { code: 'show', source: 'parent' },
+        { code: 'comment', source: 'parent' },
+      ],
+      rulesConfig,
+      {}
+    );
+    expect(cells.find((c) => c.level === 4 && c.purpose === 'information').state).toBe('mastered');
+    expect(cells.find((c) => c.level === 6 && c.purpose === 'information').state).toBe('mastered');
+  });
+});
