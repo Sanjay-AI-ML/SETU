@@ -5,6 +5,27 @@
 
 ---
 
+## 2026-08-01 — Session 11: Phase 7 — Demo hardening (start)
+
+**Done:** Phase 7 (rehearsal, backup video, deck screenshots) is mostly yours to
+execute — rehearsing out loud and recording video aren't things I can do — but
+built the two pieces of prep that are:
+- 7 clean deck screenshots captured live off `npm run dev` (Home, Session
+  Overview, Bubble Time Prebrief, Run in both ready/waiting phases, and a
+  fully-populated Results + Report via Demo Mode). Saved outside git per the
+  project's media policy — path noted in `docs/demo-runbook.md`.
+- `docs/demo-runbook.md`: pre-flight checklist, a two-track live demo script
+  (Track A = real child, Track B = Demo Mode fallback, with an explicit
+  bailout trigger for pivoting mid-demo), and notes on what to actually
+  record for the backup video.
+
+**Not yet done (yours):** the actual rehearsal, recording the backup video,
+building the deck itself. Everything else in the build order (Phases 0–3.5,
+5, 6) is complete; only Phase 4 (Vision, on hold per your call) and the
+human parts of Phase 7 remain.
+
+---
+
 ## 2026-08-01 — Session 10: Phase 5 — Report polish
 
 **Done:** Phase 5's print-CSS half was already done (Session 8's `main > button` fix); the remaining gap was that the printable Clinician Report showed the Matrix profile and flags but not the actual latency evidence a clinician needs alongside it. Added:
