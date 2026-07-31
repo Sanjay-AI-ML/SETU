@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildEmptyCells, applyRules, applySurpassed } from './index.js';
+import { buildEmptyCells, matchRules, applyRules, applySurpassed, mergeCells } from './index.js';
 import rulesConfig from '../../data/matrix-rules.json';
 
 describe('core/matrix buildEmptyCells', () => {
@@ -63,5 +63,72 @@ describe('core/matrix applySurpassed', () => {
     expect(obtainL3.state).toBe('mastered');
     expect(refuseL1.state).toBe('not-used');
     expect(refuseL2.state).toBe('not-used');
+  });
+});
+
+describe('core/matrix matchRules', () => {
+  it('marks matched cells but does NOT compute surpassed', () => {
+    const observations = [
+      { code: 'reach', source: 'parent' },
+      { code: 'point', source: 'parent' },
+    ];
+    const cells = matchRules(observations, rulesConfig, {});
+    const level1Obtain = cells.find((c) => c.level === 1 && c.purpose === 'obtain');
+    const level3Obtain = cells.find((c) => c.level === 3 && c.purpose === 'obtain');
+    const level4Obtain = cells.find((c) => c.level === 4 && c.purpose === 'obtain');
+    expect(level1Obtain.state).toBe('not-used');
+    expect(level3Obtain.state).toBe('mastered');
+    expect(level4Obtain.state).toBe('mastered');
+  });
+
+  it('attaches evidence with the provided context', () => {
+    const cells = matchRules([{ code: 'reach', source: 'parent' }], rulesConfig, {
+      sessionId: 'session-1',
+      activityRunId: 'run-1',
+    });
+    const cell = cells.find((c) => c.level === 3 && c.purpose === 'obtain');
+    expect(cell.evidence).toEqual([
+      { sessionId: 'session-1', activityRunId: 'run-1', observationCode: 'reach', ruleId: 'rule-obtain-l3-reach' },
+    ]);
+  });
+});
+
+describe('core/matrix mergeCells', () => {
+  it('takes the highest-ranked state across multiple cell arrays for the same cell', () => {
+    const runA = matchRules([{ code: 'reach', source: 'parent' }], rulesConfig, { activityRunId: 'run-a' });
+    const runB = matchRules([{ code: 'point', source: 'parent' }], rulesConfig, { activityRunId: 'run-b' });
+    const merged = mergeCells([runA, runB]);
+    const obtainL3 = merged.find((c) => c.level === 3 && c.purpose === 'obtain');
+    const obtainL4 = merged.find((c) => c.level === 4 && c.purpose === 'obtain');
+    expect(obtainL3.state).toBe('mastered');
+    expect(obtainL4.state).toBe('mastered');
+  });
+
+  it('concatenates evidence from all inputs for the same cell', () => {
+    const runA = matchRules([{ code: 'reach', source: 'parent' }], rulesConfig, { activityRunId: 'run-a' });
+    const runB = matchRules([{ code: 'reach', source: 'parent' }], rulesConfig, { activityRunId: 'run-b' });
+    const merged = mergeCells([runA, runB]);
+    const obtainL3 = merged.find((c) => c.level === 3 && c.purpose === 'obtain');
+    expect(obtainL3.evidence).toHaveLength(2);
+    expect(obtainL3.evidence[0].activityRunId).toBe('run-a');
+    expect(obtainL3.evidence[1].activityRunId).toBe('run-b');
+  });
+
+  it('returns all not-used cells when given an empty list of cell arrays', () => {
+    const merged = mergeCells([]);
+    expect(merged).toHaveLength(28);
+    expect(merged.every((c) => c.state === 'not-used')).toBe(true);
+  });
+
+  it('a subsequent applySurpassed pass on merged cells produces session-wide surpassed states', () => {
+    const runA = matchRules(
+      [{ code: 'reach', source: 'parent' }, { code: 'point', source: 'parent' }],
+      rulesConfig,
+      {}
+    );
+    const merged = mergeCells([runA]);
+    const surpassed = applySurpassed(merged);
+    const obtainL1 = surpassed.find((c) => c.level === 1 && c.purpose === 'obtain');
+    expect(obtainL1.state).toBe('surpassed');
   });
 });

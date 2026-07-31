@@ -10,7 +10,7 @@ export function buildEmptyCells() {
   return cells;
 }
 
-export function applyRules(observations, rulesConfig, context = {}) {
+export function matchRules(observations, rulesConfig, context = {}) {
   const cells = buildEmptyCells();
   const observedCodes = observations.map((observation) => observation.code);
 
@@ -28,7 +28,11 @@ export function applyRules(observations, rulesConfig, context = {}) {
     });
   }
 
-  return applySurpassed(cells);
+  return cells;
+}
+
+export function applyRules(observations, rulesConfig, context = {}) {
+  return applySurpassed(matchRules(observations, rulesConfig, context));
 }
 
 export function applySurpassed(cells) {
@@ -48,4 +52,22 @@ export function applySurpassed(cells) {
   }
 
   return cells;
+}
+
+const STATE_RANK = { 'not-used': 0, emerging: 1, mastered: 2 };
+
+export function mergeCells(cellsArrays) {
+  const merged = buildEmptyCells();
+
+  for (const cells of cellsArrays) {
+    for (const cell of cells) {
+      const target = merged.find((c) => c.level === cell.level && c.purpose === cell.purpose);
+      if (STATE_RANK[cell.state] > STATE_RANK[target.state]) {
+        target.state = cell.state;
+      }
+      target.evidence.push(...cell.evidence);
+    }
+  }
+
+  return merged;
 }
