@@ -27,7 +27,8 @@
   },
   "activityPrebrief": {
     "materialsLabel": "You'll need",
-    "startButton": "Start activity"
+    "startButton": "Start activity",
+    "calibratingLabel": "Listening to your room…"
   },
   "activityRun": {
     "serveButton": "Blow bubbles",
