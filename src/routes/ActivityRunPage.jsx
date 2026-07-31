@@ -26,6 +26,9 @@ export default function ActivityRunPage() {
   useEffect(() => {
     dispatch({ type: 'START_ACTIVITY_RUN', activityId: bubbleTime.id });
     audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+    return () => {
+      audioContextRef.current?.close();
+    };
   }, [dispatch]);
 
   function handleServe() {
