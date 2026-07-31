@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import { getConsent } from '../../core/storage/index.js';
 
-export default function ConsentGate({ children }) {
+export default function ConsentGate() {
   const [status, setStatus] = useState('checking');
 
   useEffect(() => {
@@ -13,5 +13,5 @@ export default function ConsentGate({ children }) {
 
   if (status === 'checking') return null;
   if (status === 'unacknowledged') return <Navigate to="/consent" replace />;
-  return children;
+  return <Outlet />;
 }
