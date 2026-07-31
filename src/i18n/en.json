@@ -35,7 +35,8 @@
     "respondedButton": "Child responded",
     "noResponseButton": "No response",
     "trialLabel": "Trial {current} of {total}",
-    "waitingLabel": "Waiting for response…"
+    "waitingLabel": "Waiting for response…",
+    "micUnavailableLabel": "Microphone unavailable — using tap-only detection"
   },
   "activityReview": {
     "title": "What did you notice?",

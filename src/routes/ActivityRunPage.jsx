@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import activities from '../data/activities.json';
 import { markTime, computeLatencyMs } from '../core/latency/index.js';
+import { getAudioContext, getDetector, resetAudioSession } from '../core/latency/audioSession.js';
 import { useSessionDispatch } from '../state/SessionContext.jsx';
 import strings from '../i18n/en.json';
 
@@ -17,18 +18,18 @@ function playServeTone(audioContext) {
 
 export default function ActivityRunPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useSessionDispatch();
+  const audioAvailable = Boolean(location.state?.audioAvailable);
   const audioContextRef = useRef(null);
+  const recordedRef = useRef(false);
   const [trialIndex, setTrialIndex] = useState(0);
   const [phase, setPhase] = useState('ready'); // 'ready' | 'waiting'
   const [pendingServeAt, setPendingServeAt] = useState(null);
 
   useEffect(() => {
     dispatch({ type: 'START_ACTIVITY_RUN', activityId: bubbleTime.id });
-    audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
-    return () => {
-      audioContextRef.current?.close();
-    };
+    audioContextRef.current = getAudioContext();
   }, [dispatch]);
 
   async function handleServe() {
@@ -37,27 +38,47 @@ export default function ActivityRunPage() {
       await audioContext.resume();
     }
     playServeTone(audioContext);
-    setPendingServeAt(markTime(audioContext));
+    const serveAt = markTime(audioContext);
+    setPendingServeAt(serveAt);
     setPhase('waiting');
+    recordedRef.current = false;
+
+    if (audioAvailable) {
+      getDetector().arm((detectedAt) => {
+        recordTrial({ responded: true, source: 'audio-onset', returnAt: detectedAt, serveAt });
+      });
+    }
   }
 
-  function recordTrial({ responded }) {
+  function recordTrial({ responded, source, returnAt: providedReturnAt, serveAt: providedServeAt }) {
+    if (recordedRef.current) return;
+    recordedRef.current = true;
+    if (audioAvailable) {
+      getDetector().disarm();
+    }
+
     const audioContext = audioContextRef.current;
-    const returnAt = responded ? markTime(audioContext) : null;
-    const latencyMs = responded ? computeLatencyMs(pendingServeAt, returnAt) : null;
+    const serveAt = providedServeAt ?? pendingServeAt;
+    const returnAt = responded ? (providedReturnAt ?? markTime(audioContext)) : null;
+    const latencyMs = responded ? computeLatencyMs(serveAt, returnAt) : null;
 
     dispatch({
       type: 'RECORD_TRIAL',
       index: trialIndex,
-      serveAt: pendingServeAt,
+      serveAt,
       returnAt,
-      returnSource: responded ? 'parent-tap' : 'none',
+      returnSource: responded ? source : 'none',
       latencyMs,
       responded,
     });
 
     const nextIndex = trialIndex + 1;
     if (nextIndex >= bubbleTime.trialCount) {
+      // Torn down here (end of activity) rather than in an effect cleanup:
+      // React StrictMode double-invokes mount effects in dev, and an effect
+      // cleanup would release the freshly-calibrated singleton session
+      // between the two invocations, leaving the second mount uncalibrated.
+      resetAudioSession();
       navigate('/session/activity/review');
       return;
     }
@@ -74,14 +95,15 @@ export default function ActivityRunPage() {
           .replace('{current}', trialIndex + 1)
           .replace('{total}', bubbleTime.trialCount)}
       </p>
+      {!audioAvailable && <p>{strings.activityRun.micUnavailableLabel}</p>}
       {phase === 'ready' && <button onClick={handleServe}>{strings.activityRun.serveButton}</button>}
       {phase === 'waiting' && (
         <>
           <p>{strings.activityRun.waitingLabel}</p>
-          <button onClick={() => recordTrial({ responded: true })}>
+          <button onClick={() => recordTrial({ responded: true, source: 'parent-tap' })}>
             {strings.activityRun.respondedButton}
           </button>
-          <button onClick={() => recordTrial({ responded: false })}>
+          <button onClick={() => recordTrial({ responded: false, source: 'none' })}>
             {strings.activityRun.noResponseButton}
           </button>
         </>
