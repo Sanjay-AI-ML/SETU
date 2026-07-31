@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import activities from '../data/activities.json';
 import { markTime, computeLatencyMs } from '../core/latency/index.js';
-import { getAudioContext, getDetector, resetAudioSession } from '../core/latency/audioSession.js';
+import { getAudioContext, getDetector, hasActiveSession, resetAudioSession } from '../core/latency/audioSession.js';
 import { useSessionDispatch } from '../state/SessionContext.jsx';
 import strings from '../i18n/en.json';
 
@@ -38,10 +38,13 @@ export default function ActivityRunPage() {
   // a stray sound can't fire a phantom trial into an unmounted page. It
   // does NOT call resetAudioSession(), which would reintroduce the
   // StrictMode double-invoke hazard the mount effect's comment guards
-  // against.
+  // against. hasActiveSession() guards against the normal-completion path,
+  // where resetAudioSession() already ran and nulled the singleton —
+  // without this guard, getDetector() would auto-vivify (and immediately
+  // orphan) a brand-new AudioContext just to disarm it.
   useEffect(() => {
     return () => {
-      if (audioAvailable) {
+      if (audioAvailable && hasActiveSession()) {
         getDetector().disarm();
       }
     };

@@ -17,6 +17,10 @@ export function getDetector() {
   return detector;
 }
 
+export function hasActiveSession() {
+  return detector !== null;
+}
+
 export function resetAudioSession() {
   detector?.release();
   if (audioContext && audioContext.state !== 'closed') {
