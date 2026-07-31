@@ -5,6 +5,37 @@
 
 ---
 
+## 2026-07-31 — Session 5: Phase 2 — Audio onset detection
+
+**Done — 7-task implementation plan (`.superpowers/sdd/2026-07-31-phase2-audio-onset-detection/`), task-by-task, reviewed clean, plus this final verification task:**
+- 4 new `core/latency` modules:
+  - `onset.js` — pure logic (`computeRmsEnergy`, `calibrateNoiseFloor`, `shouldTriggerOnset`), TDD'd, 9 tests
+  - `capture.js` — `createOnsetDetector(audioContext)`: `getUserMedia` + `AudioWorklet` adapter wrapping calibration and arm/disarm/release; **untested by design** — needs real `getUserMedia`/`AudioWorklet` browser APIs, not available under Vitest/jsdom
+  - `audioSession.js` — singleton `AudioContext`/detector holder (`getAudioContext`, `getDetector`); **untested by design**, thin wiring
+  - `onset-processor.worklet.js` — the `AudioWorkletProcessor` itself, runs in the separate `AudioWorkletGlobalScope`; **untested by design**, not reachable from the main-thread test environment
+  - Full suite: 37/37 passing (up from 28/28 at the end of Phase 1)
+- `ActivityPrebriefPage` now has a calibration step: clicking "Start activity" shows "Listening to your room…", calls `getDetector().calibrate(1500ms)` against a resumed `AudioContext`, and navigates to Activity Run with `audioAvailable: true/false` in router state depending on whether calibration succeeded — calibration failure (denied/no mic) is caught and never blocks navigation
+- `ActivityRunPage` rewritten for dual-source trial recording: arms the onset detector per trial when `audioAvailable`, races a real audio onset against the existing manual "Child responded" tap, tags each trial's `returnSource` as `'audio-onset'` or `'parent-tap'`; a StrictMode-cleanup fix was needed so the detector is correctly disarmed/re-armed across the double-invoked effect in dev mode without leaking a duplicate `onmessage` handler
+- `ResponseTimeRibbon` now draws a visible ring around any dot whose trial has `returnSource === 'audio-onset'`, distinguishing it from a plain parent-tap dot — verified the SVG markup renders the ring conditionally (`trial.returnSource === 'audio-onset' && ...`) and, in this session's runs, correctly stayed absent since no real onset was ever triggered (see below)
+
+**Verified this session (browser walkthrough, chrome-devtools MCP, `npm run dev` at `localhost:5173`):**
+- Full suite re-run: **37/37 passing**
+- **Tap-only path**: Home → Start new session → Session Overview → Begin → Prebrief (confirmed "Listening to your room…" appears on click) → hit an environment limitation getting past the *real* native mic-permission prompt (see "Watch out for") → worked around it with a `getUserMedia` stub injected via `navigate_page`'s `initScript`, run twice:
+  1. Stub **rejects** (simulates denied/no mic) — confirmed "Microphone unavailable — using tap-only detection" appears on Activity Run, completed all 3 trials via manual "Blow bubbles"/"Child responded"/"No response" taps only, through Review (checked 2 boxes) → Confirm → Session Results (Ribbon SVG + full 7×4 Matrix grid rendered, no errors) → View report → Report Preview (rendered fully, disclaimers + matrix present)
+  2. Stub **resolves** with a synthetic oscillator `MediaStream` (simulates mic granted) — calibration succeeded, no "Microphone unavailable" text, detector armed each trial, all 3 trials still completed via manual taps only (never blocked by the live audio wiring), through to Results and Report identically clean. Ribbon tooltip confirmed `returnSource: 'parent-tap'` was correctly recorded on all 3 trials (the synthetic tone never crosses the onset threshold as a real "blow" would, so no ring appeared — expected)
+- Console was clean in every run except one pre-existing, unrelated `favicon.ico` 404 (not a Phase 2 regression)
+- **Permission-denied path** (Task 8's Step 3): confirmed via the rejecting stub above — the "Microphone unavailable — using tap-only detection" note appears and the activity completes normally end-to-end
+
+**NOT verified this session — needs hands-on confirmation:**
+- **The real mic-triggered audio-onset detection path has not been exercised.** This session's browser tooling could not get past the native mic-permission prompt at all (it hung indefinitely — see below), so a `getUserMedia` script stub was used instead to unblock the tap-only and permission-denied paths. That stub cannot produce a real "blow bubbles" sound crossing the RMS threshold. **Someone needs to run Bubble Time on the physical Android device (or a desktop browser with a live mic), actually blow into/near the mic during a trial, and confirm: calibration picks up real room noise, a real sound crossing the threshold produces a trial with `returnSource: 'audio-onset'`, and the Ribbon shows the ring on that dot.**
+
+**Watch out for**
+- **The native browser mic-permission prompt cannot be driven by chrome-devtools MCP automation in this environment.** `navigator.permissions.query({name:'microphone'})` stayed at `state: 'prompt'` indefinitely — the app's own calibration `await` (and thus the whole Prebrief screen) hung forever waiting on a decision no tool here can make. It is not a JS `alert`/`confirm` dialog, so `handle_dialog` doesn't apply and there's no permission-grant tool in this toolset. Worked around it with a `getUserMedia` override injected via `navigate_page`'s `initScript`, which is a reasonable substitute for exercising app logic but is **not** the same as verifying a real permission-prompt UX or a real mic signal — flagged above.
+
+**Next up:** Get hands-on confirmation of the real audio-onset path on-device (Samsung Galaxy S24 Ultra) or a live-mic desktop browser. Once confirmed, Phase 2 is functionally complete; return to the I3 (i18n coverage)/I5 (Ribbon SVG polish) backlog items noted at the end of Phase 1 whenever convenient.
+
+---
+
 ## 2026-07-31 — Session 4: Phase 1 — Bubble Time vertical slice
 
 **Done — full 18-task Phase 1 plan (`docs/plans/2026-07-31-setu-phase1-implementation-plan.md`), built via subagent-driven development, task-by-task review, staying on `main` throughout:**
