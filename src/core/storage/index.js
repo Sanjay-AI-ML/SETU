@@ -9,3 +9,13 @@ export function getConsent() {
 export function setConsent(value) {
   return set(CONSENT_KEY, value);
 }
+
+const CHILD_PROFILE_KEY = 'setu:child-profile';
+
+export function getChildProfile() {
+  return get(CHILD_PROFILE_KEY).then((value) => value ?? null);
+}
+
+export function setChildProfile(profile) {
+  return set(CHILD_PROFILE_KEY, profile);
+}

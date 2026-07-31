@@ -10,7 +10,7 @@ vi.mock('idb-keyval', () => ({
   }),
 }));
 
-const { getConsent, setConsent } = await import('./index.js');
+const { getConsent, setConsent, getChildProfile, setChildProfile } = await import('./index.js');
 
 beforeEach(() => {
   store.clear();
@@ -29,5 +29,17 @@ describe('core/storage consent', () => {
   it('returns false if consent was explicitly set to false', async () => {
     await setConsent(false);
     await expect(getConsent()).resolves.toBe(false);
+  });
+});
+
+describe('core/storage child profile', () => {
+  it('returns null when no child profile has been saved', async () => {
+    await expect(getChildProfile()).resolves.toBeNull();
+  });
+
+  it('returns the saved profile after setChildProfile', async () => {
+    const profile = { id: 'child-1', displayName: 'Demo Child', ageMonths: 24 };
+    await setChildProfile(profile);
+    await expect(getChildProfile()).resolves.toEqual(profile);
   });
 });
