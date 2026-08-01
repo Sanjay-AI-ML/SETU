@@ -28,6 +28,7 @@ export default function ActivityRunPage() {
   const recordedRef = useRef(false);
   const videoRef = useRef(null);
   const visionCodesRef = useRef(new Set());
+  const [visionActive, setVisionActive] = useState(visionAvailable);
   const [trialIndex, setTrialIndex] = useState(0);
   const [phase, setPhase] = useState('ready'); // 'ready' | 'waiting'
   const [pendingServeAt, setPendingServeAt] = useState(null);
@@ -45,7 +46,9 @@ export default function ActivityRunPage() {
     dispatch({ type: 'START_ACTIVITY_RUN', activityId: currentActivity.id });
     audioContextRef.current = getAudioContext();
     if (visionAvailable) {
-      getVisionDetector().start(videoRef.current, handleVisionFrame);
+      getVisionDetector()
+        .start(videoRef.current, handleVisionFrame)
+        .catch(() => setVisionActive(false));
     }
     // currentActivity intentionally omitted: this must run exactly once per
     // page mount (one activity run per visit to this route), the same reason
@@ -150,8 +153,8 @@ export default function ActivityRunPage() {
           .replace('{total}', currentActivity.trialCount)}
       </p>
       {!audioAvailable && <p>{strings.activityRun.micUnavailableLabel}</p>}
-      {!visionAvailable && <p>{strings.activityRun.visionUnavailableLabel}</p>}
-      {visionAvailable && (
+      {!visionActive && <p>{strings.activityRun.visionUnavailableLabel}</p>}
+      {visionActive && (
         <video ref={videoRef} autoPlay playsInline muted style={{ width: 160, height: 120 }} />
       )}
       {phase === 'ready' && <button onClick={handleServe}>{currentActivity.serveButtonLabel}</button>}

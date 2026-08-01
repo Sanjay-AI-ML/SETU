@@ -42,6 +42,7 @@
 **Known limitation:** detection accuracy against a real child has not been verified from this development environment — no camera or child available here, everything above was verified via unit tests, code review, and the production-build asset diff only. The two most likely things to need retuning after real-world testing:
 - `classifyMotion`'s displacement heuristic is a crude frame-to-frame centroid-distance-from-frame-center measure, not true motion/velocity tracking.
 - `capture.js`'s head-yaw extraction is a best-effort `atan2` read off a column-major 4x4 transformation matrix, not independently verified against MediaPipe's actual matrix layout.
+- There is no confidence/persistence layer: any single frame (out of ~30-60/sec) satisfying a code's condition permanently adds it to the accumulated set for the rest of the activity. In practice this means codes with loose conditions — `gaze-to-face` (any frame with head yaw within 20°) and `show` (any frame with an open hand) — will be pre-checked on Review in nearly every run, not just when the behaviour was sustained or characteristic. The design spec called for a rolling best-confidence-per-code threshold; this shipped as a simpler any-frame latch instead. Since Review only pre-*checks* a box (the parent must still confirm it), this doesn't break the provenance/honesty guarantee, but it does make the pre-checks a weaker signal than "the camera saw this" might imply.
 
 **Not yet done:** on-device verification with a real camera and a real child.
 

@@ -36,30 +36,42 @@ export function createVisionDetector() {
   let rafId = null;
   let lastVideoTime = -1;
   let prevHandLandmarks = null;
-  let stopped = false;
+  // Generation token, not a boolean: a boolean "stopped" flag gets reset by
+  // the very next start() call, so a stop() sandwiched between two start()
+  // calls (React StrictMode's dev-only double-invoke of mount effects) can't
+  // tell "cancelled" apart from "never started" — the first start() resumes
+  // from its await thinking it's still current and races the second start().
+  // Each start() captures the generation at call time and checks it's still
+  // current after every await; stop() bumps it, permanently invalidating any
+  // in-flight start() no matter how many started before the next one.
+  let generation = 0;
 
   async function start(videoElement, onFrameCallback) {
-    stopped = false;
-    lastVideoTime = -1;
+    const myGeneration = ++generation;
     if (!faceLandmarker || !handLandmarker) {
       await loadModels();
     }
-    if (stopped) return;
+    if (myGeneration !== generation) return;
+
+    const acquiredStream = await navigator.mediaDevices.getUserMedia({ video: true });
+    if (myGeneration !== generation) {
+      acquiredStream.getTracks().forEach((track) => track.stop());
+      return;
+    }
+    stream = acquiredStream;
     videoEl = videoElement;
     onFrame = onFrameCallback;
-    stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    if (stopped) {
-      stream.getTracks().forEach((track) => track.stop());
-      stream = null;
-      return;
-    }
     videoEl.srcObject = stream;
     await videoEl.play();
-    if (stopped) {
+    if (myGeneration !== generation) {
       stream.getTracks().forEach((track) => track.stop());
       stream = null;
+      videoEl = null;
+      onFrame = null;
       return;
     }
+
+    lastVideoTime = -1;
     prevHandLandmarks = null;
     loop();
   }
@@ -100,7 +112,7 @@ export function createVisionDetector() {
   }
 
   function stop() {
-    stopped = true;
+    generation++;
     if (rafId) cancelAnimationFrame(rafId);
     rafId = null;
     if (stream) {
