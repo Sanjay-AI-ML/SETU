@@ -165,15 +165,20 @@ export default function HomePage() {
         <div className="section routines-panel">
           <div className="routines-intro">
             <p className="routines-intro-text">
-              <strong>Routines-Based Intervention (RBI)</strong> embeds communication practice into
-              everyday family moments — meals, bath time, dressing, and bedtime. These routines
-              happen naturally every day, making them the most powerful context for real progress.
+              {strings.routines?.introText || 'Routines-Based Intervention (RBI) embeds communication practice into everyday family moments — meals, bath time, dressing, and bedtime.'}
             </p>
           </div>
 
           <div className="scenario-list">
             {scenariosData.map((scenario) => {
               const isExpanded = expandedScenario === scenario.id;
+              const scStrings = strings.routines?.scenarios?.[scenario.id];
+              const name = scStrings?.name || scenario.name;
+              const subtitle = scStrings?.subtitle || scenario.subtitle;
+              const description = scStrings?.description || scenario.description;
+              const setting = scStrings?.setting || scenario.setting;
+              const when = scStrings?.when || scenario.when;
+
               return (
                 <div
                   key={scenario.id}
@@ -191,8 +196,8 @@ export default function HomePage() {
                   >
                     <span className="scenario-icon">{scenario.icon}</span>
                     <div className="scenario-head-text">
-                      <span className="scenario-name">{scenario.name}</span>
-                      <span className="scenario-sub">{scenario.subtitle}</span>
+                      <span className="scenario-name">{name}</span>
+                      <span className="scenario-sub">{subtitle}</span>
                     </div>
                     <div className="scenario-meta-right">
                       <span className="scenario-badge">{scenario.ageRange}</span>
@@ -202,21 +207,21 @@ export default function HomePage() {
 
                   {isExpanded && (
                     <div className="scenario-body">
-                      <p className="scenario-desc">{scenario.description}</p>
+                      <p className="scenario-desc">{description}</p>
 
                       <div className="scenario-details-row">
                         <div className="scenario-detail">
-                          <span className="scenario-detail-label">📍 Setting</span>
-                          <span className="scenario-detail-val">{scenario.setting}</span>
+                          <span className="scenario-detail-label">{strings.routines?.setting || '📍 Setting'}</span>
+                          <span className="scenario-detail-val">{setting}</span>
                         </div>
                         <div className="scenario-detail">
-                          <span className="scenario-detail-label">⏰ When</span>
-                          <span className="scenario-detail-val">{scenario.when}</span>
+                          <span className="scenario-detail-label">{strings.routines?.when || '⏰ When'}</span>
+                          <span className="scenario-detail-val">{when}</span>
                         </div>
                       </div>
 
                       <div className="scenario-skills">
-                        <p className="scenario-skills-title">🎯 Target Skills</p>
+                        <p className="scenario-skills-title">{strings.routines?.targetSkills || '🎯 Target Skills'}</p>
                         <div className="scenario-skill-tags">
                           {scenario.targetSkills.map((skill) => (
                             <span key={skill} className="skill-tag">
@@ -227,7 +232,7 @@ export default function HomePage() {
                       </div>
 
                       <div className="scenario-setup">
-                        <p className="scenario-skills-title">⚙️ Quick Setup</p>
+                        <p className="scenario-skills-title">{strings.routines?.quickSetup || '⚙️ Quick Setup'}</p>
                         <ol className="scenario-setup-list">
                           {scenario.setup.map((step, i) => (
                             <li key={i}>{step}</li>
@@ -237,7 +242,7 @@ export default function HomePage() {
 
                       <div className="scenario-opportunities">
                         <p className="scenario-skills-title">
-                          💡 {scenario.opportunitiesCount} Communication Opportunities
+                          {(strings.routines?.opportunities || '💡 {count} Communication Opportunities').replace('{count}', scenario.opportunitiesCount)}
                         </p>
                         {scenario.opportunities.map((opp) => (
                           <div key={opp.id} className="opportunity-row">

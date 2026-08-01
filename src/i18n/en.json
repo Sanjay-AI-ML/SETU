@@ -30,6 +30,44 @@
     "quickVideoCheck": "Quick video check (upload/record a short clip)",
     "matrixCredit": "SETU maps natural play observations to Charity Rowland's Communication Matrix framework (OHSU)."
   },
+  "routines": {
+    "introText": "Routines-Based Intervention (RBI) embeds communication practice into everyday family moments — meals, bath time, dressing, and bedtime. These routines happen naturally every day, making them the most powerful context for real progress.",
+    "setting": "📍 Setting",
+    "when": "⏰ When",
+    "targetSkills": "🎯 Target Skills",
+    "quickSetup": "⚙️ Quick Setup",
+    "opportunities": "💡 {count} Communication Opportunities",
+    "scenarios": {
+      "mealtime": {
+        "name": "Mealtime Routine",
+        "subtitle": "Requesting & Refusing at the Table",
+        "setting": "Kitchen / Dining table",
+        "when": "Any regular meal or snack time",
+        "description": "Everyday meals are a rich communication goldmine. This routine captures how your child asks for more of a preferred food, refuses a disliked item, and uses gaze, gesture, or words at the table."
+      },
+      "bath-sensory": {
+        "name": "Bath & Sensory Play",
+        "subtitle": "Requesting actions & water play",
+        "setting": "Bathroom / Sensory tub",
+        "when": "Bath time or water play",
+        "description": "Bath time provides natural pauses and turn-taking opportunities when pouring water, blowing bubbles, or splashing together."
+      },
+      "dressing": {
+        "name": "Dressing Routine",
+        "subtitle": "Choices & body awareness",
+        "setting": "Bedroom / Changing area",
+        "when": "Morning dressing or bedtime pjs",
+        "description": "Offering choices between two shirts or socks encourages pointing, vocalizing, and expressing preference."
+      },
+      "bedtime": {
+        "name": "Bedtime Story Routine",
+        "subtitle": "Commenting & shared attention",
+        "setting": "Bed / Quiet reading nook",
+        "when": "Wind-down routine before sleep",
+        "description": "Reading picture books together creates rich opportunities for pointing, labeling pictures, and sharing visual attention."
+      }
+    }
+  },
   "sessionOverview": {
     "title": "Today's session",
     "eyebrow": "Session in progress",
