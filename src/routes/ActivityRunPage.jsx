@@ -1,8 +1,11 @@
+// src/routes/ActivityRunPage.jsx
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import activities from '../data/activities.json';
 import { markTime, computeLatencyMs } from '../core/latency/index.js';
 import { getAudioContext, getDetector, hasActiveSession, resetAudioSession } from '../core/latency/audioSession.js';
+import { getVisionDetector, hasActiveVisionSession, resetVisionSession } from '../core/vision/visionSession.js';
+import { mapObservations } from '../core/vision/observationMapper.js';
 import { useSessionDispatch, useSessionState } from '../state/SessionContext.jsx';
 import strings from '../i18n/en.json';
 
@@ -20,18 +23,30 @@ export default function ActivityRunPage() {
   const dispatch = useSessionDispatch();
   const { session } = useSessionState();
   const audioAvailable = Boolean(location.state?.audioAvailable);
+  const visionAvailable = Boolean(location.state?.visionAvailable);
   const audioContextRef = useRef(null);
   const recordedRef = useRef(false);
+  const videoRef = useRef(null);
+  const visionCodesRef = useRef(new Set());
   const [trialIndex, setTrialIndex] = useState(0);
   const [phase, setPhase] = useState('ready'); // 'ready' | 'waiting'
   const [pendingServeAt, setPendingServeAt] = useState(null);
 
   const currentActivity = session ? activities[session.activityRuns.length] : null;
 
+  function handleVisionFrame(signals) {
+    if (!currentActivity) return;
+    const codes = mapObservations({ activityId: currentActivity.id, ...signals });
+    codes.forEach((code) => visionCodesRef.current.add(code));
+  }
+
   useEffect(() => {
     if (!currentActivity) return;
     dispatch({ type: 'START_ACTIVITY_RUN', activityId: currentActivity.id });
     audioContextRef.current = getAudioContext();
+    if (visionAvailable) {
+      getVisionDetector().start(videoRef.current, handleVisionFrame);
+    }
     // currentActivity intentionally omitted: this must run exactly once per
     // page mount (one activity run per visit to this route), the same reason
     // the audio-session mount effect below has no cleanup.
@@ -53,8 +68,11 @@ export default function ActivityRunPage() {
       if (audioAvailable && hasActiveSession()) {
         getDetector().disarm();
       }
+      if (visionAvailable && hasActiveVisionSession()) {
+        getVisionDetector().stop();
+      }
     };
-  }, [audioAvailable]);
+  }, [audioAvailable, visionAvailable]);
 
   if (!session) {
     return <Navigate to="/" replace />;
@@ -110,7 +128,12 @@ export default function ActivityRunPage() {
       // cleanup would release the freshly-calibrated singleton session
       // between the two invocations, leaving the second mount uncalibrated.
       resetAudioSession();
-      navigate('/session/activity/review');
+      if (visionAvailable) {
+        resetVisionSession();
+      }
+      navigate('/session/activity/review', {
+        state: { visionSuggestedCodes: Array.from(visionCodesRef.current) },
+      });
       return;
     }
     setTrialIndex(nextIndex);
@@ -127,6 +150,10 @@ export default function ActivityRunPage() {
           .replace('{total}', currentActivity.trialCount)}
       </p>
       {!audioAvailable && <p>{strings.activityRun.micUnavailableLabel}</p>}
+      {!visionAvailable && <p>{strings.activityRun.visionUnavailableLabel}</p>}
+      {visionAvailable && (
+        <video ref={videoRef} autoPlay playsInline muted style={{ width: 160, height: 120 }} />
+      )}
       {phase === 'ready' && <button onClick={handleServe}>{currentActivity.serveButtonLabel}</button>}
       {phase === 'waiting' && (
         <>

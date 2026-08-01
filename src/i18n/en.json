@@ -38,7 +38,8 @@
     "noResponseButton": "No response",
     "trialLabel": "Trial {current} of {total}",
     "waitingLabel": "Waiting for response…",
-    "micUnavailableLabel": "Microphone unavailable — using tap-only detection"
+    "micUnavailableLabel": "Microphone unavailable — using tap-only detection",
+    "visionUnavailableLabel": "Camera unavailable — using manual observation only."
   },
   "activityReview": {
     "title": "What did you notice?",
