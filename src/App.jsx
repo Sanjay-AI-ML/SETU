@@ -12,6 +12,7 @@ import SessionHistoryPage from './routes/SessionHistoryPage.jsx';
 import SettingsPage from './routes/SettingsPage.jsx';
 import VideoCheckPage from './routes/VideoCheckPage.jsx';
 import RollCallPage from './routes/RollCallPage.jsx';
+import VoiceAgeCheckPage from './routes/VoiceAgeCheckPage.jsx';
 import AppHeader from './components/common/AppHeader.jsx';
 import ConsentGate from './components/common/ConsentGate.jsx';
 import RequireChildProfile from './components/common/RequireChildProfile.jsx';
@@ -34,6 +35,7 @@ export default function App() {
               <Route path="/session/history" element={<SessionHistoryPage />} />
               <Route path="/video-check" element={<VideoCheckPage />} />
               <Route path="/roll-call" element={<RollCallPage />} />
+              <Route path="/voice-age-check" element={<VoiceAgeCheckPage />} />
               <Route path="/session/overview" element={<SessionOverviewPage />} />
               <Route path="/session/activity/prebrief" element={<ActivityPrebriefPage />} />
               <Route path="/session/activity/run" element={<ActivityRunPage />} />

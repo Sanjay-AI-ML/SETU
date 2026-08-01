@@ -134,6 +134,20 @@ export default function SettingsPage() {
         </div>
       )}
 
+      {/* Experimental Features — deliberately low-emphasis, not on HomePage */}
+      <div className="section card">
+        <h3>Experimental</h3>
+        <p style={{ fontSize: '0.88rem', color: 'var(--ink-soft)', margin: '4px 0 16px' }}>
+          Novelty features under active exploration. Not validated, not part of any assessment
+          or report.
+        </p>
+        <div className="actions inline">
+          <button type="button" className="btn btn-ghost" onClick={() => navigate('/voice-age-check')}>
+            🎙️ Voice register check
+          </button>
+        </div>
+      </div>
+
       {/* Disclaimer info */}
       <div className="callout plain" style={{ marginTop: 24 }}>
         <p style={{ fontSize: '0.82rem', margin: 0, color: 'var(--ink-soft)' }}>
