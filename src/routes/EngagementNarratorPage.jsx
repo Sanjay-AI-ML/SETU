@@ -309,16 +309,19 @@ export default function EngagementNarratorPage() {
         if (allFaces.length === 1) {
           faceLM = allFaces[0];
         } else {
-          // Score each face: higher noseY (lower in frame) + smaller bounding area = Child
+          // Score each face: right side position (noseX >= 0.35) + lower in frame (higher noseY) + smaller area = Child
           const scoredFaces = allFaces.map((f) => {
             const xs = f.map((p) => p.x);
             const ys = f.map((p) => p.y);
             const width = Math.max(...xs) - Math.min(...xs);
             const height = Math.max(...ys) - Math.min(...ys);
             const area = width * height;
+            const noseX = f[NOSE_TIP]?.x ?? 0.5;
             const noseY = f[NOSE_TIP]?.y ?? 0.5;
-            // Higher score = more likely to be child
-            const childScore = noseY * 2.0 - area * 3.0;
+
+            // Heavily prioritize faces positioned on the right side of the video frame (noseX >= 0.35)
+            const rightSideBonus = noseX >= 0.35 ? (noseX * 4.0) : (noseX * 0.2);
+            const childScore = rightSideBonus + (noseY * 2.0) - (area * 3.0);
             return { f, childScore };
           });
           scoredFaces.sort((a, b) => b.childScore - a.childScore);
