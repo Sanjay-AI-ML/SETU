@@ -46,14 +46,18 @@ export function createVisionDetector() {
   // in-flight start() no matter how many started before the next one.
   let generation = 0;
 
-  async function start(videoElement, onFrameCallback) {
+  async function start(videoElement, onFrameCallback, facingMode = 'environment') {
     const myGeneration = ++generation;
     if (!faceLandmarker || !handLandmarker) {
       await loadModels();
     }
     if (myGeneration !== generation) return;
 
-    const acquiredStream = await navigator.mediaDevices.getUserMedia({ video: true });
+    // Bare (non-exact) facingMode is an "ideal" constraint per spec: the
+    // browser picks the closest match instead of rejecting the request, so
+    // this stays safe on devices with only one camera (e.g. a laptop webcam
+    // during browser testing).
+    const acquiredStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode } });
     if (myGeneration !== generation) {
       acquiredStream.getTracks().forEach((track) => track.stop());
       return;

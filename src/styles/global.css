@@ -382,6 +382,26 @@ input[type="checkbox"] {
   padding: 2px 6px; border-radius: 999px;
 }
 
+.camera-toggle {
+  position: absolute;
+  bottom: 6px;
+  right: 7px;
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(15, 22, 15, 0.55);
+  color: #fbf7ee;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.12s ease;
+}
+.camera-toggle svg { width: 16px; height: 16px; }
+.camera-toggle:hover { background: rgba(15, 22, 15, 0.75); }
+.camera-toggle:active { transform: scale(0.94); }
+
 .waiting-stage { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 8px 0 4px; }
 .pulse-ring {
   width: 64px; height: 64px; border-radius: 50%;

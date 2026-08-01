@@ -29,6 +29,7 @@ export default function ActivityRunPage() {
   const videoRef = useRef(null);
   const visionCodesRef = useRef(new Set());
   const [visionActive, setVisionActive] = useState(visionAvailable);
+  const [cameraFacing, setCameraFacing] = useState('environment');
   const [trialIndex, setTrialIndex] = useState(0);
   const [phase, setPhase] = useState('ready'); // 'ready' | 'waiting'
   const [pendingServeAt, setPendingServeAt] = useState(null);
@@ -41,13 +42,25 @@ export default function ActivityRunPage() {
     codes.forEach((code) => visionCodesRef.current.add(code));
   }
 
+  async function handleSwitchCamera() {
+    const nextFacing = cameraFacing === 'environment' ? 'user' : 'environment';
+    setCameraFacing(nextFacing);
+    getVisionDetector().stop();
+    try {
+      await getVisionDetector().start(videoRef.current, handleVisionFrame, nextFacing);
+      setVisionActive(true);
+    } catch {
+      setVisionActive(false);
+    }
+  }
+
   useEffect(() => {
     if (!currentActivity) return;
     dispatch({ type: 'START_ACTIVITY_RUN', activityId: currentActivity.id });
     audioContextRef.current = getAudioContext();
     if (visionAvailable) {
       getVisionDetector()
-        .start(videoRef.current, handleVisionFrame)
+        .start(videoRef.current, handleVisionFrame, cameraFacing)
         .catch(() => setVisionActive(false));
     }
     // currentActivity intentionally omitted: this must run exactly once per
@@ -159,6 +172,19 @@ export default function ActivityRunPage() {
       {visionActive && (
         <div className="preview-frame">
           <video ref={videoRef} autoPlay playsInline muted />
+          <button
+            type="button"
+            className="camera-toggle"
+            onClick={handleSwitchCamera}
+            aria-label={strings.activityRun.switchCameraLabel}
+            title={strings.activityRun.switchCameraLabel}
+          >
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+              <circle cx="12" cy="13" r="3.2" stroke="currentColor" strokeWidth="1.6" />
+              <path d="M9 4h1M14 4h1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+            </svg>
+          </button>
         </div>
       )}
       <div className="spacer" />
