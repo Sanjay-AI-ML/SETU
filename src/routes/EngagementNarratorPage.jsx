@@ -184,9 +184,15 @@ export default function EngagementNarratorPage() {
     return () => { cancelled = true; };
   }, []);
 
+  const objectUrlRef = useRef(null);
+
   // ── Start camera ─────────────────────────────────────────────────────
   const startCamera = useCallback(async () => {
     try {
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current);
+        objectUrlRef.current = null;
+      }
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'environment', width: { ideal: 480 }, height: { ideal: 360 } },
         audio: false,
@@ -198,6 +204,39 @@ export default function EngagementNarratorPage() {
       }
       setStatus('running');
     } catch {
+      setStatus('error');
+    }
+  }, []);
+
+  // ── Start from uploaded video file ───────────────────────────────────
+  const handleFileUpload = useCallback(async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((t) => t.stop());
+        streamRef.current = null;
+      }
+
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current);
+      }
+
+      const url = URL.createObjectURL(file);
+      objectUrlRef.current = url;
+
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+        videoRef.current.src = url;
+        videoRef.current.loop = true;
+        videoRef.current.controls = true;
+        videoRef.current.muted = false;
+        await videoRef.current.play();
+      }
+      setStatus('running');
+    } catch (err) {
+      console.error('File load error:', err);
       setStatus('error');
     }
   }, []);
@@ -334,7 +373,8 @@ export default function EngagementNarratorPage() {
   useEffect(() => {
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop());
+      if (streamRef.current) streamRef.current.getTracks().forEach((t) => t.stop());
+      if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
       if (synthRef.current?.speaking) synthRef.current.cancel();
     };
   }, []);
@@ -425,11 +465,23 @@ export default function EngagementNarratorPage() {
         )}
       </div>
 
-      {/* ── Start Button ─────────────────────────────────────────────── */}
+      {/* ── Start Action Buttons ─────────────────────────────────────── */}
       {status === 'ready' && (
-        <button className="btn btn-primary" style={{ marginTop: 14 }} onClick={startCamera}>
-          🎬 {lang === 'ta' ? 'விவரிப்பை தொடங்கு' : lang === 'hi' ? 'वर्णन शुरू करें' : 'Start Narration'}
-        </button>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 14 }}>
+          <button className="btn btn-primary" onClick={startCamera}>
+            📷 {lang === 'ta' ? 'லைவ் கேமராவை தொடங்கு' : lang === 'hi' ? 'लाइव कैमरा शुरू करें' : 'Start Live Rear Camera'}
+          </button>
+
+          <label className="btn btn-secondary" style={{ textAlign: 'center', cursor: 'pointer' }}>
+            📁 {lang === 'ta' ? 'வீடியோவை பதிவேற்று / தேர்ந்தெடு' : lang === 'hi' ? 'वीडियो अपलोड / चुनें' : 'Upload / Pick Video File'}
+            <input
+              type="file"
+              accept="video/*"
+              onChange={handleFileUpload}
+              style={{ display: 'none' }}
+            />
+          </label>
+        </div>
       )}
 
       {/* ── Gaze Meter ───────────────────────────────────────────────── */}
@@ -474,6 +526,21 @@ export default function EngagementNarratorPage() {
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* ── Running actions ──────────────────────────────────────────── */}
+      {status === 'running' && (
+        <div className="actions tight" style={{ marginTop: 12 }}>
+          <label className="btn btn-secondary" style={{ textAlign: 'center', cursor: 'pointer' }}>
+            📁 {lang === 'ta' ? 'வேறொரு வீடியோவை தேர்ந்தெடு' : lang === 'hi' ? 'दूसरा वीडियो चुनें' : 'Pick Another Video File'}
+            <input
+              type="file"
+              accept="video/*"
+              onChange={handleFileUpload}
+              style={{ display: 'none' }}
+            />
+          </label>
         </div>
       )}
 
