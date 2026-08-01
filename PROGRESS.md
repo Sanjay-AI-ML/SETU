@@ -5,6 +5,50 @@
 
 ---
 
+## 2026-08-01 — Session 12: Phase 4 — Vision (full implementation)
+
+**Done — 9-task plan (`.superpowers/sdd/2026-08-01-phase4-vision/`), task-by-task, each reviewed before moving on:**
+- Vendored MediaPipe assets (before Task 1): `@mediapipe/tasks-vision` installed via npm, then its own bundled model/runtime files copied into `public/` so the product works fully offline with no CDN dependency — `public/models/face_landmarker.task` (3,758,596 bytes), `public/models/hand_landmarker.task` (7,819,105 bytes), and 6 WASM runtime files under `public/mediapipe/wasm/` (~34MB total: `vision_wasm_internal.js`/`.wasm`, `vision_wasm_module_internal.js`/`.wasm`, `vision_wasm_nosimd_internal.js`/`.wasm`).
+- Phase 4 implementation plan documented (`docs/`) before task execution began.
+- **Task 1/2** — `src/core/vision/gesture.js`: pure classifiers on MediaPipe landmark output — `classifyHeadOrientation`, `classifySmile` (Task 1), `classifyHandPose`, `classifyMotion` (Task 2).
+- **Task 3** (1 fix round) — `src/core/vision/observationMapper.js`: maps classifier outputs to activity-specific observation codes. Fix round added negative-AND-guard test coverage — reach/push-away observations require both a matching hand-pose *and* a matching motion-direction condition, not either alone.
+- **Task 4** — `src/core/vision/visionSession.js`: singleton vision-session holder, mirroring the Phase 2 `audioSession.js` precedent; untested by design (thin wiring over browser APIs).
+- **Task 5** (1 fix round) — `src/core/vision/capture.js`: the MediaPipe camera adapter — `FilesetResolver` + `FaceLandmarker` + `HandLandmarker`, driven by a `requestAnimationFrame` detection loop. Fix round resolved two real bugs found in review: `lastVideoTime` was never reset across stop/start cycles, and an async race in `start()`/`stop()` could leak a live camera stream if `stop()` was called while `start()` was still awaiting `getUserMedia` — fixed with a `stopped` guard flag checked after each await.
+- **Task 6** — `src/routes/ActivityPrebriefPage.jsx`: requests combined audio+video permission via a single `getUserMedia({audio, video})` call, falling back to two independent single-stream requests if the combined call is rejected (Chrome rejects the whole call if either stream is denied).
+- **Task 7** — `src/routes/ActivityRunPage.jsx`: continuous MediaPipe inference during Activity Run, with a small live `<video>` preview thumbnail, wired into the existing mount/cleanup effects alongside the pre-existing audio-latency logic (preserved completely unchanged). Observation codes accumulate into a `Set` and pass to Review via route state.
+- **Task 8** — `src/routes/ActivityReviewPage.jsx`: vision-suggested checkboxes start pre-checked for parent confirmation (not auto-added as observations); confirmed observations are tagged `source: 'vision-confirmed'` vs `'parent'` — the same honesty-preserving provenance pattern Phase 2 established for trials' `returnSource: 'audio-onset'` vs `'parent-tap'`.
+- **Task 9** (this session) — final verification and this entry.
+
+**Explicit scope decision:** full gaze + point/reach gesture classification was implemented, not the safer minimal (presence-only) fallback — even though the architecture doc's own risk analysis names Vision as the first thing to cut under time pressure (see Session 8's note). This was a deliberate, informed call, not an oversight.
+
+**Verified this session:**
+- Full suite: **68/68 tests passing** (9 test files).
+- `npm run build`: clean.
+- Vendored-asset production-build check (the single most important check in this whole plan — Phase 2's C1 was exactly this bug class: an asset that works under `npm run dev` but silently breaks under `npm run build`, only caught by diffing production output). All 8 files compared byte-for-byte, `public/` vs `dist/`:
+
+  | File | public/ bytes | dist/ bytes | Match |
+  |---|---|---|---|
+  | models/face_landmarker.task | 3,758,596 | 3,758,596 | yes |
+  | models/hand_landmarker.task | 7,819,105 | 7,819,105 | yes |
+  | mediapipe/wasm/vision_wasm_internal.js | 323,343 | 323,343 | yes |
+  | mediapipe/wasm/vision_wasm_internal.wasm | 11,532,084 | 11,532,084 | yes |
+  | mediapipe/wasm/vision_wasm_module_internal.js | 323,381 | 323,381 | yes |
+  | mediapipe/wasm/vision_wasm_module_internal.wasm | 11,532,104 | 11,532,104 | yes |
+  | mediapipe/wasm/vision_wasm_nosimd_internal.js | 323,146 | 323,146 | yes |
+  | mediapipe/wasm/vision_wasm_nosimd_internal.wasm | 10,815,273 | 10,815,273 | yes |
+
+  All 8 vendored assets survived the production build byte-for-byte identical.
+
+**Known limitation:** detection accuracy against a real child has not been verified from this development environment — no camera or child available here, everything above was verified via unit tests, code review, and the production-build asset diff only. The two most likely things to need retuning after real-world testing:
+- `classifyMotion`'s displacement heuristic is a crude frame-to-frame centroid-distance-from-frame-center measure, not true motion/velocity tracking.
+- `capture.js`'s head-yaw extraction is a best-effort `atan2` read off a column-major 4x4 transformation matrix, not independently verified against MediaPipe's actual matrix layout.
+
+**Not yet done:** on-device verification with a real camera and a real child.
+
+**Next up:** run all 4 activities on the physical Android device with a real camera and confirm the pre-checked Review suggestions are directionally sane — i.e., real gestures produce plausible pre-checks, not necessarily perfectly accurate ones yet.
+
+---
+
 ## 2026-08-01 — Session 11: Phase 7 — Demo hardening (start)
 
 **Done:** Phase 7 (rehearsal, backup video, deck screenshots) is mostly yours to
