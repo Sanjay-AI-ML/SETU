@@ -135,6 +135,31 @@ export function createVisionDetector() {
     loop();
   }
 
+  // Same detection loop as start(), but driven by a file-backed <video> the
+  // caller already pointed at a local blob URL, instead of a live camera
+  // stream. Used by the standalone video-upload screening check — nothing
+  // here uploads anywhere, the file never leaves the device, and the loop
+  // stops itself when playback ends (see the videoElement 'ended' handling
+  // callers are expected to wire up, mirroring how stop() is called for the
+  // live path).
+  async function startFromFile(videoElement, onFrameCallback) {
+    const myGeneration = ++generation;
+    if (!faceLandmarker || !handLandmarker) {
+      await loadModels();
+    }
+    if (myGeneration !== generation) return;
+
+    await videoElement.play();
+    if (myGeneration !== generation) return;
+
+    stream = null;
+    videoEl = videoElement;
+    onFrame = onFrameCallback;
+    lastVideoTime = -1;
+    prevHandLandmarks = null;
+    loop();
+  }
+
   function loop() {
     rafId = requestAnimationFrame(loop);
     if (!videoEl || videoEl.currentTime === lastVideoTime) return;
@@ -183,5 +208,5 @@ export function createVisionDetector() {
     prevHandLandmarks = null;
   }
 
-  return { start, stop };
+  return { start, startFromFile, stop };
 }

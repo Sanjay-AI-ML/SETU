@@ -288,6 +288,11 @@ export default function HomePage() {
         <button type="button" className="btn btn-secondary" onClick={handleTryDemo}>
           ⚡ {strings.home.tryDemo}
         </button>
+
+        {/* Standalone video screening check */}
+        <button type="button" className="btn btn-ghost" onClick={() => navigate('/video-check')}>
+          🎥 Quick video check (upload/record a short clip)
+        </button>
       </div>
 
       <div className="callout plain" style={{ marginTop: 24, textAlign: 'center' }}>
