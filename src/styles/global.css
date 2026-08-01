@@ -85,7 +85,7 @@ button, input, select, textarea, optgroup {
 
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -99,9 +99,9 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
-  overscroll-behavior: none;
-  overflow-x: hidden;
   width: 100%;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
 }
 
 ::selection { background: var(--accent-soft); color: var(--accent-ink); }
@@ -120,16 +120,21 @@ textarea:focus-visible,
 /* ═══════════════════════════════════════════════════════════════════════════
    LAYOUT CONTAINMENT & WRAPPERS
 ══════════════════════════════════════════════════════════════════════════════ */
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
 main {
   max-width: 480px;
   width: 100%;
   margin: 0 auto;
-  padding: 20px 16px 56px;
+  padding: 20px 16px 64px;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   gap: 0;
-  overflow-x: hidden;
+  touch-action: pan-y;
 }
 main.screen-wide { max-width: 640px; }
 
