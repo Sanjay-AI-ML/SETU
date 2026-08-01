@@ -7,7 +7,9 @@ import { useLanguage } from '../../i18n/index.jsx';
  * multiple saved sessions — heatmap of level growth + small-wins timeline.
  */
 export default function LongitudinalProgressCard({ sessions }) {
-  const { strings } = useLanguage();
+  const { strings, lang } = useLanguage();
+  const localeMap = { en: 'en-GB', ta: 'ta-IN', hi: 'hi-IN' };
+  const activeLocale = localeMap[lang] ?? 'en-GB';
   const [milestones, setMilestones] = useState([]);
   const [levelHistory, setLevelHistory] = useState([]);
 
@@ -17,7 +19,7 @@ export default function LongitudinalProgressCard({ sessions }) {
     // ── Build level history from sessions ─────────────────────────────────
     const history = sessions.map((s) => {
       const dateStr = s.startedAt
-        ? new Date(s.startedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+        ? new Date(s.startedAt).toLocaleDateString(activeLocale, { day: 'numeric', month: 'short' })
         : '?';
       const runs = s.activityRuns ?? [];
       const totalTrials = runs.reduce((acc, r) => acc + (r.trials?.length ?? 0), 0);
@@ -38,7 +40,7 @@ export default function LongitudinalProgressCard({ sessions }) {
     const wins = [];
     sessions.forEach((s, idx) => {
       const dateStr = s.startedAt
-        ? new Date(s.startedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+        ? new Date(s.startedAt).toLocaleDateString(activeLocale, { day: 'numeric', month: 'short' })
         : '?';
 
       // First session ever
@@ -97,7 +99,7 @@ export default function LongitudinalProgressCard({ sessions }) {
       }
     });
     setMilestones(dedupedWins.slice(0, 6));
-  }, [sessions, strings]);
+  }, [sessions, strings, lang]);
 
   if (!sessions || sessions.length === 0) return null;
 
@@ -126,11 +128,11 @@ export default function LongitudinalProgressCard({ sessions }) {
                   <div
                     className="lbar-fill"
                     style={{ height: `${pct}%` }}
-                    title={`${h.totalTrials} trials`}
+                    title={`${h.totalTrials} ${strings.longitudinal?.trialsLabel ?? 'trials'}`}
                   />
                 </div>
                 <span className="lbar-label">{h.date}</span>
-                <span className="lbar-count">{h.totalTrials}T</span>
+                <span className="lbar-count">{h.totalTrials}{strings.longitudinal?.trialsSuffix ?? 'T'}</span>
               </div>
             );
           })}
@@ -162,7 +164,7 @@ export default function LongitudinalProgressCard({ sessions }) {
                       }}
                     />
                   </div>
-                  <span className="speed-value">{(h.avgResponseMs / 1000).toFixed(1)}s</span>
+                  <span className="speed-value">{(h.avgResponseMs / 1000).toFixed(1)}{strings.longitudinal?.secondsSuffix ?? 's'}</span>
                 </div>
               ) : null
             )}

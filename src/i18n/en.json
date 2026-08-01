@@ -59,7 +59,7 @@
         "when": "Morning dressing or bedtime pjs",
         "description": "Offering choices between two shirts or socks encourages pointing, vocalizing, and expressing preference."
       },
-      "bedtime": {
+      "bedtime-story": {
         "name": "Bedtime Story Routine",
         "subtitle": "Commenting & shared attention",
         "setting": "Bed / Quiet reading nook",
@@ -225,7 +225,10 @@
     "firstAssessment": "First assessment completed",
     "responsesRecorded": "{count} responses recorded",
     "fingerPoint": "Index finger point observed",
-    "firstWord": "First word / vocal label recorded"
+    "firstWord": "First word / vocal label recorded",
+    "trialsLabel": "trials",
+    "trialsSuffix": "T",
+    "secondsSuffix": "s"
   },
   "rollCall": {
     "eyebrow": "Special feature",
