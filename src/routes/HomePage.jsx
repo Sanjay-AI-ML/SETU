@@ -129,6 +129,10 @@ export default function HomePage() {
           <div className="activity-accordion-list">
             {ACTIVITIES_EXPLANATION.map((item) => {
               const isExpanded = expandedActivity === item.id;
+              const actStrings = strings.activities?.[item.id];
+              const name = actStrings?.name || item.name;
+              const category = actStrings?.category || item.category;
+              const desc = actStrings?.homeDesc || item.desc;
               return (
                 <div key={item.id} className={`accordion-item ${isExpanded ? 'active' : ''}`}>
                   <button
@@ -138,15 +142,15 @@ export default function HomePage() {
                   >
                     <span className="activity-icon">{item.icon}</span>
                     <div className="activity-info">
-                      <span className="activity-title">{item.name}</span>
-                      <span className="activity-cat">{item.category}</span>
+                      <span className="activity-title">{name}</span>
+                      <span className="activity-cat">{category}</span>
                     </div>
                     <span className="accordion-chevron">{isExpanded ? '▲' : '▼'}</span>
                   </button>
 
                   {isExpanded && (
                     <div className="accordion-body">
-                      <p>{item.desc}</p>
+                      <p>{desc}</p>
                     </div>
                   )}
                 </div>
@@ -257,14 +261,13 @@ export default function HomePage() {
       {/* ── Roll Call: standalone special feature, deliberately separate
            from the scored session flow above ─────────────────────────── */}
       <div className="section card special-feature-card">
-        <span className="chip" style={{ marginBottom: 8 }}>✨ Special feature</span>
-        <h3 style={{ margin: '0 0 6px', fontSize: '1.05rem', fontWeight: 750 }}>🗣️ Roll Call</h3>
+        <span className="chip" style={{ marginBottom: 8 }}>✨ {strings.rollCall?.eyebrow || 'Special feature'}</span>
+        <h3 style={{ margin: '0 0 6px', fontSize: '1.05rem', fontWeight: 750 }}>{strings.rollCall?.title || '🗣️ Roll Call'}</h3>
         <p className="preview-sub" style={{ marginBottom: 12 }}>
-          A 30-second live tally: call your child's name as many times as feels natural, and
-          see how often they oriented toward you and vocalized in response.
+          {strings.rollCall?.homeCardDesc || "A 30-second live tally: call your child's name as many times as feels natural, and see how often they oriented toward you and vocalized in response."}
         </p>
         <button type="button" className="btn btn-secondary" onClick={() => navigate('/roll-call')}>
-          Start Roll Call
+          {strings.rollCall?.homeCardButton || 'Start Roll Call'}
         </button>
       </div>
 

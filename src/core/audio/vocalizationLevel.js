@@ -8,8 +8,10 @@ export const VOCALIZATION_RMS_THRESHOLD = 0.04;
 
 export function computeRms(timeDomainData) {
   let sumSquares = 0;
+  const isFloat = timeDomainData instanceof Float32Array;
   for (let i = 0; i < timeDomainData.length; i++) {
-    const normalized = (timeDomainData[i] - 128) / 128;
+    const sample = timeDomainData[i];
+    const normalized = isFloat ? sample : (sample - 128) / 128;
     sumSquares += normalized * normalized;
   }
   return Math.sqrt(sumSquares / timeDomainData.length);

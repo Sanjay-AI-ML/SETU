@@ -183,6 +183,10 @@ export default function ActivityRunPage() {
     setPendingServeAt(null);
   }
 
+  const actStrings = currentActivity ? strings.activities?.[currentActivity.id] : null;
+  const activityName = actStrings?.name || currentActivity?.name;
+  const serveButtonLabel = actStrings?.serveButtonLabel || currentActivity?.serveButtonLabel;
+
   return (
     <main>
       <div className="screen-head">
@@ -191,7 +195,7 @@ export default function ActivityRunPage() {
             .replace('{current}', trialIndex + 1)
             .replace('{total}', currentActivity.trialCount)}
         </span>
-        <h1>{currentActivity.name}</h1>
+        <h1>{activityName}</h1>
       </div>
       {!audioAvailable && <p className="notice">{strings.activityRun.micUnavailableLabel}</p>}
       {!visionActive && <p className="notice">{strings.activityRun.visionUnavailableLabel}</p>}
@@ -223,7 +227,7 @@ export default function ActivityRunPage() {
       <div className="spacer" />
       {phase === 'ready' && (
         <div className="actions">
-          <button className="btn btn-primary" onClick={handleServe}>{currentActivity.serveButtonLabel}</button>
+          <button className="btn btn-primary" onClick={handleServe}>{serveButtonLabel}</button>
         </div>
       )}
       {phase === 'waiting' && (

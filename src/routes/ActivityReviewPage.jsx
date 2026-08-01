@@ -28,9 +28,10 @@ export default function ActivityReviewPage() {
   }
 
   const currentActivity = activities.find((activity) => activity.id === activityRun.activityId);
+  const actReviewTags = strings.activities?.[currentActivity?.id]?.reviewTags;
   const tagOptions = currentActivity.expectedBehaviours.map((code, index) => ({
     code,
-    label: currentActivity.reviewTags[index],
+    label: actReviewTags?.[index] || currentActivity.reviewTags[index],
   }));
   const visionSuggestedSet = new Set(visionSuggestedCodes);
 

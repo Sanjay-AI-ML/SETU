@@ -35,10 +35,11 @@ export default function SessionOverviewPage() {
         {activities.map((activity, index) => {
           const isDone = index < completedCount;
           const isCurrent = index === completedCount;
+          const name = strings.activities?.[activity.id]?.name || activity.name;
           return (
             <li key={activity.id} className={`activity-card${isDone ? ' done' : ''}${isCurrent ? ' current' : ''}`}>
               <span className="idx">{isDone ? '✓' : index + 1}</span>
-              <span className="name">{activity.name}</span>
+              <span className="name">{name}</span>
               {isDone && <span className="status">{strings.sessionOverview.doneLabel}</span>}
             </li>
           );

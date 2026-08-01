@@ -70,19 +70,24 @@ export default function ActivityPrebriefPage() {
     navigate('/session/activity/run', { state: { audioAvailable, visionAvailable } });
   }
 
+  const actStrings = currentActivity ? strings.activities?.[currentActivity.id] : null;
+  const activityName = actStrings?.name || currentActivity?.name;
+  const parentScript = actStrings?.parentScript || currentActivity?.parentScript;
+  const materials = actStrings?.materials || currentActivity?.materials || [];
+
   return (
     <main>
       <div className="screen-head">
         <p className="eyebrow">{strings.activityPrebrief?.eyebrow || 'Up next'}</p>
-        <h1>{currentActivity.name}</h1>
+        <h1>{activityName}</h1>
       </div>
       <div className="callout plain section">
-        <p>{currentActivity.parentScript}</p>
+        <p>{parentScript}</p>
       </div>
       <div className="section">
         <h2>{strings.activityPrebrief.materialsLabel}</h2>
         <ul className="card-list">
-          {currentActivity.materials.map((material) => (
+          {materials.map((material) => (
             <li key={material} className="card" style={{ padding: '11px 15px', fontSize: '0.92rem', color: 'var(--ink-soft)' }}>
               {material}
             </li>

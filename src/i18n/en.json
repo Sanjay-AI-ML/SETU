@@ -68,7 +68,14 @@
     "flagsTitle": "Points to review with a clinician",
     "noFlags": "No concerns flagged by the demo heuristics.",
     "reportButton": "View report",
-    "shareSpecialist": "Share with Specialist"
+    "shareSpecialist": "Share with Specialist",
+    "ageCheckInsufficient": "Not enough observations yet to estimate a developmental level.",
+    "ageCheckStrongest": "Strongest observed level: Level {level} ({note}) — typically seen at {min}–{max} months.",
+    "ageCheckOnTrack": "On track for stated age ✅",
+    "ageCheckAhead": "Performing ~{months} months ahead of stated age 🌟",
+    "ageCheckDelayed": "~{months} months behind the typical range for stated age — discuss with a clinician 🔶",
+    "strategiesTitle": "What To Do Tomorrow",
+    "strategiesSubtitle": "Personalized home strategies based on today's observations — try these during your everyday routines."
   },
   "reportPreview": {
     "title": "Clinician report",
@@ -109,6 +116,92 @@
     "notes": "Notes:",
     "backupData": "Backup JSON Data",
     "logout": "Log Out (Switch Child)",
-    "clearAll": "Clear All App Data"
+    "clearAll": "Clear All App Data",
+    "experimentalTitle": "Experimental",
+    "experimentalSubtitle": "Novelty features under active exploration. Not validated, not part of any assessment or report.",
+    "voiceRegisterCheck": "Voice register check"
+  },
+  "activities": {
+    "bubble-time": {
+      "name": "Bubble Time",
+      "category": "Requesting & Obtaining",
+      "homeDesc": "Parent blows bubbles, then holds the wand closed and waits. Measures how the child asks for \"more\" — through eye contact, reaching, pointing, or vocalizing.",
+      "parentScript": "Blow a few bubbles together, then pause with the wand held still and wait quietly for your child to ask for more.",
+      "serveButtonLabel": "Blow bubbles",
+      "materials": ["Bubble solution and wand"],
+      "reviewTags": ["Reached for bubbles", "Pointed at wand", "Vocalised", "Looked at parent", "Said a word"]
+    },
+    "peek-a-boo": {
+      "name": "Peek-a-boo",
+      "category": "Social Reciprocity",
+      "homeDesc": "Parent plays peek-a-boo, then pauses mid-reveal behind hands. Measures social anticipation, smiling, facial gaze, and turn-taking.",
+      "parentScript": "Play peek-a-boo through a few rounds, then pause mid-reveal with your hands still covering your face and wait.",
+      "serveButtonLabel": "Play peek-a-boo",
+      "materials": ["None — just your hands or a small cloth"],
+      "reviewTags": ["Looked at face", "Vocalised", "Smiled", "Anticipated the reveal"]
+    },
+    "not-this-one": {
+      "name": "Not-This-One",
+      "category": "Refusal & Protest",
+      "homeDesc": "Parent offers a non-preferred item. Measures communicative refusal — turning head away, pushing item, or vocalizing \"no\".",
+      "parentScript": "Offer your child an item you know they dislike, hold it within reach, and wait for their reaction before taking it away.",
+      "serveButtonLabel": "Offer the item",
+      "materials": ["A clearly non-preferred toy, food, or object"],
+      "reviewTags": ["Pushed away", "Turned head", "Protested", "Said no"]
+    },
+    "whats-in-the-box": {
+      "name": "What's In The Box?",
+      "category": "Information & Commenting",
+      "homeDesc": "Parent pulls a mystery toy from a box and asks \"What's this?\". Measures pointing, labeling, showing, and sharing interest.",
+      "parentScript": "Reveal an object or picture from the box and ask \"What's this?\", then wait for your child to respond before naming it yourself.",
+      "serveButtonLabel": "Reveal the object",
+      "materials": ["A small box", "3-4 familiar objects or picture cards"],
+      "reviewTags": ["Pointed at object", "Named the object", "Commented", "Showed the object"]
+    }
+  },
+  "rollCall": {
+    "eyebrow": "Special feature",
+    "title": "🗣️ Roll Call",
+    "subtitle": "Call your child's name as many times as feels natural over {seconds} seconds. We'll tally how often they oriented toward you and vocalized in response.",
+    "disclaimer": "Informal, on-device signal only — not a diagnosis. Each \"Call name\" tap is your own ground truth; we never try to acoustically tell your voice apart from your child's. Orienting and vocalizing are each counted once per distinct moment, not per video frame.",
+    "startButton": "Start Roll Call ({seconds}s)",
+    "errorLabel": "Camera or microphone unavailable. Check permissions and try again.",
+    "secondsRemaining": "{seconds}s remaining",
+    "callsLabel": "📣 Calls: {count}",
+    "orientedLabel": "👀 Oriented: {count}",
+    "vocalizedLabel": "🔊 Vocalized: {count}",
+    "callNameButton": "📣 Call name now",
+    "stopEarlyButton": "Stop early",
+    "summaryTitle": "Roll Call summary",
+    "summaryText": "You called your child's name {calls} time(s). They oriented toward the camera {oriented} time(s) and vocalized {vocal} time(s) during the window.",
+    "summaryNote": "A tally, not a score — how these numbers relate to each other matters more than any one number alone, and this isn't part of the scored Matrix session.",
+    "tryAgain": "Try again",
+    "backHome": "Back to home",
+    "homeCardDesc": "A 30-second live tally: call your child's name as many times as feels natural, and see how often they oriented toward you and vocalized in response.",
+    "homeCardButton": "Start Roll Call"
+  },
+  "videoCheck": {
+    "eyebrow": "Standalone check",
+    "title": "Quick video check",
+    "subtitle": "Pick or record up to {seconds} seconds of your child at play. Analysed entirely on this device — the clip is never uploaded or saved.",
+    "disclaimer": "This is an informal, on-device signal only — not a diagnosis, and not a substitute for the guided activities. It looks at whether a face was visible, how often your child oriented toward the camera, and whether vocal activity occurred during the clip. It detects that a sound happened, never what kind of sound — telling babble apart from crying or speech would need a trained audio model, which this hackathon prototype deliberately doesn't attempt without real clinical training data.",
+    "chooseButton": "🎥 Choose or record a video",
+    "analyzing": "Analysing clip on-device…",
+    "errorLabel": "Couldn't analyse this clip. Try a different file.",
+    "resultTitle": "Result",
+    "statsLine": "Face detected in {face}% of frames, oriented toward the camera in {gaze}%, smiling in {smile}%, {handEvents} hand-motion events detected.",
+    "checkAnother": "Check another clip",
+    "backHome": "Back to home"
+  },
+  "voiceAgeCheck": {
+    "eyebrow": "Experimental — not part of assessment",
+    "title": "Voice register check",
+    "disclaimer": "This is a novelty feature, not a validated age predictor. It estimates pitch from {seconds} seconds of live audio using simple signal processing (no trained model). Pitch loosely correlates with age at a population level but says very little about any one person — especially infants and pre-verbal toddlers, whose cry and babble acoustics don't map cleanly onto adult speech norms this kind of heuristic is usually built around. This result never feeds the Matrix, flags, or clinician report, and nothing recorded here is saved.",
+    "recordButton": "Record {seconds}s and estimate",
+    "recordingLabel": "{seconds}s remaining — speak or vocalize naturally",
+    "errorLabel": "Microphone unavailable. Check permissions and try again.",
+    "pitchLine": "Estimated fundamental frequency: ~{pitch} Hz (median across the recording).",
+    "tryAgain": "Try again",
+    "backSettings": "Back to Settings"
   }
 }

@@ -1,14 +1,18 @@
 import { classifyBand } from '../latency/index.js';
 
 const NO_RESPONSE_RATE_THRESHOLD = 0.5;
+// Require at least 2 activities before flagging "no behaviour above Level II"
+// — a single-activity session simply hasn't had enough elicitation opportunities.
+const MIN_ACTIVITIES_FOR_LEVEL_FLAG = 2;
 
 // Every flag is a rule over directly observed data, with a plain-language
 // `detail` naming the exact evidence — never a score, likelihood, or
 // prediction. See CLAUDE.md: "must never imply a diagnosis." Adding evidence
 // text here is meant to make these flags more legible to a clinician, not to
 // dress a heuristic up as something more predictive than it is.
-export function computeFlags({ trials, cells, latencyBandsConfig }) {
+export function computeFlags({ trials, cells, latencyBandsConfig, ranActivityIds = [] }) {
   const flags = [];
+  const activityCount = ranActivityIds.length;
 
   if (hasHighNoResponseRate(trials)) {
     const noResponseCount = trials.filter((t) => !t.responded).length;
@@ -16,16 +20,16 @@ export function computeFlags({ trials, cells, latencyBandsConfig }) {
       id: 'flag-no-response-rate',
       label: 'No response in half or more of trials',
       severity: 'concern',
-      detail: `No response recorded in ${noResponseCount} of ${trials.length} trials across all activities.`,
+      detail: `No response recorded in ${noResponseCount} of ${trials.length} trials across ${activityCount} ${activityCount === 1 ? 'activity' : 'activities'}.`,
     });
   }
 
-  if (!hasBehaviourAboveLevelTwo(cells)) {
+  if (activityCount >= MIN_ACTIVITIES_FOR_LEVEL_FLAG && !hasBehaviourAboveLevelTwo(cells)) {
     flags.push({
       id: 'flag-no-behaviour-above-level-ii',
       label: 'No communication behaviours observed above Level II',
       severity: 'concern',
-      detail: 'Every observed or emerging behaviour stayed at pre-intentional/intentional levels (I-II) across all four purposes.',
+      detail: `Across ${activityCount} activities, every observed or emerging behaviour stayed at pre-intentional/intentional levels (I-II) across all four communicative purposes.`,
     });
   }
 

@@ -78,24 +78,29 @@ export default function SessionResultsPage() {
       <div className="section card">
         <h2 style={{ marginTop: 0 }}>🎯 {strings.sessionResults?.ageCheckTitle || 'Developmental age check'}</h2>
         {ageGap.status === 'insufficient-data' ? (
-          <p className="empty-note">Not enough observations yet to estimate a developmental level.</p>
+          <p className="empty-note">{strings.sessionResults?.ageCheckInsufficient || 'Not enough observations yet to estimate a developmental level.'}</p>
         ) : (
           <>
             <p style={{ margin: '0 0 6px' }}>
-              Strongest observed level: <strong>Level {ageGap.functionalLevel}</strong> ({ageGap.note})
-              — typically seen at <strong>{ageGap.expectedRange.minMonths}–{ageGap.expectedRange.maxMonths} months</strong>.
+              {(strings.sessionResults?.ageCheckStrongest || 'Strongest observed level: Level {level} ({note}) — typically seen at {min}–{max} months.')
+                .replace('{level}', ageGap.functionalLevel)
+                .replace('{note}', ageGap.note)
+                .replace('{min}', ageGap.expectedRange.minMonths)
+                .replace('{max}', ageGap.expectedRange.maxMonths)}
             </p>
             {ageGap.status === 'on-track' && (
-              <p className="chip" style={{ background: 'var(--mastered)' }}>On track for stated age</p>
+              <p className="chip" style={{ background: 'var(--mastered)' }}>
+                {strings.sessionResults?.ageCheckOnTrack || 'On track for stated age ✅'}
+              </p>
             )}
             {ageGap.status === 'ahead' && (
               <p className="chip" style={{ background: 'var(--emerging)' }}>
-                Performing ~{ageGap.gapMonths} months ahead of stated age
+                {(strings.sessionResults?.ageCheckAhead || 'Performing ~{months} months ahead of stated age 🌟').replace('{months}', ageGap.gapMonths)}
               </p>
             )}
             {ageGap.status === 'delayed' && (
               <p className="chip" style={{ background: 'var(--concern)' }}>
-                ~{ageGap.gapMonths} months behind the typical range for stated age — discuss with a clinician
+                {(strings.sessionResults?.ageCheckDelayed || '~{months} months behind the typical range for stated age — discuss with a clinician 🔶').replace('{months}', ageGap.gapMonths)}
               </p>
             )}
           </>
@@ -130,10 +135,9 @@ export default function SessionResultsPage() {
       {strategies.length > 0 && (
         <div className="section">
           <div className="strategies-header">
-            <h2>🏠 What To Do Tomorrow</h2>
+            <h2>🏠 {strings.sessionResults?.strategiesTitle || 'What To Do Tomorrow'}</h2>
             <p className="strategies-subtitle">
-              Personalized home strategies based on today's observations — try these during your
-              everyday routines.
+              {strings.sessionResults?.strategiesSubtitle || "Personalized home strategies based on today's observations — try these during your everyday routines."}
             </p>
           </div>
           <div className="strategies-list">

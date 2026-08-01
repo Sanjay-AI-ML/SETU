@@ -9,11 +9,13 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getVisionDetector, resetVisionSession } from '../core/vision/visionSession.js';
 import { computeRms, isVocalizing } from '../core/audio/vocalizationLevel.js';
+import { useLanguage } from '../i18n/index.jsx';
 
 const ROLL_CALL_SECONDS = 30;
 
 export default function RollCallPage() {
   const navigate = useNavigate();
+  const { strings } = useLanguage();
   const videoRef = useRef(null);
   const prevFacingRef = useRef(null);
   const prevVocalizingRef = useRef(false);
@@ -155,37 +157,34 @@ export default function RollCallPage() {
   return (
     <main>
       <div className="screen-head">
-        <p className="eyebrow">Special feature</p>
-        <h1>🗣️ Roll Call</h1>
+        <p className="eyebrow">{strings.rollCall?.eyebrow || 'Special feature'}</p>
+        <h1>{strings.rollCall?.title || '🗣️ Roll Call'}</h1>
         <p className="subtitle">
-          Call your child's name as many times as feels natural over {ROLL_CALL_SECONDS} seconds.
-          We'll tally how often they oriented toward you and vocalized in response.
+          {(strings.rollCall?.subtitle || "Call your child's name as many times as feels natural over {seconds} seconds. We'll tally how often they oriented toward you and vocalized in response.").replace('{seconds}', ROLL_CALL_SECONDS)}
         </p>
       </div>
 
       <div className="callout plain">
-        <p>
-          Informal, on-device signal only — not a diagnosis. Each "Call name" tap is your own
-          ground truth; we never try to acoustically tell your voice apart from your child's.
-          Orienting and vocalizing are each counted once per distinct moment, not per video frame.
-        </p>
+        <p>{strings.rollCall?.disclaimer}</p>
       </div>
 
       {phase === 'idle' && (
         <div className="actions">
           <button type="button" className="btn btn-primary" onClick={handleStart}>
-            Start Roll Call ({ROLL_CALL_SECONDS}s)
+            {(strings.rollCall?.startButton || 'Start Roll Call ({seconds}s)').replace('{seconds}', ROLL_CALL_SECONDS)}
           </button>
         </div>
       )}
 
       {phase === 'error' && (
-        <p className="notice">Camera or microphone unavailable. Check permissions and try again.</p>
+        <p className="notice">{strings.rollCall?.errorLabel || 'Camera or microphone unavailable. Check permissions and try again.'}</p>
       )}
 
       {(phase === 'running' || phase === 'error') && (
         <>
-          <div className="trial-badge">{secondsLeft}s remaining</div>
+          <div className="trial-badge">
+            {(strings.rollCall?.secondsRemaining || '{seconds}s remaining').replace('{seconds}', secondsLeft)}
+          </div>
           <div className="preview-frame">
             <video ref={videoRef} autoPlay playsInline muted />
             {eyeGlow && eyeGlow.map((pos, i) => (
@@ -200,8 +199,8 @@ export default function RollCallPage() {
               type="button"
               className="camera-toggle"
               onClick={handleSwitchCamera}
-              aria-label="Switch camera"
-              title="Switch camera"
+              aria-label={strings.activityRun?.switchCameraLabel || 'Switch camera'}
+              title={strings.activityRun?.switchCameraLabel || 'Switch camera'}
             >
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
@@ -212,18 +211,18 @@ export default function RollCallPage() {
           </div>
 
           <div className="matrix-legend" style={{ margin: '14px 0' }}>
-            <span className="chip">📣 Calls: {callCount}</span>
-            <span className="chip">👀 Oriented: {orientCount}</span>
-            <span className="chip">🔊 Vocalized: {vocalCount}</span>
+            <span className="chip">{(strings.rollCall?.callsLabel || '📣 Calls: {count}').replace('{count}', callCount)}</span>
+            <span className="chip">{(strings.rollCall?.orientedLabel || '👀 Oriented: {count}').replace('{count}', orientCount)}</span>
+            <span className="chip">{(strings.rollCall?.vocalizedLabel || '🔊 Vocalized: {count}').replace('{count}', vocalCount)}</span>
           </div>
 
           {phase === 'running' && (
             <div className="actions">
               <button type="button" className="btn btn-primary" onClick={handleCallName}>
-                📣 Call name now
+                {strings.rollCall?.callNameButton || '📣 Call name now'}
               </button>
               <button type="button" className="btn btn-ghost" onClick={finalize}>
-                Stop early
+                {strings.rollCall?.stopEarlyButton || 'Stop early'}
               </button>
             </div>
           )}
@@ -232,15 +231,15 @@ export default function RollCallPage() {
 
       {phase === 'done' && (
         <div className="section card">
-          <h2 style={{ marginTop: 0 }}>Roll Call summary</h2>
+          <h2 style={{ marginTop: 0 }}>{strings.rollCall?.summaryTitle || 'Roll Call summary'}</h2>
           <p>
-            You called your child's name <strong>{callCount}</strong> time(s). They oriented
-            toward the camera <strong>{orientCount}</strong> time(s) and vocalized{' '}
-            <strong>{vocalCount}</strong> time(s) during the window.
+            {(strings.rollCall?.summaryText || "You called your child's name {calls} time(s). They oriented toward the camera {oriented} time(s) and vocalized {vocal} time(s) during the window.")
+              .replace('{calls}', callCount)
+              .replace('{oriented}', orientCount)
+              .replace('{vocal}', vocalCount)}
           </p>
           <p className="matrix-caption" style={{ margin: '10px 0 0' }}>
-            A tally, not a score — how these numbers relate to each other matters more than any
-            one number alone, and this isn't part of the scored Matrix session.
+            {strings.rollCall?.summaryNote}
           </p>
         </div>
       )}
@@ -248,11 +247,11 @@ export default function RollCallPage() {
       <div className="actions inline" style={{ marginTop: 16 }}>
         {phase === 'done' && (
           <button type="button" className="btn btn-secondary" onClick={handleReset}>
-            Try again
+            {strings.rollCall?.tryAgain || 'Try again'}
           </button>
         )}
         <button type="button" className="btn btn-ghost" onClick={() => navigate('/')}>
-          Back to home
+          {strings.rollCall?.backHome || 'Back to home'}
         </button>
       </div>
     </main>

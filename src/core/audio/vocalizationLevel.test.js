@@ -12,6 +12,14 @@ describe('computeRms', () => {
     for (let i = 0; i < loud.length; i++) loud[i] = i % 2 === 0 ? 0 : 255;
     expect(computeRms(loud)).toBeCloseTo(1, 1);
   });
+
+  it('works with Float32Array values [-1..1]', () => {
+    const Float32Silence = new Float32Array(64).fill(0);
+    expect(computeRms(Float32Silence)).toBe(0);
+    const Float32Loud = new Float32Array(64);
+    for (let i = 0; i < Float32Loud.length; i++) Float32Loud[i] = i % 2 === 0 ? -1 : 1;
+    expect(computeRms(Float32Loud)).toBeCloseTo(1, 1);
+  });
 });
 
 describe('isVocalizing', () => {
