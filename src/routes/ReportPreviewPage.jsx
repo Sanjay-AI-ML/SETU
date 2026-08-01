@@ -31,7 +31,8 @@ export default function ReportPreviewPage() {
         matchRules(run.observations, rulesConfig, { sessionId: session.id, activityRunId: run.id })
       );
       const cells = applySurpassed(mergeCells(cellsPerRun));
-      const flags = computeFlags({ trials: allTrials, cells, latencyBandsConfig });
+      const ranActivityIds = session.activityRuns.map((run) => run.activityId);
+      const flags = computeFlags({ trials: allTrials, cells, latencyBandsConfig, ranActivityIds });
       setReport(generateReport({ session, child, cells, flags, trials: allTrials }));
     });
   }, [session]);
@@ -104,7 +105,10 @@ export default function ReportPreviewPage() {
         ) : (
           <ul className="card-list">
             {report.sections.flags.map((flag) => (
-              <li key={flag.id} className="flag-card">{flag.label}</li>
+              <li key={flag.id} className="flag-card">
+                <strong>{flag.label}</strong>
+                {flag.detail && <p className="matrix-caption" style={{ margin: '4px 0 0' }}>{flag.detail}</p>}
+              </li>
             ))}
           </ul>
         )}

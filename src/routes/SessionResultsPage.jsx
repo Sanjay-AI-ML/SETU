@@ -52,7 +52,8 @@ export default function SessionResultsPage() {
     matchRules(run.observations, rulesConfig, { sessionId: session.id, activityRunId: run.id })
   );
   const cells = applySurpassed(mergeCells(cellsPerRun));
-  const flags = computeFlags({ trials: allTrials, cells, latencyBandsConfig });
+  const ranActivityIds = session.activityRuns.map((run) => run.activityId);
+  const flags = computeFlags({ trials: allTrials, cells, latencyBandsConfig, ranActivityIds });
   const ageGap = computeAgeGap({ ageMonths: childAgeMonths, cells, ageNormsConfig });
 
   // ── Generate personalized home strategies ──────────────────────────────
@@ -117,7 +118,8 @@ export default function SessionResultsPage() {
           <ul className="card-list">
             {flags.map((flag) => (
               <li key={flag.id} className="flag-card">
-                {flag.label}
+                <strong>{flag.label}</strong>
+                {flag.detail && <p className="matrix-caption" style={{ margin: '4px 0 0' }}>{flag.detail}</p>}
               </li>
             ))}
           </ul>
