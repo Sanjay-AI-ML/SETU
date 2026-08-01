@@ -254,6 +254,20 @@ export default function HomePage() {
         </div>
       )}
 
+      {/* ── Roll Call: standalone special feature, deliberately separate
+           from the scored session flow above ─────────────────────────── */}
+      <div className="section card special-feature-card">
+        <span className="chip" style={{ marginBottom: 8 }}>✨ Special feature</span>
+        <h3 style={{ margin: '0 0 6px', fontSize: '1.05rem', fontWeight: 750 }}>🗣️ Roll Call</h3>
+        <p className="preview-sub" style={{ marginBottom: 12 }}>
+          A 30-second live tally: call your child's name as many times as feels natural, and
+          see how often they oriented toward you and vocalized in response.
+        </p>
+        <button type="button" className="btn btn-secondary" onClick={() => navigate('/roll-call')}>
+          Start Roll Call
+        </button>
+      </div>
+
       {/* ── Main Action Buttons ────────────────────────────────────────── */}
       <div className="actions" style={{ gap: 12, marginTop: 16 }}>
         {/* Resume Session Button (shows progress badge when session active) */}

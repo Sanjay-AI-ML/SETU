@@ -29,6 +29,25 @@ function extractYawDeg(matrixData) {
   return Math.atan2(m02, m22) * (180 / Math.PI);
 }
 
+// The face_landmarker.task model returns 478 points when it locates a face:
+// the base 468-point mesh plus 10 iris points (468-477). Iris centers
+// (right: 468, left: 473) give a tighter "eye" position than eye-corner mesh
+// points, but only if the full 478-point set is present — defend against a
+// lite/alternate model variant that might only return the base 468 by
+// falling back to outer-canthus corner points (33/263), which are always in
+// the base mesh. Purely cosmetic (the Roll Call glow effect) — never feeds
+// any classifier or observation code.
+export function extractEyePositions(landmarks) {
+  if (!landmarks || landmarks.length === 0) return null;
+  if (landmarks.length >= 478) {
+    return [landmarks[468], landmarks[473]].map((p) => ({ x: p.x, y: p.y }));
+  }
+  if (landmarks.length >= 264) {
+    return [landmarks[33], landmarks[263]].map((p) => ({ x: p.x, y: p.y }));
+  }
+  return null;
+}
+
 export function createVisionDetector() {
   let stream = null;
   let videoEl = null;
@@ -171,12 +190,16 @@ export function createVisionDetector() {
 
     let facing = null;
     let smiling = false;
+    let eyePositions = null;
     if (faceResult.facialTransformationMatrixes?.length) {
       const yawDeg = extractYawDeg(faceResult.facialTransformationMatrixes[0].data);
       facing = classifyHeadOrientation(yawDeg).facing;
     }
     if (faceResult.faceBlendshapes?.length) {
       smiling = classifySmile(faceResult.faceBlendshapes[0].categories);
+    }
+    if (faceResult.faceLandmarks?.length) {
+      eyePositions = extractEyePositions(faceResult.faceLandmarks[0]);
     }
 
     let handPose = 'neutral';
@@ -192,7 +215,7 @@ export function createVisionDetector() {
       prevHandLandmarks = null;
     }
 
-    onFrame({ facing, smiling, handPose, motionDirection });
+    onFrame({ facing, smiling, handPose, motionDirection, eyePositions });
   }
 
   function stop() {
