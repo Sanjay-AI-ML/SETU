@@ -7,11 +7,11 @@ const STATE_LABELS = {
   surpassed: 'Surpassed',
 };
 
-const STATE_COLORS = {
-  'not-used': '#e0e0e0',
-  emerging: '#ffca28',
-  mastered: '#43a047',
-  surpassed: '#1976d2',
+const STATE_VARS = {
+  'not-used': { bg: 'var(--notused-soft)', fg: 'var(--notused)' },
+  emerging: { bg: 'var(--emerging-soft)', fg: 'var(--emerging)' },
+  mastered: { bg: 'var(--mastered-soft)', fg: 'var(--mastered)' },
+  surpassed: { bg: 'var(--surpassed-soft)', fg: 'var(--surpassed)' },
 };
 
 export default function MatrixProfileGrid({ cells, taxonomy }) {
@@ -27,55 +27,87 @@ export default function MatrixProfileGrid({ cells, taxonomy }) {
 
   return (
     <div>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: `120px repeat(${taxonomy.purposes.length}, 1fr)`,
-          gap: '4px',
-        }}
-      >
-        <div />
-        {taxonomy.purposes.map((purpose) => (
-          <div key={purpose.id}>{purpose.name}</div>
-        ))}
-        {taxonomy.levels.map((level) => (
-          <Fragment key={level.level}>
-            <div>{level.name}</div>
-            {taxonomy.purposes.map((purpose) => {
-              const cell = findCell(level.level, purpose.id);
-              const key = cellKey(level.level, purpose.id);
-              const isExpanded = expandedKey === key;
-              return (
-                <div key={key}>
-                  <button
-                    type="button"
-                    onClick={() => setExpandedKey(isExpanded ? null : key)}
-                    style={{ background: STATE_COLORS[cell.state], width: '100%', height: '32px' }}
-                    aria-label={`${purpose.name} ${level.name}: ${STATE_LABELS[cell.state]}`}
-                  />
-                  {isExpanded && (
-                    <div>
-                      <p>{STATE_LABELS[cell.state]}</p>
-                      {cell.evidence.length === 0 && <p>No direct evidence.</p>}
-                      {cell.evidence.map((e, i) => (
-                        <p key={i}>{`${e.observationCode} → ${e.ruleId}`}</p>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </Fragment>
-        ))}
+      <div className="matrix-wrap">
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: `104px repeat(${taxonomy.purposes.length}, minmax(64px, 1fr))`,
+            gap: '5px',
+            minWidth: 420,
+          }}
+        >
+          <div />
+          {taxonomy.purposes.map((purpose) => (
+            <div
+              key={purpose.id}
+              style={{
+                fontSize: '0.72rem', fontWeight: 700, color: 'var(--ink-faint)',
+                textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.03em',
+                padding: '0 0 4px',
+              }}
+            >
+              {purpose.name}
+            </div>
+          ))}
+          {taxonomy.levels.map((level) => (
+            <Fragment key={level.level}>
+              <div style={{ fontSize: '0.78rem', color: 'var(--ink-soft)', fontWeight: 600, display: 'flex', alignItems: 'center' }}>
+                {level.name}
+              </div>
+              {taxonomy.purposes.map((purpose) => {
+                const cell = findCell(level.level, purpose.id);
+                const key = cellKey(level.level, purpose.id);
+                const isExpanded = expandedKey === key;
+                const colors = STATE_VARS[cell.state];
+                return (
+                  <div key={key}>
+                    <button
+                      type="button"
+                      onClick={() => setExpandedKey(isExpanded ? null : key)}
+                      aria-label={`${purpose.name} ${level.name}: ${STATE_LABELS[cell.state]}`}
+                      aria-expanded={isExpanded}
+                      style={{
+                        background: colors.bg,
+                        width: '100%',
+                        height: '34px',
+                        border: isExpanded ? `2px solid ${colors.fg}` : '1px solid transparent',
+                        borderRadius: '7px',
+                        cursor: 'pointer',
+                        transition: 'transform 0.12s ease',
+                        margin: 0,
+                        display: 'block',
+                      }}
+                    />
+                    {isExpanded && (
+                      <div className="card" style={{ marginTop: 6, padding: '10px 12px' }}>
+                        <p style={{ margin: 0, fontSize: '0.82rem', fontWeight: 700, color: colors.fg }}>
+                          {STATE_LABELS[cell.state]}
+                        </p>
+                        {cell.evidence.length === 0 && (
+                          <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: 'var(--ink-faint)' }}>No direct evidence.</p>
+                        )}
+                        {cell.evidence.map((e, i) => (
+                          <p key={i} style={{ margin: '4px 0 0', fontSize: '0.78rem', fontFamily: 'var(--font-mono)', color: 'var(--ink-soft)' }}>
+                            {e.observationCode} → {e.ruleId}
+                          </p>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </Fragment>
+          ))}
+        </div>
       </div>
-      <p>
+      <p className="matrix-caption">
         Mapped to Charity Rowland's Communication Matrix framework (OHSU, communicationmatrix.org).
-        SETU maps to this framework — it is not the Communication Matrix itself.
+        SETU maps to this framework. It is not the Communication Matrix itself.
       </p>
-      <ul>
+      <ul className="matrix-legend">
         {Object.entries(STATE_LABELS).map(([state, label]) => (
           <li key={state}>
-            <span style={{ background: STATE_COLORS[state], display: 'inline-block', width: '12px', height: '12px' }} />
+            <span className="dot" style={{ background: STATE_VARS[state].fg }} />
             {label}
           </li>
         ))}

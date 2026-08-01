@@ -16,29 +16,44 @@ export default function SessionOverviewPage() {
 
   return (
     <main>
-      <h1>{strings.sessionOverview.title}</h1>
-      <p>
-        {strings.sessionOverview.progressLabel
-          .replace('{completed}', completedCount)
-          .replace('{total}', activities.length)}
-      </p>
-      <ul>
+      <div className="screen-head">
+        <p className="eyebrow">Session in progress</p>
+        <h1>{strings.sessionOverview.title}</h1>
+        <p className="subtitle">
+          {strings.sessionOverview.progressLabel
+            .replace('{completed}', completedCount)
+            .replace('{total}', activities.length)}
+        </p>
+      </div>
+      <div className="progress-track">
         {activities.map((activity, index) => (
-          <li key={activity.id}>
-            {activity.name}
-            {index < completedCount ? ` — ${strings.sessionOverview.doneLabel}` : ''}
-          </li>
+          <span key={activity.id} className={index < completedCount ? 'filled' : ''} />
         ))}
+      </div>
+      <ul className="card-list">
+        {activities.map((activity, index) => {
+          const isDone = index < completedCount;
+          const isCurrent = index === completedCount;
+          return (
+            <li key={activity.id} className={`activity-card${isDone ? ' done' : ''}${isCurrent ? ' current' : ''}`}>
+              <span className="idx">{isDone ? '✓' : index + 1}</span>
+              <span className="name">{activity.name}</span>
+              {isDone && <span className="status">{strings.sessionOverview.doneLabel}</span>}
+            </li>
+          );
+        })}
       </ul>
-      {allDone ? (
-        <button onClick={() => navigate('/session/results')}>
-          {strings.sessionOverview.seeResultsButton}
-        </button>
-      ) : (
-        <button onClick={() => navigate('/session/activity/prebrief')}>
-          {strings.sessionOverview.continueButton}
-        </button>
-      )}
+      <div className="actions">
+        {allDone ? (
+          <button className="btn btn-primary" onClick={() => navigate('/session/results')}>
+            {strings.sessionOverview.seeResultsButton}
+          </button>
+        ) : (
+          <button className="btn btn-primary" onClick={() => navigate('/session/activity/prebrief')}>
+            {strings.sessionOverview.continueButton}
+          </button>
+        )}
+      </div>
     </main>
   );
 }

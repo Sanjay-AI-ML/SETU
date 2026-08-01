@@ -29,19 +29,34 @@ export default function SessionResultsPage() {
   const flags = computeFlags({ trials: allTrials, cells, latencyBandsConfig });
 
   return (
-    <main>
-      <h1>{strings.sessionResults.title}</h1>
-      <ResponseTimeRibbon trials={allTrials} bands={latencyBandsConfig} />
-      <p>{latencyBandsConfig.disclaimer}</p>
-      <MatrixProfileGrid cells={cells} taxonomy={taxonomy} />
-      <h2>{strings.sessionResults.flagsTitle}</h2>
-      {flags.length === 0 && <p>{strings.sessionResults.noFlags}</p>}
-      <ul>
-        {flags.map((flag) => (
-          <li key={flag.id}>{flag.label}</li>
-        ))}
-      </ul>
-      <button onClick={() => navigate('/session/report')}>{strings.sessionResults.reportButton}</button>
+    <main className="screen-wide">
+      <div className="screen-head">
+        <p className="eyebrow">Session complete</p>
+        <h1>{strings.sessionResults.title}</h1>
+      </div>
+      <div className="section card">
+        <ResponseTimeRibbon trials={allTrials} bands={latencyBandsConfig} />
+        <p className="matrix-caption" style={{ margin: '10px 0 0' }}>{latencyBandsConfig.disclaimer}</p>
+      </div>
+      <div className="section">
+        <h2>Communication Matrix profile</h2>
+        <MatrixProfileGrid cells={cells} taxonomy={taxonomy} />
+      </div>
+      <div className="section">
+        <h2>{strings.sessionResults.flagsTitle}</h2>
+        {flags.length === 0 ? (
+          <p className="empty-note">{strings.sessionResults.noFlags}</p>
+        ) : (
+          <ul className="card-list">
+            {flags.map((flag) => (
+              <li key={flag.id} className="flag-card">{flag.label}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+      <div className="actions">
+        <button className="btn btn-primary" onClick={() => navigate('/session/report')}>{strings.sessionResults.reportButton}</button>
+      </div>
     </main>
   );
 }

@@ -71,18 +71,31 @@ export default function ActivityPrebriefPage() {
 
   return (
     <main>
-      <h1>{currentActivity.name}</h1>
-      <p>{currentActivity.parentScript}</p>
-      <h2>{strings.activityPrebrief.materialsLabel}</h2>
-      <ul>
-        {currentActivity.materials.map((material) => (
-          <li key={material}>{material}</li>
-        ))}
-      </ul>
-      {calibrating && <p>{strings.activityPrebrief.calibratingLabel}</p>}
-      <button onClick={handleStart} disabled={calibrating}>
-        {strings.activityPrebrief.startButton}
-      </button>
+      <div className="screen-head">
+        <p className="eyebrow">Up next</p>
+        <h1>{currentActivity.name}</h1>
+      </div>
+      <div className="callout plain section">
+        <p>{currentActivity.parentScript}</p>
+      </div>
+      <div className="section">
+        <h2>{strings.activityPrebrief.materialsLabel}</h2>
+        <ul className="card-list">
+          {currentActivity.materials.map((material) => (
+            <li key={material} className="card" style={{ padding: '11px 15px', fontSize: '0.92rem', color: 'var(--ink-soft)' }}>
+              {material}
+            </li>
+          ))}
+        </ul>
+      </div>
+      {calibrating && (
+        <p className="notice">{strings.activityPrebrief.calibratingLabel}</p>
+      )}
+      <div className="actions">
+        <button className="btn btn-primary" onClick={handleStart} disabled={calibrating}>
+          {strings.activityPrebrief.startButton}
+        </button>
+      </div>
     </main>
   );
 }

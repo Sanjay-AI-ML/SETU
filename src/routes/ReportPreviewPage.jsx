@@ -41,29 +41,56 @@ export default function ReportPreviewPage() {
   const allTrials = session.activityRuns.flatMap((run) => run.trials);
 
   return (
-    <main>
-      <h1>{strings.reportPreview.title}</h1>
-      <p>{report.sections.child.displayName} — {report.sections.child.ageMonths} months</p>
-      <p>{strings.reportPreview.generatedLabel.replace('{date}', new Date(report.generatedAt).toLocaleString())}</p>
-      <h2>{strings.reportPreview.disclaimersTitle}</h2>
-      <ul>
-        {report.disclaimers.map((disclaimer, index) => (
-          <li key={index}>{disclaimer}</li>
-        ))}
-      </ul>
-      <h2>{strings.reportPreview.ribbonTitle}</h2>
-      <ResponseTimeRibbon trials={allTrials} bands={latencyBandsConfig} />
-      <p>{latencyBandsConfig.disclaimer}</p>
-      <h2>{strings.reportPreview.matrixTitle}</h2>
-      <MatrixProfileGrid cells={report.sections.matrixProfile} taxonomy={taxonomy} />
-      <h2>{strings.reportPreview.flagsTitle}</h2>
-      {report.sections.flags.length === 0 && <p>{strings.reportPreview.noFlags}</p>}
-      <ul>
-        {report.sections.flags.map((flag) => (
-          <li key={flag.id}>{flag.label}</li>
-        ))}
-      </ul>
-      <button onClick={() => window.print()}>{strings.reportPreview.printButton}</button>
+    <main className="screen-wide">
+      <div className="screen-head">
+        <p className="eyebrow">Clinician-facing document</p>
+        <h1>{strings.reportPreview.title}</h1>
+        <p className="subtitle">
+          {report.sections.child.displayName}, {report.sections.child.ageMonths} months
+        </p>
+        <p className="matrix-caption" style={{ margin: '2px 0 0' }}>
+          {strings.reportPreview.generatedLabel.replace('{date}', new Date(report.generatedAt).toLocaleString())}
+        </p>
+      </div>
+
+      <div className="section">
+        <h2>{strings.reportPreview.disclaimersTitle}</h2>
+        <ul className="card-list">
+          {report.disclaimers.map((disclaimer, index) => (
+            <li key={index} className="callout plain" style={{ borderLeftColor: 'var(--concern)' }}>
+              <p>{disclaimer}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="section card">
+        <h2 style={{ marginTop: 0 }}>{strings.reportPreview.ribbonTitle}</h2>
+        <ResponseTimeRibbon trials={allTrials} bands={latencyBandsConfig} />
+        <p className="matrix-caption" style={{ margin: '10px 0 0' }}>{latencyBandsConfig.disclaimer}</p>
+      </div>
+
+      <div className="section">
+        <h2>{strings.reportPreview.matrixTitle}</h2>
+        <MatrixProfileGrid cells={report.sections.matrixProfile} taxonomy={taxonomy} />
+      </div>
+
+      <div className="section">
+        <h2>{strings.reportPreview.flagsTitle}</h2>
+        {report.sections.flags.length === 0 ? (
+          <p className="empty-note">{strings.reportPreview.noFlags}</p>
+        ) : (
+          <ul className="card-list">
+            {report.sections.flags.map((flag) => (
+              <li key={flag.id} className="flag-card">{flag.label}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div className="actions">
+        <button className="btn btn-primary" onClick={() => window.print()}>{strings.reportPreview.printButton}</button>
+      </div>
     </main>
   );
 }

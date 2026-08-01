@@ -54,20 +54,31 @@ export default function ActivityReviewPage() {
 
   return (
     <main>
-      <h1>{strings.activityReview.title}</h1>
-      <p>{strings.activityReview.instructions}</p>
-      {tagOptions.map((option) => (
-        <label key={option.code}>
-          <input
-            type="checkbox"
-            checked={!!checked[option.code]}
-            onChange={() => toggle(option.code)}
-          />
-          {option.label}
-          {visionSuggestedSet.has(option.code) && ` ${strings.activityReview.visionSuggestedLabel}`}
-        </label>
-      ))}
-      <button onClick={handleConfirm}>{strings.activityReview.confirmButton}</button>
+      <div className="screen-head">
+        <p className="eyebrow">Activity complete</p>
+        <h1>{strings.activityReview.title}</h1>
+        <p className="subtitle">{strings.activityReview.instructions}</p>
+      </div>
+      <ul className="card-list">
+        {tagOptions.map((option) => (
+          <li key={option.code} className="check-card">
+            <label>
+              <input
+                type="checkbox"
+                checked={!!checked[option.code]}
+                onChange={() => toggle(option.code)}
+              />
+              {option.label}
+            </label>
+            {visionSuggestedSet.has(option.code) && (
+              <span className="chip">{strings.activityReview.visionSuggestedLabel}</span>
+            )}
+          </li>
+        ))}
+      </ul>
+      <div className="actions">
+        <button className="btn btn-primary" onClick={handleConfirm}>{strings.activityReview.confirmButton}</button>
+      </div>
     </main>
   );
 }

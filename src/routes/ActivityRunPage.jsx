@@ -146,28 +146,40 @@ export default function ActivityRunPage() {
 
   return (
     <main>
-      <h1>{currentActivity.name}</h1>
-      <p>
-        {strings.activityRun.trialLabel
-          .replace('{current}', trialIndex + 1)
-          .replace('{total}', currentActivity.trialCount)}
-      </p>
-      {!audioAvailable && <p>{strings.activityRun.micUnavailableLabel}</p>}
-      {!visionActive && <p>{strings.activityRun.visionUnavailableLabel}</p>}
+      <div className="screen-head">
+        <span className="trial-badge">
+          {strings.activityRun.trialLabel
+            .replace('{current}', trialIndex + 1)
+            .replace('{total}', currentActivity.trialCount)}
+        </span>
+        <h1>{currentActivity.name}</h1>
+      </div>
+      {!audioAvailable && <p className="notice">{strings.activityRun.micUnavailableLabel}</p>}
+      {!visionActive && <p className="notice">{strings.activityRun.visionUnavailableLabel}</p>}
       {visionActive && (
-        <video ref={videoRef} autoPlay playsInline muted style={{ width: 160, height: 120 }} />
+        <div className="preview-frame">
+          <video ref={videoRef} autoPlay playsInline muted />
+        </div>
       )}
-      {phase === 'ready' && <button onClick={handleServe}>{currentActivity.serveButtonLabel}</button>}
+      <div className="spacer" />
+      {phase === 'ready' && (
+        <div className="actions">
+          <button className="btn btn-primary" onClick={handleServe}>{currentActivity.serveButtonLabel}</button>
+        </div>
+      )}
       {phase === 'waiting' && (
-        <>
+        <div className="waiting-stage">
+          <div className="pulse-ring" aria-hidden="true" />
           <p>{strings.activityRun.waitingLabel}</p>
-          <button onClick={() => recordTrial({ responded: true, source: 'parent-tap' })}>
-            {strings.activityRun.respondedButton}
-          </button>
-          <button onClick={() => recordTrial({ responded: false, source: 'none' })}>
-            {strings.activityRun.noResponseButton}
-          </button>
-        </>
+          <div className="actions" style={{ paddingTop: 0, width: '100%' }}>
+            <button className="btn btn-primary" onClick={() => recordTrial({ responded: true, source: 'parent-tap' })}>
+              {strings.activityRun.respondedButton}
+            </button>
+            <button className="btn btn-secondary" onClick={() => recordTrial({ responded: false, source: 'none' })}>
+              {strings.activityRun.noResponseButton}
+            </button>
+          </div>
+        </div>
       )}
     </main>
   );

@@ -33,29 +33,36 @@ export default function ChildProfilePage() {
 
   return (
     <main>
-      <h1>{strings.childProfile.title}</h1>
+      <div className="screen-head">
+        <p className="eyebrow">Child profile</p>
+        <h1>{strings.childProfile.title}</h1>
+      </div>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="displayName">{strings.childProfile.displayNameLabel}</label>
-        <input
-          id="displayName"
-          type="text"
-          required
-          value={displayName}
-          onChange={(event) => setDisplayName(event.target.value)}
-        />
-        <label htmlFor="ageMonths">{strings.childProfile.ageMonthsLabel}</label>
-        <input
-          id="ageMonths"
-          type="number"
-          min="0"
-          required
-          value={ageMonths}
-          onChange={(event) => setAgeMonths(event.target.value)}
-        />
+        <div className="field">
+          <label htmlFor="displayName">{strings.childProfile.displayNameLabel}</label>
+          <input
+            id="displayName"
+            type="text"
+            required
+            value={displayName}
+            onChange={(event) => setDisplayName(event.target.value)}
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="ageMonths">{strings.childProfile.ageMonthsLabel}</label>
+          <input
+            id="ageMonths"
+            type="number"
+            min="0"
+            required
+            value={ageMonths}
+            onChange={(event) => setAgeMonths(event.target.value)}
+          />
+        </div>
         <fieldset>
           <legend>{strings.childProfile.homeLanguagesLabel}</legend>
           {AVAILABLE_LANGUAGES.map((language) => (
-            <label key={language}>
+            <label key={language} className="option">
               <input
                 type="checkbox"
                 checked={homeLanguages.includes(language)}
@@ -65,9 +72,13 @@ export default function ChildProfilePage() {
             </label>
           ))}
         </fieldset>
-        <label htmlFor="notes">{strings.childProfile.notesLabel}</label>
-        <textarea id="notes" value={notes} onChange={(event) => setNotes(event.target.value)} />
-        <button type="submit">{strings.childProfile.saveButton}</button>
+        <div className="field">
+          <label htmlFor="notes">{strings.childProfile.notesLabel}</label>
+          <textarea id="notes" value={notes} onChange={(event) => setNotes(event.target.value)} />
+        </div>
+        <div className="actions tight">
+          <button className="btn btn-primary" type="submit">{strings.childProfile.saveButton}</button>
+        </div>
       </form>
     </main>
   );
