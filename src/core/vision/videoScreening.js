@@ -51,3 +51,40 @@ export function interpretSummary(summary) {
     message: 'The child oriented toward the camera/caller only briefly during the clip. This alone is not conclusive — consider this alongside the guided activities.',
   };
 }
+
+// Vocalization-presence signal from the clip's own audio track — a coarse
+// "was there vocal activity here" energy check, not sound classification.
+// See core/audio/vocalizationLevel.js for why this stops short of
+// differentiating what kind of sound it was.
+
+export function summarizeVocalization(vocalizingFlags) {
+  const totalSamples = vocalizingFlags.length;
+  if (totalSamples === 0) {
+    return { totalSamples: 0, vocalizingRatio: 0, vocalizationEvents: 0 };
+  }
+
+  const vocalizingCount = vocalizingFlags.filter(Boolean).length;
+  let vocalizationEvents = 0;
+  for (let i = 0; i < vocalizingFlags.length; i++) {
+    if (vocalizingFlags[i] && !vocalizingFlags[i - 1]) vocalizationEvents++;
+  }
+
+  return {
+    totalSamples,
+    vocalizingRatio: vocalizingCount / totalSamples,
+    vocalizationEvents,
+  };
+}
+
+export function interpretVocalization(summary) {
+  if (summary.totalSamples === 0) {
+    return { label: 'no-data', message: 'No audio was analysed for this clip.' };
+  }
+  if (summary.vocalizationEvents === 0) {
+    return { label: 'no-vocalization', message: 'No vocalization activity was detected during the clip.' };
+  }
+  return {
+    label: 'vocalization-detected',
+    message: `Vocalization activity detected in ${(summary.vocalizingRatio * 100).toFixed(0)}% of the clip, across ${summary.vocalizationEvents} distinct moment(s). This flags that sound happened, not what kind of sound it was.`,
+  };
+}

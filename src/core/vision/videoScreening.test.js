@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { summarizeFrames, interpretSummary } from './videoScreening.js';
+import { summarizeFrames, interpretSummary, summarizeVocalization, interpretVocalization } from './videoScreening.js';
 
 describe('summarizeFrames', () => {
   it('returns zeroed summary for no frames', () => {
@@ -52,5 +52,35 @@ describe('interpretSummary', () => {
       { facing: 'away', smiling: false, motionDirection: null },
     ]);
     expect(interpretSummary(summary).label).toBe('limited-engagement');
+  });
+});
+
+describe('summarizeVocalization', () => {
+  it('returns zeroed summary for no samples', () => {
+    expect(summarizeVocalization([])).toEqual({ totalSamples: 0, vocalizingRatio: 0, vocalizationEvents: 0 });
+  });
+
+  it('counts ratio and distinct rising-edge events', () => {
+    const flags = [false, true, true, false, false, true, false];
+    const summary = summarizeVocalization(flags);
+    expect(summary.totalSamples).toBe(7);
+    expect(summary.vocalizingRatio).toBeCloseTo(3 / 7);
+    expect(summary.vocalizationEvents).toBe(2);
+  });
+});
+
+describe('interpretVocalization', () => {
+  it('flags no-data for empty summary', () => {
+    expect(interpretVocalization(summarizeVocalization([])).label).toBe('no-data');
+  });
+
+  it('flags no-vocalization when nothing crosses the threshold', () => {
+    const summary = summarizeVocalization([false, false, false]);
+    expect(interpretVocalization(summary).label).toBe('no-vocalization');
+  });
+
+  it('flags vocalization-detected when events occurred', () => {
+    const summary = summarizeVocalization([false, true, false]);
+    expect(interpretVocalization(summary).label).toBe('vocalization-detected');
   });
 });

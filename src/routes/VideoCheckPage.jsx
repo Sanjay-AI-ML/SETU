@@ -5,7 +5,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getVisionDetector, resetVisionSession } from '../core/vision/visionSession.js';
-import { summarizeFrames, interpretSummary } from '../core/vision/videoScreening.js';
+import { summarizeFrames, interpretSummary, summarizeVocalization, interpretVocalization } from '../core/vision/videoScreening.js';
+import { computeRms, isVocalizing } from '../core/audio/vocalizationLevel.js';
 
 const MAX_CLIP_SECONDS = 30;
 
@@ -13,8 +14,12 @@ export default function VideoCheckPage() {
   const navigate = useNavigate();
   const videoRef = useRef(null);
   const framesRef = useRef([]);
+  const vocalizingFlagsRef = useRef([]);
   const objectUrlRef = useRef(null);
   const finishedRef = useRef(false);
+  const audioContextRef = useRef(null);
+  const analyserRef = useRef(null);
+  const timeDomainBufferRef = useRef(null);
   const [status, setStatus] = useState('idle'); // 'idle' | 'analyzing' | 'done' | 'error'
   const [result, setResult] = useState(null);
 
@@ -22,6 +27,7 @@ export default function VideoCheckPage() {
     return () => {
       resetVisionSession();
       if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
+      audioContextRef.current?.close().catch(() => {});
     };
   }, []);
 
@@ -30,15 +36,47 @@ export default function VideoCheckPage() {
     finishedRef.current = true;
     getVisionDetector().stop();
     const summary = summarizeFrames(framesRef.current);
-    setResult({ summary, interpretation: interpretSummary(summary) });
+    const vocalization = summarizeVocalization(vocalizingFlagsRef.current);
+    setResult({
+      summary,
+      interpretation: interpretSummary(summary),
+      vocalization,
+      vocalizationInterpretation: interpretVocalization(vocalization),
+    });
     setStatus('done');
   }
 
   function handleFrame(signals) {
     framesRef.current.push(signals);
+
+    if (analyserRef.current && timeDomainBufferRef.current) {
+      analyserRef.current.getByteTimeDomainData(timeDomainBufferRef.current);
+      const rms = computeRms(timeDomainBufferRef.current);
+      vocalizingFlagsRef.current.push(isVocalizing(rms));
+    }
+
     if (videoRef.current && videoRef.current.currentTime >= MAX_CLIP_SECONDS) {
       finalize();
     }
+  }
+
+  // Web Audio's MediaElementSourceNode can only ever be created once per
+  // <video> element (throws InvalidStateError on a second call) — so the
+  // audio graph is built once, lazily, on the first clip, and reused for
+  // every subsequent clip picked in the same visit to this page.
+  function ensureAudioGraph(video) {
+    if (audioContextRef.current) return;
+    const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+    const audioContext = new AudioContextCtor();
+    const source = audioContext.createMediaElementSource(video);
+    const analyser = audioContext.createAnalyser();
+    analyser.fftSize = 1024;
+    source.connect(analyser);
+    // Deliberately not connected to audioContext.destination — the graph
+    // taps the decoded audio for analysis without playing it back.
+    audioContextRef.current = audioContext;
+    analyserRef.current = analyser;
+    timeDomainBufferRef.current = new Uint8Array(analyser.fftSize);
   }
 
   async function handleFileSelected(event) {
@@ -46,6 +84,7 @@ export default function VideoCheckPage() {
     if (!file) return;
 
     framesRef.current = [];
+    vocalizingFlagsRef.current = [];
     finishedRef.current = false;
     setResult(null);
     setStatus('analyzing');
@@ -60,6 +99,10 @@ export default function VideoCheckPage() {
     video.onended = finalize;
 
     try {
+      ensureAudioGraph(video);
+      if (audioContextRef.current.state === 'suspended') {
+        await audioContextRef.current.resume();
+      }
       await getVisionDetector().startFromFile(video, handleFrame);
     } catch {
       setStatus('error');
@@ -70,6 +113,7 @@ export default function VideoCheckPage() {
     setStatus('idle');
     setResult(null);
     framesRef.current = [];
+    vocalizingFlagsRef.current = [];
   }
 
   return (
@@ -86,8 +130,11 @@ export default function VideoCheckPage() {
       <div className="callout plain">
         <p>
           This is an informal, on-device signal only — not a diagnosis, and not a substitute
-          for the guided activities. It looks at whether a face was visible and how often your
-          child oriented toward the camera during the clip.
+          for the guided activities. It looks at whether a face was visible, how often your
+          child oriented toward the camera, and whether vocal activity occurred during the clip.
+          It detects <em>that</em> a sound happened, never <em>what kind</em> of sound — telling
+          babble apart from crying or speech would need a trained audio model, which this
+          hackathon prototype deliberately doesn't attempt without real clinical training data.
         </p>
       </div>
 
@@ -126,6 +173,7 @@ export default function VideoCheckPage() {
             smiling in {(result.summary.smileRatio * 100).toFixed(0)}%,
             {' '}{result.summary.handMotionEvents} hand-motion events detected.
           </p>
+          <p style={{ margin: '14px 0 0' }}>{result.vocalizationInterpretation.message}</p>
         </div>
       )}
 
