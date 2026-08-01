@@ -119,20 +119,22 @@ export default function LongitudinalProgressCard({ sessions }) {
         <p className="longitudinal-section-label">
           {strings.longitudinal?.activitySection || 'Session Activity'}
         </p>
-        <div className="longitudinal-bars">
+        <div className="longitudinal-bars" style={{ marginBottom: '8px' }}>
           {levelHistory.map((h) => {
             const pct = Math.max(8, Math.round((h.totalTrials / maxTrials) * 100));
+            const suffix = strings.longitudinal?.trialsSuffix ?? 'T';
             return (
               <div key={h.sessionId} className="lbar-col">
                 <div className="lbar-track">
                   <div
                     className="lbar-fill"
                     style={{ height: `${pct}%` }}
+                    data-count={`${h.totalTrials}${suffix}`}
                     title={`${h.totalTrials} ${strings.longitudinal?.trialsLabel ?? 'trials'}`}
                   />
                 </div>
                 <span className="lbar-label">{h.date}</span>
-                <span className="lbar-count">{h.totalTrials}{strings.longitudinal?.trialsSuffix ?? 'T'}</span>
+                <span className="lbar-count">{h.totalTrials}{suffix}</span>
               </div>
             );
           })}

@@ -31,16 +31,22 @@ describe('core/matrix flags', () => {
     expect(flags.map((f) => f.id)).not.toContain('flag-no-response-rate');
   });
 
-  it('flags when no behaviour above Level II was observed', () => {
+  it('flags when no behaviour above Level II was observed across 2+ activities', () => {
     const cells = buildEmptyCells();
-    const flags = computeFlags({ trials: [], cells, latencyBandsConfig });
+    const flags = computeFlags({ trials: [], cells, latencyBandsConfig, ranActivityIds: ['bubble-time', 'peek-a-boo'] });
     expect(flags.map((f) => f.id)).toContain('flag-no-behaviour-above-level-ii');
   });
 
   it('does not flag level-ii when a cell above Level II is mastered', () => {
     const cells = buildEmptyCells();
     cells.find((c) => c.level === 3 && c.purpose === 'obtain').state = 'mastered';
-    const flags = computeFlags({ trials: [], cells, latencyBandsConfig });
+    const flags = computeFlags({ trials: [], cells, latencyBandsConfig, ranActivityIds: ['bubble-time', 'peek-a-boo'] });
+    expect(flags.map((f) => f.id)).not.toContain('flag-no-behaviour-above-level-ii');
+  });
+
+  it('does not flag level-ii after only a single activity (not enough elicitation opportunities)', () => {
+    const cells = buildEmptyCells();
+    const flags = computeFlags({ trials: [], cells, latencyBandsConfig, ranActivityIds: ['bubble-time'] });
     expect(flags.map((f) => f.id)).not.toContain('flag-no-behaviour-above-level-ii');
   });
 
