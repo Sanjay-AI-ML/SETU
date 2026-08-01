@@ -44,7 +44,8 @@
   "activityReview": {
     "title": "What did you notice?",
     "instructions": "Check anything your child did during the activity.",
-    "confirmButton": "Confirm and see results"
+    "confirmButton": "Confirm and see results",
+    "visionSuggestedLabel": "(camera suggested)"
   },
   "sessionResults": {
     "title": "Session results",
