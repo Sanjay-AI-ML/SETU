@@ -300,22 +300,34 @@ export default function EngagementNarratorPage() {
       const allFaces = faceResult?.faceLandmarks ?? [];
       const handLMs  = handResult?.landmarks ?? [];
 
-      // ── Isolate child's face ──────────────────────────────────────────
-      // In parent-child interaction, if multiple faces are present,
-      // select the lower/smaller face or the face closest to the hands.
+      // ── Filter to detect ONLY the Child's Face (ignore adult/parent) ──────
+      // Adult faces in parent-child clips are larger (larger bounding area)
+      // and sit higher in the frame (lower noseY).
+      // Child faces are smaller and sit lower down (higher noseY).
       let faceLM = null;
       if (allFaces.length > 0) {
         if (allFaces.length === 1) {
           faceLM = allFaces[0];
         } else {
-          // Sort by nose y-position (lower in frame = child)
-          const sorted = [...allFaces].sort((a, b) => (b[NOSE_TIP]?.y ?? 0) - (a[NOSE_TIP]?.y ?? 0));
-          faceLM = sorted[0];
+          // Score each face: higher noseY (lower in frame) + smaller bounding area = Child
+          const scoredFaces = allFaces.map((f) => {
+            const xs = f.map((p) => p.x);
+            const ys = f.map((p) => p.y);
+            const width = Math.max(...xs) - Math.min(...xs);
+            const height = Math.max(...ys) - Math.min(...ys);
+            const area = width * height;
+            const noseY = f[NOSE_TIP]?.y ?? 0.5;
+            // Higher score = more likely to be child
+            const childScore = noseY * 2.0 - area * 3.0;
+            return { f, childScore };
+          });
+          scoredFaces.sort((a, b) => b.childScore - a.childScore);
+          faceLM = scoredFaces[0].f;
         }
         lastValidFaceRef.current = faceLM;
         lastValidFaceTimeRef.current = now;
       } else if (now - lastValidFaceTimeRef.current < 1500) {
-        // Use last valid face position within 1.5s grace window
+        // Use last valid child face position within 1.5s grace window
         faceLM = lastValidFaceRef.current;
       }
 
@@ -327,18 +339,33 @@ export default function EngagementNarratorPage() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         if (faceLM) {
-          // Draw a bounding box approximation
+          // Draw child bounding box
           const xs = faceLM.map(p => p.x * canvas.width);
           const ys = faceLM.map(p => p.y * canvas.height);
           const minX = Math.min(...xs), maxX = Math.max(...xs);
           const minY = Math.min(...ys), maxY = Math.max(...ys);
           const pad = 12;
-          ctx.strokeStyle = 'rgba(185,111,24,0.85)';
-          ctx.lineWidth = 2.5;
+          const boxX = minX - pad;
+          const boxY = minY - pad;
+          const boxW = (maxX - minX) + pad * 2;
+          const boxH = (maxY - minY) + pad * 2;
+
+          ctx.strokeStyle = 'rgba(36,107,82,0.95)';
+          ctx.lineWidth = 3;
           ctx.beginPath();
-          ctx.roundRect(minX - pad, minY - pad, (maxX - minX) + pad * 2, (maxY - minY) + pad * 2, 12);
+          ctx.roundRect(boxX, boxY, boxW, boxH, 12);
           ctx.stroke();
-          setFaceBox({ x: minX - pad, y: minY - pad, w: (maxX - minX) + pad * 2, h: (maxY - minY) + pad * 2 });
+
+          // Label badge over child face
+          ctx.fillStyle = 'rgba(36,107,82,0.92)';
+          const badgeText = lang === 'ta' ? '👶 குழந்தை' : lang === 'hi' ? '👶 बच्चा' : '👶 Child Tracked';
+          ctx.font = 'bold 12px sans-serif';
+          const textWidth = ctx.measureText(badgeText).width;
+          ctx.fillRect(boxX, Math.max(0, boxY - 22), textWidth + 14, 20);
+          ctx.fillStyle = '#ffffff';
+          ctx.fillText(badgeText, boxX + 7, Math.max(14, boxY - 7));
+
+          setFaceBox({ x: boxX, y: boxY, w: boxW, h: boxH });
 
           // Draw iris dots
           [LEFT_EYE_CENTER, RIGHT_EYE_CENTER].forEach(idx => {
@@ -538,6 +565,40 @@ export default function EngagementNarratorPage() {
               className="narrator-gaze-fill"
               style={{ width: `${Math.round(gazeScore * 100)}%`, background: gazeColour }}
             />
+          </div>
+        </div>
+      )}
+
+      {/* ── Collaborative Engagement Rating & Support Tips ────────── */}
+      {status === 'running' && (
+        <div className="narrator-gaze-section" style={{ background: 'var(--surface-raise)', borderColor: 'var(--accent-line)', marginTop: 10 }}>
+          <div className="narrator-gaze-header">
+            <span className="narrator-gaze-label" style={{ color: 'var(--accent-ink)' }}>
+              🤝 {lang === 'ta' ? 'குழந்தை கூட்டு ஈடுபாட்டு மதிப்பீடு' : lang === 'hi' ? 'बच्चा सहभागिता रेटिंग' : 'Child Collaborative Rating'}
+            </span>
+            <span className="narrator-gaze-value" style={{ color: 'var(--accent-deep)', fontSize: '0.9rem', fontWeight: 800 }}>
+              {Math.round(gazeScore * 100)}%
+            </span>
+          </div>
+          <div className="narrator-gaze-track" style={{ height: 12, marginBottom: 10 }}>
+            <div
+              className="narrator-gaze-fill"
+              style={{
+                width: `${Math.round(gazeScore * 100)}%`,
+                background: 'linear-gradient(90deg, var(--accent) 0%, var(--mastered) 100%)',
+              }}
+            />
+          </div>
+
+          <div style={{ fontSize: '0.81rem', color: 'var(--ink-soft)', lineHeight: 1.45, paddingTop: 4, borderTop: '1px dashed var(--border)' }}>
+            <strong style={{ color: 'var(--ink)', display: 'block', marginBottom: 3 }}>
+              💡 {lang === 'ta' ? 'பெற்றோர் ஆதரவு குறிப்பு' : lang === 'hi' ? 'माता-पिता सहायता सुझाव' : 'Parent Support Advice'}:
+            </strong>
+            {gazeScore > 0.65
+              ? (lang === 'ta' ? '🌟 சிறந்த பகிர்ந்த கவனம்! இந்த முறை மாற்ற அமைப்பை தொடருங்கள்.' : lang === 'hi' ? '🌟 उत्कृष्ट साझा ध्यान! इस बारी-बारी के तालमेल को बनाए रखें।' : '🌟 Excellent shared attention! Keep this turn-taking rhythm going.')
+              : gazeScore > 0.35
+              ? (lang === 'ta' ? '💡 நல்ல தொடர்பு! குழந்தை அடுத்த பதிலை தொடங்க 3 வினாடிகள் காத்திருங்கள்.' : lang === 'hi' ? '💡 अच्छा संपर्क! बच्चा अगला अवसर शुरू करे इसके लिए 3 सेकंड रुकें।' : '💡 Good interaction! Pause for 3 seconds to see if child initiates the next return.')
+              : (lang === 'ta' ? '🎯 குழந்தையின் கவனத்தை ஈர்க்க பொம்மையை உங்கள் கண்களுக்கு அருகில் கொண்டு வாருங்கள்.' : lang === 'hi' ? '🎯 ध्यान वापस खींचने के लिए खिलौने को अपनी आँखों के पास लाएँ।' : '🎯 Bring the prop close to your eyes or call their name gently to draw gaze back.')}
           </div>
         </div>
       )}
