@@ -7,11 +7,13 @@ import { useNavigate } from 'react-router-dom';
 import { getVisionDetector, resetVisionSession } from '../core/vision/visionSession.js';
 import { summarizeFrames, interpretSummary, summarizeVocalization, interpretVocalization } from '../core/vision/videoScreening.js';
 import { computeRms, isVocalizing } from '../core/audio/vocalizationLevel.js';
+import { useLanguage } from '../i18n/index.jsx';
 
 const MAX_CLIP_SECONDS = 30;
 
 export default function VideoCheckPage() {
   const navigate = useNavigate();
+  const { strings } = useLanguage();
   const videoRef = useRef(null);
   const framesRef = useRef([]);
   const vocalizingFlagsRef = useRef([]);
@@ -50,7 +52,7 @@ export default function VideoCheckPage() {
     framesRef.current.push(signals);
 
     if (analyserRef.current && timeDomainBufferRef.current) {
-      analyserRef.current.getByteTimeDomainData(timeDomainBufferRef.current);
+      analyserRef.current.getFloatTimeDomainData(timeDomainBufferRef.current);
       const rms = computeRms(timeDomainBufferRef.current);
       vocalizingFlagsRef.current.push(isVocalizing(rms));
     }
@@ -72,11 +74,11 @@ export default function VideoCheckPage() {
     const analyser = audioContext.createAnalyser();
     analyser.fftSize = 1024;
     source.connect(analyser);
-    // Deliberately not connected to audioContext.destination — the graph
-    // taps the decoded audio for analysis without playing it back.
+    // Also connect to destination so the video's audio is audible during playback
+    source.connect(audioContext.destination);
     audioContextRef.current = audioContext;
     analyserRef.current = analyser;
-    timeDomainBufferRef.current = new Uint8Array(analyser.fftSize);
+    timeDomainBufferRef.current = new Float32Array(analyser.fftSize);
   }
 
   async function handleFileSelected(event) {
@@ -95,7 +97,7 @@ export default function VideoCheckPage() {
 
     const video = videoRef.current;
     video.src = url;
-    video.muted = true;
+    video.muted = false; // keep audio unmuted so playback has sound
     video.onended = finalize;
 
     try {
@@ -119,29 +121,21 @@ export default function VideoCheckPage() {
   return (
     <main>
       <div className="screen-head">
-        <p className="eyebrow">Standalone check</p>
-        <h1>Quick video check</h1>
+        <p className="eyebrow">{strings.videoCheck?.eyebrow || 'Standalone check'}</p>
+        <h1>{strings.videoCheck?.title || 'Quick video check'}</h1>
         <p className="subtitle">
-          Pick or record up to {MAX_CLIP_SECONDS} seconds of your child at play. Analysed
-          entirely on this device — the clip is never uploaded or saved.
+          {(strings.videoCheck?.subtitle || 'Pick or record up to {seconds} seconds of your child at play. Analysed entirely on this device — the clip is never uploaded or saved.').replace('{seconds}', MAX_CLIP_SECONDS)}
         </p>
       </div>
 
       <div className="callout plain">
-        <p>
-          This is an informal, on-device signal only — not a diagnosis, and not a substitute
-          for the guided activities. It looks at whether a face was visible, how often your
-          child oriented toward the camera, and whether vocal activity occurred during the clip.
-          It detects <em>that</em> a sound happened, never <em>what kind</em> of sound — telling
-          babble apart from crying or speech would need a trained audio model, which this
-          hackathon prototype deliberately doesn't attempt without real clinical training data.
-        </p>
+        <p>{strings.videoCheck?.disclaimer}</p>
       </div>
 
       {status === 'idle' && (
         <div className="actions">
           <label className="btn btn-primary" style={{ textAlign: 'center' }}>
-            🎥 Choose or record a video
+            {strings.videoCheck?.chooseButton || '🎥 Choose or record a video'}
             <input
               type="file"
               accept="video/*"
@@ -154,24 +148,31 @@ export default function VideoCheckPage() {
       )}
 
       {status === 'analyzing' && (
-        <p className="notice">Analysing clip on-device…</p>
+        <p className="notice">{strings.videoCheck?.analyzing || 'Analysing clip on-device…'}</p>
       )}
 
       {status === 'error' && (
-        <p className="notice">Couldn't analyse this clip. Try a different file.</p>
+        <p className="notice">{strings.videoCheck?.errorLabel || "Couldn't analyse this clip. Try a different file."}</p>
       )}
 
-      <video ref={videoRef} playsInline style={{ display: status === 'analyzing' ? 'block' : 'none', width: '100%', borderRadius: 12 }} />
+      {/* Show during analysis and keep visible after so parents can replay with audio */}
+      <video
+        ref={videoRef}
+        playsInline
+        controls
+        style={{ display: (status === 'analyzing' || status === 'done') ? 'block' : 'none', width: '100%', borderRadius: 12, marginTop: 8 }}
+      />
 
       {status === 'done' && result && (
         <div className="section card">
-          <h2 style={{ marginTop: 0 }}>Result</h2>
+          <h2 style={{ marginTop: 0 }}>{strings.videoCheck?.resultTitle || 'Result'}</h2>
           <p>{result.interpretation.message}</p>
           <p className="matrix-caption" style={{ margin: '10px 0 0' }}>
-            Face detected in {(result.summary.faceDetectedRatio * 100).toFixed(0)}% of frames,
-            oriented toward the camera in {(result.summary.gazeToCameraRatio * 100).toFixed(0)}%,
-            smiling in {(result.summary.smileRatio * 100).toFixed(0)}%,
-            {' '}{result.summary.handMotionEvents} hand-motion events detected.
+            {(strings.videoCheck?.statsLine || 'Face detected in {face}% of frames, oriented toward the camera in {gaze}%, smiling in {smile}%, {handEvents} hand-motion events detected.')
+              .replace('{face}', (result.summary.faceDetectedRatio * 100).toFixed(0))
+              .replace('{gaze}', (result.summary.gazeToCameraRatio * 100).toFixed(0))
+              .replace('{smile}', (result.summary.smileRatio * 100).toFixed(0))
+              .replace('{handEvents}', result.summary.handMotionEvents)}
           </p>
           <p style={{ margin: '14px 0 0' }}>{result.vocalizationInterpretation.message}</p>
         </div>
@@ -180,11 +181,11 @@ export default function VideoCheckPage() {
       <div className="actions inline" style={{ marginTop: 16 }}>
         {status === 'done' && (
           <button type="button" className="btn btn-secondary" onClick={handleReset}>
-            Check another clip
+            {strings.videoCheck?.checkAnother || 'Check another clip'}
           </button>
         )}
         <button type="button" className="btn btn-ghost" onClick={() => navigate('/')}>
-          Back to home
+          {strings.videoCheck?.backHome || 'Back to home'}
         </button>
       </div>
     </main>
