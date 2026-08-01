@@ -114,12 +114,21 @@
     "subtitle": "Manage child profile, export clinical assessment logs, or log out.",
     "edit": "Edit",
     "notes": "Notes:",
+    "backupTitle": "Clinical Data & Sharing",
+    "savedRuns": "Total saved assessment runs: {count} sessions",
     "backupData": "Backup JSON Data",
+    "accountTitle": "Account & Reset Actions",
+    "accountSub": "Logging out clears active child profile and returns to initial setup.",
     "logout": "Log Out (Switch Child)",
     "clearAll": "Clear All App Data",
+    "confirmTitle": "Are you sure?",
+    "confirmSub": "This will permanently delete all {count} saved history sessions and child profile data on this device.",
+    "cancel": "Cancel",
+    "deleteEverything": "Yes, Delete Everything",
     "experimentalTitle": "Experimental",
     "experimentalSubtitle": "Novelty features under active exploration. Not validated, not part of any assessment or report.",
-    "voiceRegisterCheck": "Voice register check"
+    "voiceRegisterCheck": "Voice register check",
+    "disclaimer": "SETU v0.1.0 Hackathon Prototype — 100% on-device local storage. No patient healthcare information (PHI) is uploaded to remote cloud servers."
   },
   "activities": {
     "bubble-time": {
@@ -158,6 +167,27 @@
       "materials": ["A small box", "3-4 familiar objects or picture cards"],
       "reviewTags": ["Pointed at object", "Named the object", "Commented", "Showed the object"]
     }
+  },
+  "matrix": {
+    "mastered": "Mastered",
+    "emerging": "Emerging",
+    "surpassed": "Surpassed",
+    "notUsed": "Not used",
+    "levelPurpose": "LEVEL / PURPOSE",
+    "noEvidence": "No direct evidence observed in session.",
+    "rule": "Rule {id}",
+    "levelPrefix": "Level {level}"
+  },
+  "longitudinal": {
+    "title": "Progress Over Time",
+    "trackingSub": "{count} assessment session(s) · Tracking growth",
+    "activitySection": "Session Activity",
+    "speedSection": "Avg. Response Speed (ms)",
+    "milestonesSection": "Milestone Highlights",
+    "firstAssessment": "First assessment completed",
+    "responsesRecorded": "{count} responses recorded",
+    "fingerPoint": "Index finger point observed",
+    "firstWord": "First word / vocal label recorded"
   },
   "rollCall": {
     "eyebrow": "Special feature",

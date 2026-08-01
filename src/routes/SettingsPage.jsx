@@ -62,31 +62,33 @@ export default function SettingsPage() {
           <div className="profile-details">
             <h2>{profile?.displayName || 'Child Profile'}</h2>
             <p className="profile-meta">
-              {profile?.ageMonths ? `${profile.ageMonths} months old` : 'Age not specified'}
+              {profile?.ageMonths ? `${profile.ageMonths} months old` : ''}
               {profile?.homeLanguages ? ` • ${profile.homeLanguages}` : ''}
             </p>
           </div>
           <button type="button" className="btn btn-secondary btn-sm" onClick={() => navigate('/child-profile')}>
-            {strings.settings?.edit || 'Edit'}
+            ✏️ {strings.settings?.edit || 'Edit'}
           </button>
         </div>
 
         {profile?.notes && (
           <div className="profile-notes">
             <span className="notes-label">{strings.settings?.notes || 'Notes:'}</span>
-            <p>{profile.notes}</p>
+            <p style={{ margin: 0, color: 'var(--ink-soft)' }}>{profile.notes}</p>
           </div>
         )}
       </div>
 
       {/* Clinical Backup & Share Section */}
       <div className="section card">
-        <h3>Clinical Data & Sharing</h3>
-        <p style={{ fontSize: '0.9rem', color: 'var(--ink-soft)', margin: '4px 0 16px' }}>
-          Total saved assessment runs: <strong>{sessionCount} sessions</strong>
+        <h3 style={{ margin: '0 0 4px', fontSize: '1.05rem', fontWeight: 750 }}>
+          📊 {strings.settings?.backupTitle || 'Clinical Data & Sharing'}
+        </h3>
+        <p style={{ fontSize: '0.88rem', color: 'var(--ink-soft)', margin: '0 0 16px' }}>
+          {(strings.settings?.savedRuns || 'Total saved assessment runs: {count} sessions').replace('{count}', sessionCount)}
         </p>
 
-        <div className="actions inline">
+        <div className="actions inline" style={{ gap: 10 }}>
           <button type="button" className="btn btn-secondary" onClick={handleExportBackup}>
             📥 {strings.settings?.backupData || 'Backup JSON Data'}
           </button>
@@ -97,14 +99,16 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {/* Account & Logout Actions */}
+      {/* Account & Reset Actions */}
       <div className="section card warning-card">
-        <h3>Account & Reset Actions</h3>
-        <p style={{ fontSize: '0.88rem', color: 'var(--ink-soft)', margin: '4px 0 16px' }}>
-          Logging out clears active child initials and returns to the initial profile entry.
+        <h3 style={{ margin: '0 0 4px', fontSize: '1.05rem', fontWeight: 750, color: 'var(--concern)' }}>
+          ⚙️ {strings.settings?.accountTitle || 'Account & Reset Actions'}
+        </h3>
+        <p style={{ fontSize: '0.86rem', color: 'var(--ink-soft)', margin: '0 0 16px' }}>
+          {strings.settings?.accountSub || 'Logging out clears active child profile and returns to initial setup.'}
         </p>
 
-        <div className="actions inline">
+        <div className="actions inline" style={{ gap: 10 }}>
           <button type="button" className="btn btn-secondary" onClick={handleLogOut}>
             🚪 {strings.settings?.logout || 'Log Out (Switch Child)'}
           </button>
@@ -118,40 +122,42 @@ export default function SettingsPage() {
       {showConfirmModal && (
         <div className="modal-backdrop">
           <div className="modal-card">
-            <h3>Are you sure?</h3>
-            <p style={{ fontSize: '0.9rem', color: 'var(--ink-soft)' }}>
-              This will permanently delete all {sessionCount} saved history sessions and child profile data on this device.
+            <h3 style={{ margin: '0 0 8px', fontSize: '1.15rem' }}>
+              ⚠️ {strings.settings?.confirmTitle || 'Are you sure?'}
+            </h3>
+            <p style={{ fontSize: '0.88rem', color: 'var(--ink-soft)', lineHeight: 1.55, margin: '0 0 20px' }}>
+              {(strings.settings?.confirmSub || 'This will permanently delete all {count} saved history sessions and child profile data on this device.').replace('{count}', sessionCount)}
             </p>
-            <div className="actions inline" style={{ marginTop: 20 }}>
-              <button type="button" className="btn btn-secondary" onClick={() => setShowConfirmModal(false)}>
-                Cancel
+            <div className="actions inline" style={{ gap: 10 }}>
+              <button type="button" className="btn btn-secondary" onClick={() => setShowConfirmModal(false)} style={{ flex: 1 }}>
+                {strings.settings?.cancel || 'Cancel'}
               </button>
-              <button type="button" className="btn btn-danger" style={{ background: 'var(--concern)', color: '#fff' }} onClick={handleResetAll}>
-                Yes, Delete Everything
+              <button type="button" className="btn btn-primary" style={{ background: 'var(--concern)', borderColor: 'var(--concern)', flex: 1 }} onClick={handleResetAll}>
+                {strings.settings?.deleteEverything || 'Yes, Delete Everything'}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Experimental Features — deliberately low-emphasis, not on HomePage */}
-      <div className="section card">
-        <h3>Experimental</h3>
-        <p style={{ fontSize: '0.88rem', color: 'var(--ink-soft)', margin: '4px 0 16px' }}>
-          Novelty features under active exploration. Not validated, not part of any assessment
-          or report.
+      {/* Experimental Features */}
+      <div className="section card special-feature-card">
+        <span className="chip" style={{ marginBottom: 8 }}>🧪 {strings.settings?.experimentalTitle || 'Experimental'}</span>
+        <h3 style={{ margin: '0 0 4px', fontSize: '1.02rem', fontWeight: 750 }}>
+          {strings.settings?.experimentalTitle || 'Experimental'}
+        </h3>
+        <p style={{ fontSize: '0.84rem', color: 'var(--ink-soft)', margin: '0 0 14px', lineHeight: 1.5 }}>
+          {strings.settings?.experimentalSubtitle || 'Novelty features under active exploration. Not validated, not part of any assessment or report.'}
         </p>
-        <div className="actions inline">
-          <button type="button" className="btn btn-ghost" onClick={() => navigate('/voice-age-check')}>
-            🎙️ Voice register check
-          </button>
-        </div>
+        <button type="button" className="btn btn-secondary" onClick={() => navigate('/voice-age-check')}>
+          🎙️ {strings.settings?.voiceRegisterCheck || 'Voice register check'}
+        </button>
       </div>
 
       {/* Disclaimer info */}
-      <div className="callout plain" style={{ marginTop: 24 }}>
-        <p style={{ fontSize: '0.82rem', margin: 0, color: 'var(--ink-soft)' }}>
-          <strong>SETU v0.1.0 Hackathon Prototype</strong> — 100% on-device local storage. No patient healthcare information (PHI) is uploaded to remote cloud servers without authorization.
+      <div className="callout plain" style={{ marginTop: 20 }}>
+        <p style={{ fontSize: '0.8rem', margin: 0, color: 'var(--ink-faint)', lineHeight: 1.5 }}>
+          {strings.settings?.disclaimer || 'SETU v0.1.0 Hackathon Prototype — 100% on-device local storage. No patient healthcare information (PHI) is uploaded to remote cloud servers.'}
         </p>
       </div>
     </main>

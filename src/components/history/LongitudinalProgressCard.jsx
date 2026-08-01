@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useLanguage } from '../../i18n/index.jsx';
 
 /**
  * LongitudinalProgressCard
@@ -6,6 +7,7 @@ import { useEffect, useState } from 'react';
  * multiple saved sessions — heatmap of level growth + small-wins timeline.
  */
 export default function LongitudinalProgressCard({ sessions }) {
+  const { strings } = useLanguage();
   const [milestones, setMilestones] = useState([]);
   const [levelHistory, setLevelHistory] = useState([]);
 
@@ -41,7 +43,11 @@ export default function LongitudinalProgressCard({ sessions }) {
 
       // First session ever
       if (idx === 0) {
-        wins.push({ date: dateStr, icon: '🌟', label: 'First assessment completed' });
+        wins.push({
+          date: dateStr,
+          icon: '🌟',
+          label: strings.longitudinal?.firstAssessment || 'First assessment completed',
+        });
       }
 
       // Trial count milestones
@@ -50,7 +56,11 @@ export default function LongitudinalProgressCard({ sessions }) {
         0
       );
       if (totalTrials >= 10) {
-        wins.push({ date: dateStr, icon: '🎯', label: `${totalTrials} responses recorded` });
+        wins.push({
+          date: dateStr,
+          icon: '🎯',
+          label: (strings.longitudinal?.responsesRecorded || '{count} responses recorded').replace('{count}', totalTrials),
+        });
       }
 
       // Behaviour-specific milestones from observations
@@ -62,10 +72,18 @@ export default function LongitudinalProgressCard({ sessions }) {
         ['word', 'said-word', 'named-picture', 'named-toy'].includes(o.behavior)
       );
       if (hasFinger) {
-        wins.push({ date: dateStr, icon: '☝️', label: 'Index finger point observed' });
+        wins.push({
+          date: dateStr,
+          icon: '☝️',
+          label: strings.longitudinal?.fingerPoint || 'Index finger point observed',
+        });
       }
       if (hasWord) {
-        wins.push({ date: dateStr, icon: '🗣️', label: 'First word / vocal label recorded' });
+        wins.push({
+          date: dateStr,
+          icon: '🗣️',
+          label: strings.longitudinal?.firstWord || 'First word / vocal label recorded',
+        });
       }
     });
 
@@ -79,7 +97,7 @@ export default function LongitudinalProgressCard({ sessions }) {
       }
     });
     setMilestones(dedupedWins.slice(0, 6));
-  }, [sessions]);
+  }, [sessions, strings]);
 
   if (!sessions || sessions.length === 0) return null;
 
@@ -88,15 +106,17 @@ export default function LongitudinalProgressCard({ sessions }) {
   return (
     <div className="longitudinal-card card" aria-label="Longitudinal progress summary">
       <div className="longitudinal-header">
-        <h2 className="longitudinal-title">📊 Progress Over Time</h2>
+        <h2 className="longitudinal-title">📊 {strings.longitudinal?.title || 'Progress Over Time'}</h2>
         <p className="longitudinal-sub">
-          {sessions.length} assessment session{sessions.length !== 1 ? 's' : ''} · Tracking growth
+          {(strings.longitudinal?.trackingSub || '{count} assessment session(s) · Tracking growth').replace('{count}', sessions.length)}
         </p>
       </div>
 
       {/* ── Trial Count Bar Chart ────────────────────────────────────────── */}
       <div className="longitudinal-section">
-        <p className="longitudinal-section-label">Session Activity</p>
+        <p className="longitudinal-section-label">
+          {strings.longitudinal?.activitySection || 'Session Activity'}
+        </p>
         <div className="longitudinal-bars">
           {levelHistory.map((h) => {
             const pct = Math.max(8, Math.round((h.totalTrials / maxTrials) * 100));
@@ -120,7 +140,9 @@ export default function LongitudinalProgressCard({ sessions }) {
       {/* ── Avg Response Speed trend ────────────────────────────────────── */}
       {levelHistory.some((h) => h.avgResponseMs) && (
         <div className="longitudinal-section">
-          <p className="longitudinal-section-label">Avg. Response Speed (ms)</p>
+          <p className="longitudinal-section-label">
+            {strings.longitudinal?.speedSection || 'Avg. Response Speed (ms)'}
+          </p>
           <div className="longitudinal-speed-list">
             {levelHistory.map((h) =>
               h.avgResponseMs ? (
@@ -151,7 +173,9 @@ export default function LongitudinalProgressCard({ sessions }) {
       {/* ── Small Wins Timeline ──────────────────────────────────────────── */}
       {milestones.length > 0 && (
         <div className="longitudinal-section">
-          <p className="longitudinal-section-label">🏅 Milestone Highlights</p>
+          <p className="longitudinal-section-label">
+            🏅 {strings.longitudinal?.milestonesSection || 'Milestone Highlights'}
+          </p>
           <div className="milestone-timeline">
             {milestones.map((m, i) => (
               <div key={i} className="milestone-row">
@@ -168,5 +192,3 @@ export default function LongitudinalProgressCard({ sessions }) {
     </div>
   );
 }
-
-// sessions: Array of session objects from storage

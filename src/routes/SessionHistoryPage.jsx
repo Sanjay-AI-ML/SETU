@@ -25,7 +25,8 @@ export default function SessionHistoryPage() {
 
   async function handleDelete(sessionId, event) {
     event.stopPropagation();
-    if (window.confirm('Are you sure you want to delete this session from history?')) {
+    const confirmMsg = strings.sessionHistory?.confirmDelete || 'Are you sure you want to delete this session from history?';
+    if (window.confirm(confirmMsg)) {
       await deleteSession(sessionId);
       await loadSessions();
     }
@@ -42,7 +43,7 @@ export default function SessionHistoryPage() {
   }
 
   return (
-    <main>
+    <main className="screen-wide">
       <div className="screen-head">
         <p className="eyebrow">{strings.sessionHistory?.eyebrow || 'Assessment records'}</p>
         <h1>{strings.sessionHistory?.title || 'Session History'}</h1>
@@ -65,12 +66,14 @@ export default function SessionHistoryPage() {
         </div>
       ) : (
         <div className="section">
-          <p className="history-list-label">All Sessions</p>
+          <p className="history-list-label">
+            {strings.sessionHistory?.allSessions || 'All Sessions'}
+          </p>
           <div className="card-list">
             {sessions.map((session) => {
               const dateStr = session.startedAt
                 ? new Date(session.startedAt).toLocaleString()
-                : 'Unknown date';
+                : '?';
               const runsCount = session.activityRuns?.length ?? 0;
               const totalTrials = session.activityRuns?.reduce(
                 (acc, run) => acc + (run.trials?.length ?? 0),
@@ -82,25 +85,22 @@ export default function SessionHistoryPage() {
                 <div
                   key={session.id}
                   className="card"
-                  style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}
+                  style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                     <div>
-                      <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 600 }}>
-                        Session {session.id.slice(0, 8)}
+                      <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 750 }}>
+                        {(strings.sessionHistory?.sessionTitle || 'Session {id}').replace('{id}', session.id.slice(0, 8))}
                       </h3>
                       <p style={{ margin: '2px 0 0', fontSize: '0.82rem', color: 'var(--ink-soft)' }}>
                         {dateStr}{' '}
                         {isDemo && (
                           <span
-                            className="badge"
+                            className="chip"
                             style={{
-                              background: 'var(--accent-soft)',
-                              color: 'var(--accent)',
+                              marginLeft: 6,
+                              fontSize: '0.68rem',
                               padding: '2px 6px',
-                              borderRadius: '4px',
-                              fontSize: '0.75rem',
-                              fontWeight: 700,
                             }}
                           >
                             DEMO
@@ -111,30 +111,30 @@ export default function SessionHistoryPage() {
                     <button
                       className="btn btn-ghost"
                       onClick={(e) => handleDelete(session.id, e)}
-                      style={{ padding: '4px 8px', color: 'var(--concern)', fontSize: '0.8rem' }}
-                      title="Delete session"
+                      style={{ padding: '4px 8px', color: 'var(--concern)', fontSize: '0.8rem', width: 'auto' }}
+                      title={strings.sessionHistory?.delete || 'Delete'}
                     >
-                      {strings.sessionHistory?.delete || 'Delete'}
+                      🗑️ {strings.sessionHistory?.delete || 'Delete'}
                     </button>
                   </div>
 
-                  <div style={{ display: 'flex', gap: '12px', fontSize: '0.84rem', color: 'var(--ink-soft)' }}>
+                  <div style={{ display: 'flex', gap: '14px', fontSize: '0.84rem', color: 'var(--ink-soft)' }}>
                     <span>📋 {(strings.sessionHistory?.activities || '{count} Activities').replace('{count}', runsCount)}</span>
                     <span>⏱️ {(strings.sessionHistory?.trials || '{count} Trials').replace('{count}', totalTrials)}</span>
                   </div>
 
-                  <div style={{ display: 'flex', gap: '8px', marginTop: 4 }}>
+                  <div style={{ display: 'flex', gap: '10px', marginTop: 4 }}>
                     <button
                       className="btn btn-primary"
                       onClick={() => handleViewResults(session)}
-                      style={{ flex: 1, padding: '8px 12px', fontSize: '0.86rem' }}
+                      style={{ flex: 1, padding: '9px 12px', fontSize: '0.86rem' }}
                     >
                       {strings.sessionHistory?.viewMatrix || 'View Matrix Results'}
                     </button>
                     <button
                       className="btn btn-secondary"
                       onClick={() => handleViewReport(session)}
-                      style={{ flex: 1, padding: '8px 12px', fontSize: '0.86rem' }}
+                      style={{ flex: 1, padding: '9px 12px', fontSize: '0.86rem' }}
                     >
                       {strings.sessionHistory?.viewReport || 'View Report'}
                     </button>
@@ -146,7 +146,7 @@ export default function SessionHistoryPage() {
         </div>
       )}
 
-      <div className="actions" style={{ marginTop: 24 }}>
+      <div className="actions" style={{ marginTop: 20 }}>
         <button className="btn btn-ghost" onClick={() => navigate('/')}>
           {strings.sessionHistory?.backHome || 'Back to Home'}
         </button>

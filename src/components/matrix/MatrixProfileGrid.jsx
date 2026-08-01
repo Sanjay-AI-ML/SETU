@@ -1,11 +1,5 @@
 import { Fragment, useState } from 'react';
-
-const STATE_LABELS = {
-  'not-used': 'Not used',
-  emerging: 'Emerging',
-  mastered: 'Mastered',
-  surpassed: 'Surpassed',
-};
+import { useLanguage } from '../../i18n/index.jsx';
 
 const STATE_SHORT_LABELS = {
   'not-used': '—',
@@ -46,6 +40,14 @@ const STATE_VARS = {
 
 export default function MatrixProfileGrid({ cells, taxonomy }) {
   const [expandedKey, setExpandedKey] = useState(null);
+  const { strings } = useLanguage();
+
+  const stateLabels = {
+    'not-used': strings.matrix?.notUsed || 'Not used',
+    emerging: strings.matrix?.emerging || 'Emerging',
+    mastered: strings.matrix?.mastered || 'Mastered',
+    surpassed: strings.matrix?.surpassed || 'Surpassed',
+  };
 
   function cellKey(level, purpose) {
     return `${level}-${purpose}`;
@@ -71,22 +73,22 @@ export default function MatrixProfileGrid({ cells, taxonomy }) {
         <div className="matrix-stat-pill stat-mastered">
           <span className="stat-badge">M</span>
           <span className="stat-count">{counts.mastered}</span>
-          <span className="stat-label">Mastered</span>
+          <span className="stat-label">{stateLabels.mastered}</span>
         </div>
         <div className="matrix-stat-pill stat-emerging">
           <span className="stat-badge">E</span>
           <span className="stat-count">{counts.emerging}</span>
-          <span className="stat-label">Emerging</span>
+          <span className="stat-label">{stateLabels.emerging}</span>
         </div>
         <div className="matrix-stat-pill stat-surpassed">
           <span className="stat-badge">S</span>
           <span className="stat-count">{counts.surpassed}</span>
-          <span className="stat-label">Surpassed</span>
+          <span className="stat-label">{stateLabels.surpassed}</span>
         </div>
         <div className="matrix-stat-pill stat-notused">
           <span className="stat-badge">—</span>
           <span className="stat-count">{counts['not-used']}</span>
-          <span className="stat-label">Not used</span>
+          <span className="stat-label">{stateLabels['not-used']}</span>
         </div>
       </div>
 
@@ -101,7 +103,9 @@ export default function MatrixProfileGrid({ cells, taxonomy }) {
         >
           {/* Header corner */}
           <div className="matrix-header-cell corner">
-            <span style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--ink-soft)' }}>LEVEL / PURPOSE</span>
+            <span style={{ fontSize: '0.68rem', fontWeight: 800, color: 'var(--ink-soft)' }}>
+              {strings.matrix?.levelPurpose || 'LEVEL / PURPOSE'}
+            </span>
           </div>
 
           {/* Purpose Column Headers */}
@@ -115,7 +119,9 @@ export default function MatrixProfileGrid({ cells, taxonomy }) {
           {taxonomy.levels.map((level) => (
             <Fragment key={level.level}>
               <div className="matrix-header-cell level">
-                <span className="level-num">Level {level.level}</span>
+                <span className="level-num">
+                  {(strings.matrix?.levelPrefix || 'Level {level}').replace('{level}', level.level)}
+                </span>
                 <span className="level-name">{level.name}</span>
               </div>
 
@@ -131,7 +137,7 @@ export default function MatrixProfileGrid({ cells, taxonomy }) {
                     <button
                       type="button"
                       onClick={() => setExpandedKey(isExpanded ? null : key)}
-                      aria-label={`${purpose.name} ${level.name}: ${STATE_LABELS[cell.state]}`}
+                      aria-label={`${purpose.name} ${level.name}: ${stateLabels[cell.state]}`}
                       aria-expanded={isExpanded}
                       className={`matrix-cell-btn state-${cell.state} ${isExpanded ? 'active' : ''}`}
                       style={{
@@ -149,7 +155,7 @@ export default function MatrixProfileGrid({ cells, taxonomy }) {
                       >
                         {shortLabel}
                       </span>
-                      <span className="cell-state-name">{STATE_LABELS[cell.state]}</span>
+                      <span className="cell-state-name">{stateLabels[cell.state]}</span>
                     </button>
 
                     {/* Evidence Drawer Popup */}
@@ -163,20 +169,24 @@ export default function MatrixProfileGrid({ cells, taxonomy }) {
                               color: colors.badgeFg || '#ffffff',
                             }}
                           >
-                            {STATE_LABELS[cell.state]}
+                            {stateLabels[cell.state]}
                           </span>
                           <span className="evidence-title">
-                            Level {level.level} • {purpose.name}
+                            {(strings.matrix?.levelPrefix || 'Level {level}').replace('{level}', level.level)} • {purpose.name}
                           </span>
                         </div>
                         {cell.evidence.length === 0 ? (
-                          <p className="evidence-empty">No direct evidence observed in session.</p>
+                          <p className="evidence-empty">
+                            {strings.matrix?.noEvidence || 'No direct evidence observed in session.'}
+                          </p>
                         ) : (
                           <div className="evidence-list">
                             {cell.evidence.map((e, i) => (
                               <div key={i} className="evidence-item">
                                 <span className="evidence-code">[{e.observationCode}]</span>
-                                <span className="evidence-rule">Rule {e.ruleId}</span>
+                                <span className="evidence-rule">
+                                  {(strings.matrix?.rule || 'Rule {id}').replace('{id}', e.ruleId)}
+                                </span>
                               </div>
                             ))}
                           </div>
@@ -192,13 +202,12 @@ export default function MatrixProfileGrid({ cells, taxonomy }) {
       </div>
 
       <p className="matrix-caption">
-        Mapped to Charity Rowland's Communication Matrix framework (OHSU, communicationmatrix.org).
-        SETU maps observations to this framework to support screening.
+        {strings.home?.matrixCredit || "Mapped to Charity Rowland's Communication Matrix framework (OHSU, communicationmatrix.org)."}
       </p>
 
       {/* Legend */}
       <ul className="matrix-legend">
-        {Object.entries(STATE_LABELS).map(([state, label]) => {
+        {Object.entries(stateLabels).map(([state, label]) => {
           const colors = STATE_VARS[state];
           return (
             <li key={state}>

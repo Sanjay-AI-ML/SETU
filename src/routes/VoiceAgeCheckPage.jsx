@@ -1,21 +1,15 @@
-// Experimental novelty feature: estimates a coarse "voice register" from a
-// short live recording using autocorrelation pitch detection (no trained
-// model — see core/audio/pitchEstimate.js and voiceRegisterHeuristic.js).
-// Deliberately NOT reachable from the main HomePage flow, NOT part of any
-// session, and NEVER feeds the Matrix, flags, or clinician report. Pitch is
-// a weak, population-level correlate of age at best and is especially
-// unreliable for pre-verbal infants — this page says so, repeatedly, rather
-// than presenting a number that looks more meaningful than it is.
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { estimatePitchHz } from '../core/audio/pitchEstimate.js';
 import { estimateVoiceRegister } from '../core/audio/voiceRegisterHeuristic.js';
+import { useLanguage } from '../i18n/index.jsx';
 
 const RECORD_SECONDS = 5;
 const SAMPLE_INTERVAL_MS = 150;
 
 export default function VoiceAgeCheckPage() {
   const navigate = useNavigate();
+  const { strings } = useLanguage();
   const audioContextRef = useRef(null);
   const analyserRef = useRef(null);
   const micStreamRef = useRef(null);
@@ -30,7 +24,6 @@ export default function VoiceAgeCheckPage() {
 
   useEffect(() => {
     return () => stopAll();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function stopAll() {
@@ -108,50 +101,46 @@ export default function VoiceAgeCheckPage() {
   return (
     <main>
       <div className="screen-head">
-        <p className="eyebrow">Experimental — not part of assessment</p>
-        <h1>Voice register check</h1>
+        <p className="eyebrow">{strings.voiceAgeCheck?.eyebrow || 'Experimental — not part of assessment'}</p>
+        <h1>{strings.voiceAgeCheck?.title || 'Voice register check'}</h1>
       </div>
 
       <div className="callout plain" style={{ borderLeftColor: 'var(--concern)' }}>
-        <p>
-          <strong>This is a novelty feature, not a validated age predictor.</strong> It estimates
-          pitch from {RECORD_SECONDS} seconds of live audio using simple signal processing (no
-          trained model). Pitch loosely correlates with age at a population level but says very
-          little about any one person — especially infants and pre-verbal toddlers, whose cry and
-          babble acoustics don't map cleanly onto adult speech norms this kind of heuristic is
-          usually built around. This result never feeds the Matrix, flags, or clinician report,
-          and nothing recorded here is saved.
+        <p style={{ margin: 0, fontSize: '0.86rem', lineHeight: 1.55 }}>
+          {(strings.voiceAgeCheck?.disclaimer || 'This is a novelty feature, not a validated age predictor. It estimates pitch from {seconds} seconds of live audio using simple signal processing.').replace('{seconds}', RECORD_SECONDS)}
         </p>
       </div>
 
       {phase === 'idle' && (
         <div className="actions">
           <button type="button" className="btn btn-secondary" onClick={handleStart}>
-            Record {RECORD_SECONDS}s and estimate
+            🎙️ {(strings.voiceAgeCheck?.recordButton || 'Record {seconds}s and estimate').replace('{seconds}', RECORD_SECONDS)}
           </button>
         </div>
       )}
 
       {phase === 'recording' && (
-        <>
-          <div className="trial-badge">{secondsLeft}s remaining — speak or vocalize naturally</div>
+        <div style={{ textAlignment: 'center', padding: '20px 0' }}>
+          <span className="trial-badge" style={{ marginBottom: 20 }}>
+            {(strings.voiceAgeCheck?.recordingLabel || '{seconds}s remaining — speak or vocalize naturally').replace('{seconds}', secondsLeft)}
+          </span>
           <div className="waiting-stage">
             <div className="pulse-ring" aria-hidden="true" />
           </div>
-        </>
+        </div>
       )}
 
       {phase === 'error' && (
-        <p className="notice">Microphone unavailable. Check permissions and try again.</p>
+        <p className="notice">{strings.voiceAgeCheck?.errorLabel || 'Microphone unavailable. Check permissions and try again.'}</p>
       )}
 
       {phase === 'done' && result && (
         <div className="section card">
           <h2 style={{ marginTop: 0 }}>{result.label}</h2>
-          <p>{result.note}</p>
+          <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--ink-soft)' }}>{result.note}</p>
           {result.pitchHz != null && (
             <p className="matrix-caption" style={{ margin: '10px 0 0' }}>
-              Estimated fundamental frequency: ~{result.pitchHz} Hz (median across the recording).
+              {(strings.voiceAgeCheck?.pitchLine || 'Estimated fundamental frequency: ~{pitch} Hz (median across the recording).').replace('{pitch}', result.pitchHz)}
             </p>
           )}
         </div>
@@ -160,11 +149,11 @@ export default function VoiceAgeCheckPage() {
       <div className="actions inline" style={{ marginTop: 16 }}>
         {phase === 'done' && (
           <button type="button" className="btn btn-secondary" onClick={handleReset}>
-            Try again
+            {strings.voiceAgeCheck?.tryAgain || 'Try again'}
           </button>
         )}
         <button type="button" className="btn btn-ghost" onClick={() => navigate('/settings')}>
-          Back to Settings
+          {strings.voiceAgeCheck?.backSettings || 'Back to Settings'}
         </button>
       </div>
     </main>
