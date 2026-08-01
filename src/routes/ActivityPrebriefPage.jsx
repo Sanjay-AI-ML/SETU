@@ -8,6 +8,28 @@ import strings from '../i18n/en.json';
 const CALIBRATION_MS = 1500;
 const CALIBRATION_TIMEOUT_MS = 8000;
 
+async function tryGetUserMedia(constraints) {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+    stream.getTracks().forEach((track) => track.stop());
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function requestMediaPermissions() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    stream.getTracks().forEach((track) => track.stop());
+    return { audioAvailable: true, visionAvailable: true };
+  } catch {
+    const audioAvailable = await tryGetUserMedia({ audio: true });
+    const visionAvailable = await tryGetUserMedia({ video: true });
+    return { audioAvailable, visionAvailable };
+  }
+}
+
 export default function ActivityPrebriefPage() {
   const navigate = useNavigate();
   const { session } = useSessionState();
@@ -24,24 +46,27 @@ export default function ActivityPrebriefPage() {
 
   async function handleStart() {
     setCalibrating(true);
-    let audioAvailable = true;
-    try {
-      const audioContext = getAudioContext();
-      if (audioContext.state === 'suspended') {
-        await audioContext.resume();
-      }
+    const { audioAvailable: mediaAudioAvailable, visionAvailable } = await requestMediaPermissions();
 
-      await Promise.race([
-        getDetector().calibrate(CALIBRATION_MS),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('calibration-timeout')), CALIBRATION_TIMEOUT_MS)),
-      ]);
-    } catch (error) {
-      audioAvailable = false;
-    } finally {
-      setCalibrating(false);
+    let audioAvailable = mediaAudioAvailable;
+    if (audioAvailable) {
+      try {
+        const audioContext = getAudioContext();
+        if (audioContext.state === 'suspended') {
+          await audioContext.resume();
+        }
+
+        await Promise.race([
+          getDetector().calibrate(CALIBRATION_MS),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('calibration-timeout')), CALIBRATION_TIMEOUT_MS)),
+        ]);
+      } catch (error) {
+        audioAvailable = false;
+      }
     }
 
-    navigate('/session/activity/run', { state: { audioAvailable } });
+    setCalibrating(false);
+    navigate('/session/activity/run', { state: { audioAvailable, visionAvailable } });
   }
 
   return (
