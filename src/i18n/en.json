@@ -230,6 +230,12 @@
     "trialsSuffix": "T",
     "secondsSuffix": "s"
   },
+  "narrator": {
+    "eyebrow": "AI Vision Feature",
+    "title": "🎬 AI Engagement Narrator",
+    "desc": "Point the camera at your child. The AI watches and narrates what it sees — eye contact, hand gestures, vocalisations — in real time. All analysis runs on-device. Nothing is saved.",
+    "button": "Launch Narrator"
+  },
   "rollCall": {
     "eyebrow": "Special feature",
     "title": "🗣️ Roll Call",
@@ -261,6 +267,18 @@
     "errorLabel": "Couldn't analyse this clip. Try a different file.",
     "resultTitle": "Result",
     "statsLine": "Face detected in {face}% of frames, oriented toward the camera in {gaze}%, smiling in {smile}%, {handEvents} hand-motion events detected.",
+    "timelineTitle": "What happened in this clip",
+    "noEvents": "No distinct moments were detected in this clip.",
+    "events": {
+      "oriented-camera": "Oriented toward the camera",
+      "looked-away": "Looked away",
+      "smiled": "Smiled",
+      "pointed": "Pointed",
+      "reached": "Opened hand / reached",
+      "moved-toward": "Moved a hand toward the camera",
+      "moved-away": "Moved a hand away",
+      "vocalized": "Made a sound"
+    },
     "checkAnother": "Check another clip",
     "backHome": "Back to home"
   },

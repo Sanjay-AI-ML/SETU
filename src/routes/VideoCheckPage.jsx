@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getVisionDetector, resetVisionSession } from '../core/vision/visionSession.js';
 import { summarizeFrames, interpretSummary, summarizeVocalization, interpretVocalization } from '../core/vision/videoScreening.js';
+import { describeClip, formatTimestamp } from '../core/vision/videoDescription.js';
 import { computeRms, isVocalizing } from '../core/audio/vocalizationLevel.js';
 import { useLanguage } from '../i18n/index.jsx';
 
@@ -16,6 +17,7 @@ export default function VideoCheckPage() {
   const { strings } = useLanguage();
   const videoRef = useRef(null);
   const framesRef = useRef([]);
+  const timestampsRef = useRef([]);
   const vocalizingFlagsRef = useRef([]);
   const objectUrlRef = useRef(null);
   const finishedRef = useRef(false);
@@ -39,17 +41,20 @@ export default function VideoCheckPage() {
     getVisionDetector().stop();
     const summary = summarizeFrames(framesRef.current);
     const vocalization = summarizeVocalization(vocalizingFlagsRef.current);
+    const events = describeClip(framesRef.current, timestampsRef.current, vocalizingFlagsRef.current);
     setResult({
       summary,
       interpretation: interpretSummary(summary),
       vocalization,
       vocalizationInterpretation: interpretVocalization(vocalization),
+      events,
     });
     setStatus('done');
   }
 
   function handleFrame(signals) {
     framesRef.current.push(signals);
+    timestampsRef.current.push(videoRef.current?.currentTime ?? 0);
 
     if (analyserRef.current && timeDomainBufferRef.current) {
       analyserRef.current.getFloatTimeDomainData(timeDomainBufferRef.current);
@@ -86,6 +91,7 @@ export default function VideoCheckPage() {
     if (!file) return;
 
     framesRef.current = [];
+    timestampsRef.current = [];
     vocalizingFlagsRef.current = [];
     finishedRef.current = false;
     setResult(null);
@@ -115,6 +121,7 @@ export default function VideoCheckPage() {
     setStatus('idle');
     setResult(null);
     framesRef.current = [];
+    timestampsRef.current = [];
     vocalizingFlagsRef.current = [];
   }
 
@@ -175,6 +182,26 @@ export default function VideoCheckPage() {
               .replace('{handEvents}', result.summary.handMotionEvents)}
           </p>
           <p style={{ margin: '14px 0 0' }}>{result.vocalizationInterpretation.message}</p>
+        </div>
+      )}
+
+      {status === 'done' && result && (
+        <div className="section card">
+          <h2 style={{ marginTop: 0 }}>{strings.videoCheck?.timelineTitle || 'What happened in this clip'}</h2>
+          {result.events.length === 0 ? (
+            <p className="empty-note">{strings.videoCheck?.noEvents || 'No distinct moments were detected in this clip.'}</p>
+          ) : (
+            <ul className="card-list">
+              {result.events.map((event, i) => (
+                <li key={i} className="card" style={{ padding: '9px 15px', display: 'flex', gap: 10, alignItems: 'baseline' }}>
+                  <span className="matrix-caption" style={{ fontFamily: 'var(--font-mono)', minWidth: 40 }}>
+                    {formatTimestamp(event.t)}
+                  </span>
+                  <span>{strings.videoCheck?.events?.[event.code] || event.code}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       )}
 

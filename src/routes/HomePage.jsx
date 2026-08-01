@@ -276,6 +276,22 @@ export default function HomePage() {
         </button>
       </div>
 
+      {/* ── AI Engagement Narrator ──────────────────────────────────────── */}
+      <div className="section card special-feature-card" style={{ borderColor: 'rgba(36,107,82,0.3)', background: 'linear-gradient(135deg, rgba(36,107,82,0.06) 0%, var(--surface) 100%)' }}>
+        <span className="chip" style={{ marginBottom: 8, background: 'var(--mastered-soft)', color: 'var(--mastered)', borderColor: 'var(--mastered-line)' }}>
+          🤖 {strings.narrator?.eyebrow || 'AI Vision Feature'}
+        </span>
+        <h3 style={{ margin: '0 0 6px', fontSize: '1.05rem', fontWeight: 750 }}>
+          {strings.narrator?.title || '🎬 AI Engagement Narrator'}
+        </h3>
+        <p className="preview-sub" style={{ marginBottom: 12 }}>
+          {strings.narrator?.desc || "Point the camera at your child. The AI watches and narrates what it sees — eye contact, hand gestures, vocalisations — in real time. All analysis runs on-device. Nothing is saved."}
+        </p>
+        <button type="button" className="btn btn-secondary" style={{ borderColor: 'var(--mastered-line)', color: 'var(--mastered)' }} onClick={() => navigate('/engagement-narrator')}>
+          🎬 {strings.narrator?.button || 'Launch Narrator'}
+        </button>
+      </div>
+
       {/* ── Main Action Buttons ────────────────────────────────────────── */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 20 }}>
 
