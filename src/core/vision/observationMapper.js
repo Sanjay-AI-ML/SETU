@@ -13,6 +13,9 @@ export function mapObservations({ activityId, facing = null, smiling = false, ha
   } else if (activityId === 'whats-in-the-box') {
     if (handPose === 'point') codes.push('point');
     if (handPose === 'open') codes.push('show');
+  } else if (activityId === 'call-and-response') {
+    if (facing === 'camera') codes.push('name-response-orient');
+    if (motionDirection === 'toward') codes.push('name-response-approach');
   }
 
   return codes;

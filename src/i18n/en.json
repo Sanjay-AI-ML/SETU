@@ -16,10 +16,10 @@
   },
   "home": {
     "title": "SETU",
+    "subtitle": "A bridge between parents and specialists.",
     "startSession": "Start new session",
     "tryDemo": "Try demo (no child needed)",
-    "resumeSession": "Resume session",
-    "viewHistory": "View history"
+    "resumeSession": "Resume session"
   },
   "sessionOverview": {
     "title": "Today's session",

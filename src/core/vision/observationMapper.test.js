@@ -23,6 +23,12 @@ describe('mapObservations', () => {
     expect(mapObservations({ activityId: 'whats-in-the-box', handPose: 'open' })).toEqual(['show']);
   });
 
+  it('maps call-and-response name-response-orient and name-response-approach', () => {
+    expect(mapObservations({ activityId: 'call-and-response', facing: 'camera' })).toEqual(['name-response-orient']);
+    expect(mapObservations({ activityId: 'call-and-response', motionDirection: 'toward' })).toEqual(['name-response-approach']);
+    expect(mapObservations({ activityId: 'call-and-response', facing: 'camera', motionDirection: 'toward' })).toEqual(['name-response-orient', 'name-response-approach']);
+  });
+
   it('returns an empty array when nothing crosses a threshold', () => {
     expect(mapObservations({ activityId: 'bubble-time', handPose: 'neutral', facing: null, smiling: false, motionDirection: null })).toEqual([]);
   });

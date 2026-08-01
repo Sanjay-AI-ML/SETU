@@ -1,0 +1,202 @@
+[
+  {
+    "id": "mealtime",
+    "icon": "🥣",
+    "name": "Mealtime Routine",
+    "subtitle": "Requesting & Refusing at the Table",
+    "category": "Daily Living",
+    "colour": "#e67e22",
+    "colourSoft": "#fdebd0",
+    "setting": "Kitchen / Dining table",
+    "when": "Any regular meal or snack time",
+    "ageRange": "6 months – 5 years",
+    "description": "Everyday meals are a rich communication goldmine. This routine captures how your child asks for more of a preferred food, refuses a disliked item, and uses gaze, gesture, or words at the table.",
+    "targetSkills": ["Requesting objects", "Refusing / protesting", "Gaining attention", "Turn-taking"],
+    "setup": [
+      "Place 2-3 preferred foods AND 1 non-preferred food within your child's sight but slightly out of reach.",
+      "Serve only small portions so they need to ask for more.",
+      "Turn off TV/background noise to reduce distractions."
+    ],
+    "opportunitiesCount": 4,
+    "opportunities": [
+      {
+        "id": "meal-request-preferred",
+        "label": "Request preferred food",
+        "prompt": "Serve a tiny portion of a favourite food. Wait quietly (up to 10 seconds) before offering more — let your child ask first.",
+        "expectedBehaviours": ["reach", "point", "vocalise", "gaze-to-parent", "word"],
+        "reviewTags": ["reached-for-food", "pointed-at-food", "vocalised-more", "looked-at-parent", "said-word"]
+      },
+      {
+        "id": "meal-refuse-disliked",
+        "label": "Refuse disliked food",
+        "prompt": "Offer the non-preferred food with a smile. Hold it near and wait 5 seconds to see how your child communicates refusal.",
+        "expectedBehaviours": ["push-away", "head-turn", "vocal-protest", "word-no"],
+        "reviewTags": ["pushed-away", "turned-head", "protested", "said-no"]
+      },
+      {
+        "id": "meal-social-comment",
+        "label": "Comment on meal",
+        "prompt": "Take a big exaggerated bite, say 'Mmm!' then look at your child expectantly — waiting for any shared attention or comment.",
+        "expectedBehaviours": ["gaze-to-face", "smile", "vocalise", "word"],
+        "reviewTags": ["looked-at-face", "smiled-back", "vocalised", "commented"]
+      },
+      {
+        "id": "meal-all-done",
+        "label": "Signal all done",
+        "prompt": "When the child seems finished, gently model 'all done' (hands open) but wait before clearing — observe whether they signal finished.",
+        "expectedBehaviours": ["gesture-done", "push-away", "vocalise", "word"],
+        "reviewTags": ["gestured-done", "pushed-plate", "vocalised-done", "said-all-done"]
+      }
+    ]
+  },
+  {
+    "id": "bath-sensory",
+    "icon": "🛁",
+    "name": "Bath & Sensory Play",
+    "subtitle": "Requesting actions & water play",
+    "category": "Daily Living",
+    "colour": "#2980b9",
+    "colourSoft": "#d6eaf8",
+    "setting": "Bathroom / Sensory tub",
+    "when": "Bath time or water play session",
+    "ageRange": "6 months – 4 years",
+    "description": "Bath time is a natural laboratory for communication. Water, bubbles, and bath toys create irresistible motivation to request actions, protest stops, and share excitement.",
+    "targetSkills": ["Requesting action restart", "Protesting stop", "Social anticipation", "Commenting"],
+    "setup": [
+      "Have 2–3 favourite bath toys ready.",
+      "Prepare a cup for pouring water as a fun repeated action.",
+      "Keep a dry towel nearby to pause activities intentionally."
+    ],
+    "opportunitiesCount": 4,
+    "opportunities": [
+      {
+        "id": "bath-pour-water",
+        "label": "Request water pour",
+        "prompt": "Pour water from a cup over child's hands — they'll likely love it! Pour once, then hold the cup up and wait. Do they ask for more?",
+        "expectedBehaviours": ["reach", "vocalise", "gaze-to-parent", "word"],
+        "reviewTags": ["reached-for-cup", "vocalised-more", "looked-at-parent", "said-more"]
+      },
+      {
+        "id": "bath-stop-action",
+        "label": "Protest stop of favourite action",
+        "prompt": "Mid-splash or mid-pour, suddenly stop and look away. Wait 8 seconds. Does the child protest, reach, or use any communication to resume?",
+        "expectedBehaviours": ["vocal-protest", "reach", "tap-parent", "word"],
+        "reviewTags": ["protested-stop", "reached-for-action", "tapped-parent", "said-word"]
+      },
+      {
+        "id": "bath-bubble-pop",
+        "label": "Bubble pop anticipation",
+        "prompt": "Blow a bubble near child, then pause before the next one. Does child show anticipation — looking at wand, vocalising, reaching?",
+        "expectedBehaviours": ["gaze-to-wand", "anticipatory-movement", "vocalise", "word"],
+        "reviewTags": ["looked-at-wand", "leaned-forward", "vocalised", "said-more"]
+      },
+      {
+        "id": "bath-toy-choice",
+        "label": "Choose a bath toy",
+        "prompt": "Hold up two bath toys, one in each hand, and wait — don't name them. Which one does the child choose and how do they indicate their preference?",
+        "expectedBehaviours": ["reach", "point", "gaze", "word"],
+        "reviewTags": ["reached-for-toy", "pointed-at-toy", "looked-at-toy", "named-toy"]
+      }
+    ]
+  },
+  {
+    "id": "dressing",
+    "icon": "👗",
+    "name": "Dressing & Getting Ready",
+    "subtitle": "Requesting help & protesting wrong choices",
+    "category": "Daily Living",
+    "colour": "#8e44ad",
+    "colourSoft": "#e8daef",
+    "setting": "Bedroom / Wardrobe area",
+    "when": "Morning or evening dressing routine",
+    "ageRange": "1 – 5 years",
+    "description": "Getting dressed involves real, functional communication needs — asking for help, refusing the wrong item, and choosing between options. It's a perfect routine-embedded teaching moment.",
+    "targetSkills": ["Requesting help", "Protesting / refusing", "Choosing between options", "Labeling items"],
+    "setup": [
+      "Have 2 different shirt or sock options visible.",
+      "Intentionally get one item 'wrong' (e.g., put shoe on head or sock on hand).",
+      "Leave a zipper or button undone so child may request help."
+    ],
+    "opportunitiesCount": 4,
+    "opportunities": [
+      {
+        "id": "dressing-request-help",
+        "label": "Request help with clothing",
+        "prompt": "Start putting on a shoe but don't finish fastening it. Wait — does the child indicate they need help (extend foot, vocalise, point, word)?",
+        "expectedBehaviours": ["extend-limb", "vocalise", "point", "word"],
+        "reviewTags": ["extended-foot", "vocalised-help", "pointed", "said-help"]
+      },
+      {
+        "id": "dressing-wrong-item",
+        "label": "Protest wrong item",
+        "prompt": "Put the sock on the wrong foot, or put a hat on your own head saying 'Yours!' — observe whether child communicates the error.",
+        "expectedBehaviours": ["vocal-protest", "push-away", "point-to-correct", "word"],
+        "reviewTags": ["protested-error", "pushed-away", "pointed-correctly", "corrected-verbally"]
+      },
+      {
+        "id": "dressing-choice",
+        "label": "Choose between two items",
+        "prompt": "Hold up two socks or two shirts. 'This one or that one?' — wait for any deliberate choice signal.",
+        "expectedBehaviours": ["reach", "point", "gaze", "word"],
+        "reviewTags": ["reached-for-item", "pointed-at-item", "looked-at-item", "named-item"]
+      },
+      {
+        "id": "dressing-label",
+        "label": "Label a clothing item",
+        "prompt": "Hold up an item and ask 'What's this?' — pause for up to 10 seconds before naming it yourself.",
+        "expectedBehaviours": ["vocalise", "word", "gesture", "point"],
+        "reviewTags": ["vocalised-label", "said-word", "gestured", "pointed-at-item"]
+      }
+    ]
+  },
+  {
+    "id": "bedtime-story",
+    "icon": "📖",
+    "name": "Bedtime Storytime",
+    "subtitle": "Joint attention, pointing & labeling",
+    "category": "Language & Literacy",
+    "colour": "#27ae60",
+    "colourSoft": "#d5f5e3",
+    "setting": "Bedroom / Sofa with books",
+    "when": "Bedtime or quiet reading time",
+    "ageRange": "9 months – 5 years",
+    "description": "Shared reading is one of the most powerful language-building activities. This routine measures index-finger pointing at pictures, joint gaze, picture labeling, and turn-taking in a cozy, low-stress setting.",
+    "targetSkills": ["Joint attention", "Index-finger pointing", "Labeling pictures", "Turn-taking"],
+    "setup": [
+      "Choose a simple picture book with clear, colourful images on each page.",
+      "Sit side-by-side or child on lap so you share the same view.",
+      "Read only 2-3 pages per opportunity and pause at interesting pictures."
+    ],
+    "opportunitiesCount": 4,
+    "opportunities": [
+      {
+        "id": "story-point-picture",
+        "label": "Point to picture on request",
+        "prompt": "Point to a picture and ask 'Where's the dog?' — wait for child to look, point, or vocalise before moving on.",
+        "expectedBehaviours": ["gaze-to-picture", "point", "vocalise", "word"],
+        "reviewTags": ["looked-at-picture", "pointed-at-picture", "vocalised", "named-picture"]
+      },
+      {
+        "id": "story-label-picture",
+        "label": "Spontaneous picture labeling",
+        "prompt": "Turn to a new page, wait 6 seconds before naming anything. Does the child spontaneously comment, point, or label?",
+        "expectedBehaviours": ["point", "vocalise", "word", "show-parent"],
+        "reviewTags": ["pointed-spontaneously", "vocalised-spontaneously", "named-picture", "showed-parent"]
+      },
+      {
+        "id": "story-page-turn",
+        "label": "Request page turn",
+        "prompt": "Pause at the end of a page and wait — does the child indicate they want to continue? (reaching for page, vocalising, gaze to parent)",
+        "expectedBehaviours": ["reach", "vocalise", "gaze-to-parent", "word"],
+        "reviewTags": ["reached-for-page", "vocalised-more", "looked-at-parent", "said-more"]
+      },
+      {
+        "id": "story-social-comment",
+        "label": "Share excitement about story",
+        "prompt": "React with exaggerated surprise to a picture ('Oh no! The bear!') and look at child — do they share the excitement back?",
+        "expectedBehaviours": ["gaze-to-face", "smile", "vocalise", "point-to-share"],
+        "reviewTags": ["looked-at-face", "smiled-back", "vocalised-reaction", "pointed-to-share"]
+      }
+    ]
+  }
+]

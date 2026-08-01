@@ -53,11 +53,63 @@ export function createVisionDetector() {
     }
     if (myGeneration !== generation) return;
 
-    // Bare (non-exact) facingMode is an "ideal" constraint per spec: the
-    // browser picks the closest match instead of rejecting the request, so
-    // this stays safe on devices with only one camera (e.g. a laptop webcam
-    // during browser testing).
-    const acquiredStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode } });
+    let videoConstraints = { facingMode: { ideal: facingMode } };
+
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videoDevices = devices.filter(device => device.kind === 'videoinput');
+      
+      if (videoDevices.length > 0) {
+        let selectedDevice = null;
+        if (facingMode === 'environment') {
+          // Look for back camera by label keywords
+          selectedDevice = videoDevices.find(d => {
+            const label = d.label.toLowerCase();
+            return label.includes('back') || label.includes('rear') || label.includes('environment') || label.includes('main') || label.includes('facing 0') || label.includes('camera 0');
+          });
+          
+          // If still not found, try to find a device that does NOT have front/user keywords
+          if (!selectedDevice) {
+            selectedDevice = videoDevices.find(d => {
+              const label = d.label.toLowerCase();
+              return label !== '' && !label.includes('front') && !label.includes('user') && !label.includes('selfie') && !label.includes('facing 1') && !label.includes('camera 1');
+            });
+          }
+          
+          // Fallback to the first video device (often the back/main camera on Android)
+          if (!selectedDevice && videoDevices.length > 0) {
+            selectedDevice = videoDevices[0];
+          }
+        } else {
+          // Look for front camera
+          selectedDevice = videoDevices.find(d => {
+            const label = d.label.toLowerCase();
+            return label.includes('front') || label.includes('user') || label.includes('selfie') || label.includes('secondary') || label.includes('facing 1') || label.includes('camera 1');
+          });
+          
+          // Fallback to the second video device if we have multiple cameras
+          if (!selectedDevice && videoDevices.length > 1) {
+            selectedDevice = videoDevices[1];
+          }
+        }
+
+        if (selectedDevice) {
+          videoConstraints = { deviceId: { exact: selectedDevice.deviceId } };
+        }
+      }
+    } catch (err) {
+      console.warn('Error enumerating devices, falling back to facingMode constraint', err);
+    }
+
+    let acquiredStream;
+    try {
+      acquiredStream = await navigator.mediaDevices.getUserMedia({ video: videoConstraints });
+    } catch (err) {
+      console.warn('Failed to getUserMedia with selected deviceId, trying fallback facingMode', err);
+      // Fallback to standard ideal facingMode constraint
+      acquiredStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: facingMode } } });
+    }
+
     if (myGeneration !== generation) {
       acquiredStream.getTracks().forEach((track) => track.stop());
       return;

@@ -7,6 +7,7 @@ import { getAudioContext, getDetector, hasActiveSession, resetAudioSession } fro
 import { getVisionDetector, hasActiveVisionSession, resetVisionSession } from '../core/vision/visionSession.js';
 import { mapObservations } from '../core/vision/observationMapper.js';
 import { useSessionDispatch, useSessionState } from '../state/SessionContext.jsx';
+import { setActiveSession } from '../core/storage/index.js';
 import strings from '../i18n/en.json';
 
 function playServeTone(audioContext) {
@@ -33,13 +34,29 @@ export default function ActivityRunPage() {
   const [trialIndex, setTrialIndex] = useState(0);
   const [phase, setPhase] = useState('ready'); // 'ready' | 'waiting'
   const [pendingServeAt, setPendingServeAt] = useState(null);
+  const [activeBadges, setActiveBadges] = useState([]);
 
   const currentActivity = session ? activities[session.activityRuns.length] : null;
+
+  function triggerHaptic() {
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      try { navigator.vibrate(35); } catch {}
+    }
+  }
 
   function handleVisionFrame(signals) {
     if (!currentActivity) return;
     const codes = mapObservations({ activityId: currentActivity.id, ...signals });
     codes.forEach((code) => visionCodesRef.current.add(code));
+
+    const badges = [];
+    if (signals.facing === 'camera') badges.push({ id: 'facing', label: '✨ Facing Camera' });
+    if (signals.smiling) badges.push({ id: 'smile', label: '😊 Smile Detected' });
+    if (signals.handPose === 'point') badges.push({ id: 'point', label: '👉 Pointing' });
+    if (signals.handPose === 'open') badges.push({ id: 'open', label: '✋ Open Hand' });
+    if (signals.motionDirection === 'toward') badges.push({ id: 'toward', label: '⬆️ Reaching' });
+    if (signals.motionDirection === 'away') badges.push({ id: 'away', label: '⬇️ Pushing Away' });
+    setActiveBadges(badges);
   }
 
   async function handleSwitchCamera() {
@@ -97,7 +114,14 @@ export default function ActivityRunPage() {
     return <Navigate to="/session/results" replace />;
   }
 
+  useEffect(() => {
+    if (session) {
+      setActiveSession(session);
+    }
+  }, [session]);
+
   async function handleServe() {
+    triggerHaptic();
     const audioContext = audioContextRef.current;
     if (audioContext.state === 'suspended') {
       await audioContext.resume();
@@ -116,6 +140,7 @@ export default function ActivityRunPage() {
   }
 
   function recordTrial({ responded, source, returnAt: providedReturnAt, serveAt: providedServeAt }) {
+    triggerHaptic();
     if (recordedRef.current) return;
     recordedRef.current = true;
     if (audioAvailable) {
@@ -172,6 +197,13 @@ export default function ActivityRunPage() {
       {visionActive && (
         <div className="preview-frame">
           <video ref={videoRef} autoPlay playsInline muted />
+          {activeBadges.length > 0 && (
+            <div className="hud-overlay">
+              {activeBadges.map((badge) => (
+                <span key={badge.id} className="hud-badge">{badge.label}</span>
+              ))}
+            </div>
+          )}
           <button
             type="button"
             className="camera-toggle"
