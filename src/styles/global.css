@@ -41,6 +41,12 @@
 
 * { box-sizing: border-box; }
 
+/* Browsers don't let form controls inherit font-family from the page by
+   default (UA stylesheet forces the OS system font on button/input/select/
+   textarea) — without this, every button, text field, and the language
+   dropdown silently falls back off the bundled Noto stack. */
+button, input, select, textarea, optgroup { font-family: inherit; font-size: 100%; }
+
 body {
   margin: 0;
   min-height: 100vh;
