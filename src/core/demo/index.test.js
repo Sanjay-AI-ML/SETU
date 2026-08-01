@@ -7,10 +7,10 @@ import rulesConfig from '../../data/matrix-rules.json';
 import latencyBandsConfig from '../../data/latency-bands.json';
 
 describe('createDemoSession', () => {
-  it('produces one activity run per current activity, including Call & Response', () => {
+  it('produces one activity run per current activity', () => {
     const session = createDemoSession({ childId: 'demo-child' });
     expect(session.activityRuns).toHaveLength(activities.length);
-    expect(session.activityRuns.map((r) => r.activityId)).toContain('call-and-response');
+    expect(session.activityRuns.map((r) => r.activityId)).toEqual(activities.map((a) => a.id));
   });
 
   it('every observation code it synthesises has a matching matrix rule', () => {
@@ -34,8 +34,6 @@ describe('createDemoSession', () => {
 
     expect(cells.length).toBeGreaterThan(0);
     expect(Array.isArray(flags)).toBe(true);
-    // Call & Response's synthesised observations should land as mastered
-    // social-purpose cells, not silently vanish.
     const socialMastered = cells.some((c) => c.purpose === 'social' && c.state === 'mastered');
     expect(socialMastered).toBe(true);
   });

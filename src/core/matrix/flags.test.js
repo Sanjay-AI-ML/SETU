@@ -66,35 +66,4 @@ describe('core/matrix flags', () => {
       expect(flag).not.toHaveProperty('likelihood');
     }
   });
-
-  it('flags no name-response when Call & Response ran but no name-response evidence exists', () => {
-    const cells = buildEmptyCells();
-    const flags = computeFlags({
-      trials: [],
-      cells,
-      latencyBandsConfig,
-      ranActivityIds: ['call-and-response'],
-    });
-    expect(flags.map((f) => f.id)).toContain('flag-no-name-response');
-  });
-
-  it('does not flag no-name-response when the activity was not run this session', () => {
-    const cells = buildEmptyCells();
-    const flags = computeFlags({ trials: [], cells, latencyBandsConfig, ranActivityIds: ['bubble-time'] });
-    expect(flags.map((f) => f.id)).not.toContain('flag-no-name-response');
-  });
-
-  it('does not flag no-name-response when name-response evidence exists', () => {
-    const cells = buildEmptyCells();
-    const socialL3 = cells.find((c) => c.level === 3 && c.purpose === 'social');
-    socialL3.state = 'mastered';
-    socialL3.evidence.push({ sessionId: 's1', activityRunId: 'r1', observationCode: 'name-response-orient', ruleId: 'rule-social-l3-name-orient' });
-    const flags = computeFlags({
-      trials: [],
-      cells,
-      latencyBandsConfig,
-      ranActivityIds: ['call-and-response'],
-    });
-    expect(flags.map((f) => f.id)).not.toContain('flag-no-name-response');
-  });
 });

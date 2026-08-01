@@ -37,13 +37,6 @@ const ACTIVITIES_EXPLANATION = [
     category: 'Information & Commenting',
     desc: 'Parent pulls a mystery toy from a box and asks "What\'s this?". Measures pointing, labeling, showing, and sharing interest.',
   },
-  {
-    id: 'call-and-response',
-    icon: '🗣️',
-    name: 'Call & Response',
-    category: 'Social Attention',
-    desc: 'Parent calls child\'s name without visual cues. Measures orienting, turning toward caller, vocalizing in response, and approach.',
-  },
 ];
 
 export default function HomePage() {

@@ -176,19 +176,4 @@ describe('core/matrix rules coverage for Phase 3 activities', () => {
     expect(cells.find((c) => c.level === 4 && c.purpose === 'information').state).toBe('mastered');
     expect(cells.find((c) => c.level === 6 && c.purpose === 'information').state).toBe('mastered');
   });
-
-  it('maps call-and-response observations to their expected cells', () => {
-    const cells = matchRules(
-      [
-        { code: 'name-response-orient', source: 'parent' },
-        { code: 'name-response-vocalise', source: 'parent' },
-        { code: 'name-response-approach', source: 'parent' },
-      ],
-      rulesConfig,
-      {}
-    );
-    const socialL3 = cells.find((c) => c.level === 3 && c.purpose === 'social');
-    expect(socialL3.state).toBe('mastered');
-    expect(socialL3.evidence).toHaveLength(3);
-  });
 });

@@ -7,7 +7,7 @@ const NO_RESPONSE_RATE_THRESHOLD = 0.5;
 // prediction. See CLAUDE.md: "must never imply a diagnosis." Adding evidence
 // text here is meant to make these flags more legible to a clinician, not to
 // dress a heuristic up as something more predictive than it is.
-export function computeFlags({ trials, cells, latencyBandsConfig, ranActivityIds = [] }) {
+export function computeFlags({ trials, cells, latencyBandsConfig }) {
   const flags = [];
 
   if (hasHighNoResponseRate(trials)) {
@@ -40,20 +40,7 @@ export function computeFlags({ trials, cells, latencyBandsConfig, ranActivityIds
     });
   }
 
-  if (ranActivityIds.includes('call-and-response') && !hasNameResponseEvidence(cells)) {
-    flags.push({
-      id: 'flag-no-name-response',
-      label: 'No response observed when name was called',
-      severity: 'concern',
-      detail: 'Across the Call & Response activity, no orienting, approach, or vocal response to the child\'s name was recorded — a well-established early social-communication screening signal, on its own not conclusive.',
-    });
-  }
-
   return flags;
-}
-
-function hasNameResponseEvidence(cells) {
-  return cells.some((cell) => cell.evidence.some((e) => e.observationCode?.startsWith('name-response')));
 }
 
 function hasHighNoResponseRate(trials) {

@@ -15,9 +15,6 @@
     { "id": "rule-refuse-l3-vocal-protest", "level": 3, "purpose": "refuse", "state": "mastered", "requiredObservations": ["vocal-protest"] },
     { "id": "rule-refuse-l6-word-no", "level": 6, "purpose": "refuse", "state": "mastered", "requiredObservations": ["word-no"] },
     { "id": "rule-information-l4-show", "level": 4, "purpose": "information", "state": "mastered", "requiredObservations": ["show"] },
-    { "id": "rule-information-l6-comment", "level": 6, "purpose": "information", "state": "mastered", "requiredObservations": ["comment"] },
-    { "id": "rule-social-l3-name-orient", "level": 3, "purpose": "social", "state": "mastered", "requiredObservations": ["name-response-orient"] },
-    { "id": "rule-social-l3-name-vocalise", "level": 3, "purpose": "social", "state": "mastered", "requiredObservations": ["name-response-vocalise"] },
-    { "id": "rule-social-l3-name-approach", "level": 3, "purpose": "social", "state": "mastered", "requiredObservations": ["name-response-approach"] }
+    { "id": "rule-information-l6-comment", "level": 6, "purpose": "information", "state": "mastered", "requiredObservations": ["comment"] }
   ]
 }

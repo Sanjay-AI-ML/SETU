@@ -42,16 +42,5 @@
     "trialCount": 3,
     "expectedBehaviours": ["point", "label", "comment", "show"],
     "reviewTags": ["pointed-at-object", "named-object", "commented", "showed-object"]
-  },
-  {
-    "id": "call-and-response",
-    "name": "Call & Response",
-    "purposes": ["social"],
-    "parentScript": "Call your child's name clearly from slightly behind or beside them without waving or tapping them, and wait to see if they turn or respond.",
-    "serveButtonLabel": "Call child's name",
-    "materials": ["None — no visual cues"],
-    "trialCount": 3,
-    "expectedBehaviours": ["name-response-orient", "name-response-vocalise", "name-response-approach"],
-    "reviewTags": ["turned-toward-caller", "vocalised-in-response", "approached-caller"]
   }
 ]
