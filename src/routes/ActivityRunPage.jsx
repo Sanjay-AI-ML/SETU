@@ -8,7 +8,7 @@ import { getVisionDetector, hasActiveVisionSession, resetVisionSession } from '.
 import { mapObservations } from '../core/vision/observationMapper.js';
 import { useSessionDispatch, useSessionState } from '../state/SessionContext.jsx';
 import { setActiveSession } from '../core/storage/index.js';
-import strings from '../i18n/en.json';
+import { useLanguage } from '../i18n/index.jsx';
 
 function playServeTone(audioContext) {
   const oscillator = audioContext.createOscillator();
@@ -23,6 +23,7 @@ export default function ActivityRunPage() {
   const location = useLocation();
   const dispatch = useSessionDispatch();
   const { session } = useSessionState();
+  const { strings } = useLanguage();
   const audioAvailable = Boolean(location.state?.audioAvailable);
   const visionAvailable = Boolean(location.state?.visionAvailable);
   const audioContextRef = useRef(null);

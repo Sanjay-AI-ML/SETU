@@ -2,13 +2,14 @@ import { useRef, useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import activities from '../data/activities.json';
 import { useSessionDispatch, useSessionState } from '../state/SessionContext.jsx';
-import strings from '../i18n/en.json';
+import { useLanguage } from '../i18n/index.jsx';
 
 export default function ActivityReviewPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useSessionDispatch();
   const { session, activityRun } = useSessionState();
+  const { strings } = useLanguage();
   const visionSuggestedCodes = location.state?.visionSuggestedCodes ?? [];
   const [checked, setChecked] = useState(() => {
     const initial = {};

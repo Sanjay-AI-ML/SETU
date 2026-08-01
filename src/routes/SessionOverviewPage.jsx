@@ -1,11 +1,12 @@
 import { Navigate, useNavigate } from 'react-router-dom';
 import activities from '../data/activities.json';
 import { useSessionState } from '../state/SessionContext.jsx';
-import strings from '../i18n/en.json';
+import { useLanguage } from '../i18n/index.jsx';
 
 export default function SessionOverviewPage() {
   const navigate = useNavigate();
   const { session } = useSessionState();
+  const { strings } = useLanguage();
 
   if (!session) {
     return <Navigate to="/" replace />;

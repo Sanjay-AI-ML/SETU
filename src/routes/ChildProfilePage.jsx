@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createChildProfile } from '../core/model/index.js';
 import { setChildProfile } from '../core/storage/index.js';
-import strings from '../i18n/en.json';
+import { useLanguage } from '../i18n/index.jsx';
 
 const AVAILABLE_LANGUAGES = ['English', 'Tamil', 'Hindi'];
 
 export default function ChildProfilePage() {
   const navigate = useNavigate();
+  const { strings } = useLanguage();
   const [displayName, setDisplayName] = useState('');
   const [ageMonths, setAgeMonths] = useState('');
   const [homeLanguages, setHomeLanguages] = useState([]);

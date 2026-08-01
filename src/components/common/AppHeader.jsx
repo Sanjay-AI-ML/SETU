@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getChildProfile } from '../../core/storage/index.js';
+import { useLanguage } from '../../i18n/index.jsx';
 
 export default function AppHeader() {
   const navigate = useNavigate();
   const location = useLocation();
   const [profile, setProfile] = useState(null);
+  const { lang, setLanguage } = useLanguage();
 
   useEffect(() => {
     getChildProfile().then(setProfile);
@@ -31,6 +33,18 @@ export default function AppHeader() {
         </div>
 
         <nav className="nav-links">
+          <select
+            className="nav-btn"
+            value={lang}
+            onChange={(e) => setLanguage(e.target.value)}
+            title="Language"
+            style={{ padding: '4px 6px', cursor: 'pointer', background: 'var(--surface-sunk)', border: '1px solid var(--border)' }}
+          >
+            <option value="en">English</option>
+            <option value="ta">தமிழ் (Tamil)</option>
+            <option value="hi">हिंदी (Hindi)</option>
+          </select>
+
           <button
             type="button"
             className={`nav-btn ${location.pathname === '/' ? 'active' : ''}`}

@@ -10,6 +10,16 @@ export function setConsent(value) {
   return set(CONSENT_KEY, value);
 }
 
+const LANGUAGE_KEY = 'setu:language';
+
+export function getLanguage() {
+  return get(LANGUAGE_KEY).then((value) => value ?? 'en');
+}
+
+export function setLanguage(lang) {
+  return set(LANGUAGE_KEY, lang);
+}
+
 const CHILD_PROFILE_KEY = 'setu:child-profile';
 
 export function getChildProfile() {

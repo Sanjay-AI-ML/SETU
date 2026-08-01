@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getChildProfile, getActiveSession, clearActiveSession } from '../core/storage/index.js';
 import { useSessionDispatch } from '../state/SessionContext.jsx';
 import { createDemoSession } from '../core/demo/index.js';
-import strings from '../i18n/en.json';
+import { useLanguage } from '../i18n/index.jsx';
 import scenariosData from '../data/scenarios.json';
 import activities from '../data/activities.json';
 
@@ -49,6 +49,7 @@ const ACTIVITIES_EXPLANATION = [
 export default function HomePage() {
   const navigate = useNavigate();
   const dispatch = useSessionDispatch();
+  const { strings } = useLanguage();
   const [childId, setChildId] = useState(null);
   const [activeSession, setActiveSessionState] = useState(null);
   const [expandedActivity, setExpandedActivity] = useState(null);

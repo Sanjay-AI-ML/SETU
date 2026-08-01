@@ -15,30 +15,33 @@ import AppHeader from './components/common/AppHeader.jsx';
 import ConsentGate from './components/common/ConsentGate.jsx';
 import RequireChildProfile from './components/common/RequireChildProfile.jsx';
 import { SessionProvider } from './state/SessionContext.jsx';
+import { LanguageProvider } from './i18n/index.jsx';
 
 export default function App() {
   return (
-    <SessionProvider>
-      <AppHeader />
-      <Routes>
-        <Route path="/consent" element={<ConsentPage />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-        <Route element={<ConsentGate />}>
-          <Route path="/child-profile" element={<ChildProfilePage />} />
-          <Route element={<RequireChildProfile />}>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/session/history" element={<SessionHistoryPage />} />
-            <Route path="/video-check" element={<VideoCheckPage />} />
-            <Route path="/session/overview" element={<SessionOverviewPage />} />
-            <Route path="/session/activity/prebrief" element={<ActivityPrebriefPage />} />
-            <Route path="/session/activity/run" element={<ActivityRunPage />} />
-            <Route path="/session/activity/review" element={<ActivityReviewPage />} />
-            <Route path="/session/results" element={<SessionResultsPage />} />
-            <Route path="/session/report" element={<ReportPreviewPage />} />
+    <LanguageProvider>
+      <SessionProvider>
+        <AppHeader />
+        <Routes>
+          <Route path="/consent" element={<ConsentPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route element={<ConsentGate />}>
+            <Route path="/child-profile" element={<ChildProfilePage />} />
+            <Route element={<RequireChildProfile />}>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/session/history" element={<SessionHistoryPage />} />
+              <Route path="/video-check" element={<VideoCheckPage />} />
+              <Route path="/session/overview" element={<SessionOverviewPage />} />
+              <Route path="/session/activity/prebrief" element={<ActivityPrebriefPage />} />
+              <Route path="/session/activity/run" element={<ActivityRunPage />} />
+              <Route path="/session/activity/review" element={<ActivityReviewPage />} />
+              <Route path="/session/results" element={<SessionResultsPage />} />
+              <Route path="/session/report" element={<ReportPreviewPage />} />
+            </Route>
           </Route>
-        </Route>
-      </Routes>
-    </SessionProvider>
+        </Routes>
+      </SessionProvider>
+    </LanguageProvider>
   );
 }

@@ -1,9 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { setConsent } from '../core/storage/index.js';
-import strings from '../i18n/en.json';
+import { useLanguage } from '../i18n/index.jsx';
 
 export default function ConsentPage() {
   const navigate = useNavigate();
+  const { strings } = useLanguage();
 
   async function handleAcknowledge() {
     await setConsent(true);

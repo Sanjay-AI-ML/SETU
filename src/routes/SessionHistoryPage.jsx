@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { getSessions, deleteSession } from '../core/storage/index.js';
 import { useSessionDispatch } from '../state/SessionContext.jsx';
 import LongitudinalProgressCard from '../components/history/LongitudinalProgressCard.jsx';
-import strings from '../i18n/en.json';
+import { useLanguage } from '../i18n/index.jsx';
 
 export default function SessionHistoryPage() {
   const navigate = useNavigate();
   const dispatch = useSessionDispatch();
+  const { strings } = useLanguage();
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
 

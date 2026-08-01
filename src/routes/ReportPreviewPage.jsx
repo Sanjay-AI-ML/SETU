@@ -13,13 +13,14 @@ import ResponseTimeRibbon from '../components/ribbon/ResponseTimeRibbon.jsx';
 import rulesConfig from '../data/matrix-rules.json';
 import latencyBandsConfig from '../data/latency-bands.json';
 import taxonomy from '../data/matrix-taxonomy.json';
-import strings from '../i18n/en.json';
+import { useLanguage } from '../i18n/index.jsx';
 
 import ShareButton from '../components/common/ShareButton.jsx';
 import SmsReportButton from '../components/common/SmsReportButton.jsx';
 
 export default function ReportPreviewPage() {
   const { session } = useSessionState();
+  const { strings } = useLanguage();
   const [report, setReport] = useState(null);
 
   useEffect(() => {

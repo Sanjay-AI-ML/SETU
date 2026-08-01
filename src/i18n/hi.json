@@ -1,0 +1,67 @@
+{
+  "consent": {
+    "title": "शुरू करने से पहले",
+    "notDiagnostic": "सेतु (SETU) एक नैदानिक (डायग्नोस्टिक) उपकरण नहीं है। यह किसी भी स्थिति का निदान या पुष्टि नहीं करता है।",
+    "demoDataNotice": "यह एक हैकाथॉन प्रोटोटाइप है। आप जो भी नमूना डेटा देखते हैं वह स्वयं-दर्ज या सिम्युलेटेड है, वास्तविक नैदानिक डेटा नहीं।",
+    "clinicianReviewNotice": "सेतु एक योग्य चिकित्सक की समीक्षा के लिए संरचित अवलोकन तैयार करता है — यह स्क्रीन सहायता है, अंतिम परिणाम नहीं।",
+    "acknowledgeButton": "मैं समझता/समझती हूँ, जारी रखें"
+  },
+  "childProfile": {
+    "title": "अपने बच्चे के बारे में बताएं",
+    "displayNameLabel": "बच्चे का नाम या आद्याक्षर",
+    "ageMonthsLabel": "आयु (महीनों में)",
+    "homeLanguagesLabel": "घर की भाषाएं",
+    "notesLabel": "ज्ञात निदान या नोट्स (वैकल्पिक)",
+    "saveButton": "सहेजें और जारी रखें"
+  },
+  "home": {
+    "title": "सेतु",
+    "subtitle": "माता-पिता और विशेषज्ञों के बीच एक पुल।",
+    "startSession": "नया सत्र शुरू करें",
+    "tryDemo": "डेमो आज़माएं (बच्चे की आवश्यकता नहीं)",
+    "resumeSession": "सत्र फिर से शुरू करें"
+  },
+  "sessionOverview": {
+    "title": "आज का सत्र",
+    "progressLabel": "{completed} / {total} गतिविधियां पूर्ण",
+    "continueButton": "जारी रखें",
+    "seeResultsButton": "परिणाम देखें",
+    "doneLabel": "पूर्ण"
+  },
+  "activityPrebrief": {
+    "materialsLabel": "आपको आवश्यकता होगी",
+    "startButton": "गतिविधि शुरू करें",
+    "calibratingLabel": "कमरे की ध्वनि का आकलन कर रहा है…"
+  },
+  "activityRun": {
+    "respondedButton": "बच्चे ने प्रतिक्रिया दी",
+    "noResponseButton": "कोई प्रतिक्रिया नहीं",
+    "trialLabel": "प्रयास {current} / {total}",
+    "waitingLabel": "प्रतिक्रिया की प्रतीक्षा में…",
+    "micUnavailableLabel": "माइक्रोफोन अनुपलब्ध — केवल टैप पहचान का उपयोग किया जा रहा है",
+    "visionUnavailableLabel": "कैमरा अनुपलब्ध — केवल मैनुअल अवलोकन का उपयोग किया जा रहा है।",
+    "switchCameraLabel": "कैमरा बदलें"
+  },
+  "activityReview": {
+    "title": "आपने क्या ध्यान दिया?",
+    "instructions": "गतिविधि के दौरान आपके बच्चे ने जो कुछ भी किया उसे चुनें।",
+    "confirmButton": "पुष्टि करें और परिणाम देखें",
+    "visionSuggestedLabel": "(कैमरा द्वारा सुझाया गया)"
+  },
+  "sessionResults": {
+    "title": "सत्र के परिणाम",
+    "flagsTitle": "चिकित्सक के साथ समीक्षा करने योग्य बिंदु",
+    "noFlags": "डेमो नियमों द्वारा कोई चिंता चिन्हित नहीं की गई।",
+    "reportButton": "रिपोर्ट देखें"
+  },
+  "reportPreview": {
+    "title": "चिकित्सक रिपोर्ट",
+    "generatedLabel": "तैयार किया गया {date}",
+    "printButton": "प्रिंट करें / PDF के रूप में सहेजें",
+    "disclaimersTitle": "महत्वपूर्ण नोट",
+    "ribbonTitle": "प्रतिक्रिया समय",
+    "matrixTitle": "कम्युनिकेशन मैट्रिक्स प्रोफ़ाइल",
+    "flagsTitle": "चिकित्सक के साथ समीक्षा करने योग्य बिंदु",
+    "noFlags": "डेमो नियमों द्वारा कोई चिंता चिन्हित नहीं की गई।"
+  }
+}

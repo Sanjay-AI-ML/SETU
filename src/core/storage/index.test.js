@@ -13,6 +13,8 @@ vi.mock('idb-keyval', () => ({
 const {
   getConsent,
   setConsent,
+  getLanguage,
+  setLanguage,
   getChildProfile,
   setChildProfile,
   getSessions,
@@ -40,6 +42,17 @@ describe('core/storage consent', () => {
   it('returns false if consent was explicitly set to false', async () => {
     await setConsent(false);
     await expect(getConsent()).resolves.toBe(false);
+  });
+});
+
+describe('core/storage language', () => {
+  it('defaults to "en" when no language is saved', async () => {
+    await expect(getLanguage()).resolves.toBe('en');
+  });
+
+  it('saves and retrieves the selected language', async () => {
+    await setLanguage('ta');
+    await expect(getLanguage()).resolves.toBe('ta');
   });
 });
 

@@ -14,7 +14,7 @@ import rulesConfig from '../data/matrix-rules.json';
 import taxonomy from '../data/matrix-taxonomy.json';
 import latencyBandsConfig from '../data/latency-bands.json';
 import ageNormsConfig from '../data/age-norms.json';
-import strings from '../i18n/en.json';
+import { useLanguage } from '../i18n/index.jsx';
 import { generateStrategies } from '../core/strategies/index.js';
 
 // ── Colour cycle for strategy cards ─────────────────────────────────────────
@@ -28,6 +28,7 @@ const STRATEGY_COLOURS = [
 export default function SessionResultsPage() {
   const navigate = useNavigate();
   const { session } = useSessionState();
+  const { strings } = useLanguage();
   const [showClinicianModal, setShowClinicianModal] = useState(false);
   const [childAgeMonths, setChildAgeMonths] = useState(null);
 

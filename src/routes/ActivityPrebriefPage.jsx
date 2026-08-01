@@ -3,7 +3,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import activities from '../data/activities.json';
 import { useSessionState } from '../state/SessionContext.jsx';
 import { getAudioContext, getDetector } from '../core/latency/audioSession.js';
-import strings from '../i18n/en.json';
+import { useLanguage } from '../i18n/index.jsx';
 
 const CALIBRATION_MS = 1500;
 const CALIBRATION_TIMEOUT_MS = 8000;
@@ -33,6 +33,7 @@ async function requestMediaPermissions() {
 export default function ActivityPrebriefPage() {
   const navigate = useNavigate();
   const { session } = useSessionState();
+  const { strings } = useLanguage();
   const [calibrating, setCalibrating] = useState(false);
 
   if (!session) {
