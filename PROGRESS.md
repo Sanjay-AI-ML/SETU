@@ -5,6 +5,45 @@
 
 ---
 
+## 2026-08-01 — Session 14: Scope pivot — age-gap check + SMS handoff (completed, 1hr budget)
+
+**Context:** organizers extended requirements — age-gap AI, autism response-to-call check,
+Tamil/English, offline SMS report, 30-sec video AI check. Under a 1-hour budget, scoped down
+via brainstorming: on-device only (no backend/paid API — live judge demo can't depend on
+network), rule-based "AI" (no clinical training data exists, same rationale as Matrix engine).
+
+**Done:**
+- `src/data/age-norms.json` — age-referenced developmental bands per Communication Matrix
+  level, cited from published milestone literature (Oller 2000, Owens 2020, Berk 2018, Paul
+  et al. 2018).
+- `src/core/ageGap/index.js` (+ tests, 4/4 passing) — pure function comparing the child's
+  strongest observed level against its expected age band, returns on-track/ahead/delayed.
+- Wired into `core/report/index.js` (`sections.ageGap`) and surfaced on both
+  `SessionResultsPage.jsx` and `ReportPreviewPage.jsx`.
+- `src/components/common/SmsReportButton.jsx` — condensed summary sent via native `sms:`
+  URI scheme (no new native plugin, no Android rebuild required, works offline over the
+  phone's own network).
+- README rewritten to reflect pivoted scope, features list, and honest "in progress" section.
+- Full suite: 76/76 passing. `npm run build`: clean.
+
+**Explicitly deferred (documented in README, not built this session):**
+- Call-response activity (5th guided activity, name-call orientation check).
+- Standalone 30-second video-upload screening screen.
+- Android rebuild/on-device verification of this session's changes.
+
+## 2026-08-01 — Session 13: Camera & PDF Print Fixes (completed)
+
+**Done:**
+- **Camera Device Selection**: Modified `src/core/vision/capture.js` to query available media devices via `enumerateDevices()`. If `facingMode === 'environment'`, it searches for labels containing `"back"`, `"rear"`, `"environment"`, `"main"`, etc., or defaults to index 0. If `facingMode === 'user'`, it searches for labels containing `"front"`, `"user"`, `"selfie"`, etc., or defaults to index 1. Falls back to standard ideal facingMode constraint if specific device selection fails.
+- **Native Android Printing**: Added a native Capacitor plugin `PrinterPlugin.java` in package `org.setu.app`. Registered it in `MainActivity.java` via `registerPlugin(PrinterPlugin.class)`. It implements the `@PluginMethod` `print()`, which runs on the UI thread to call `webView.createPrintDocumentAdapter()` and submits it to Android's `PrintManager` system service to open the native print/Save-to-PDF flow.
+- **Print Button Action**: Updated `src/routes/ReportPreviewPage.jsx` to instantiate the native `Printer` plugin and call it on click, falling back to browser `window.print()` on non-native (web) platforms.
+- **Verification**: Ran `npm run test` (all 68 tests passing) and `npm run build` (vite bundle compiled successfully with zero warnings/errors).
+- **On-Device Installation & Validation**:
+  - Rebuilt the native Android project via `./gradlew.bat assembleDebug` inside the `android/` directory using portable JDK 21.
+  - Successfully installed `app-debug.apk` onto the connected physical Samsung Galaxy S24 Ultra (`RZCXC04077L`) using `adb install -r`.
+  - Launched the app via `adb shell am start -n org.setu.app/.MainActivity` and monitored `adb logcat` to confirm zero crashes.
+  - Captured a live screenshot (`device_screenshot.png`) of the device screen to verify the app rendered successfully.
+
 ## 2026-08-01 — Session 12: Phase 4 — Vision (full implementation)
 
 **Done — 9-task plan (`.superpowers/sdd/2026-08-01-phase4-vision/`), task-by-task, each reviewed before moving on:**

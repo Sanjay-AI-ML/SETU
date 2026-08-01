@@ -1,3 +1,6 @@
+import { computeAgeGap } from '../ageGap/index.js';
+import ageNormsConfig from '../../data/age-norms.json';
+
 export function generateReport({ session, child, cells, flags, trials }) {
   return {
     id: crypto.randomUUID(),
@@ -6,6 +9,7 @@ export function generateReport({ session, child, cells, flags, trials }) {
     sections: {
       child: { displayName: child.displayName, ageMonths: child.ageMonths },
       matrixProfile: cells,
+      ageGap: computeAgeGap({ ageMonths: child.ageMonths, cells, ageNormsConfig }),
       flags,
       trials: trials.map((t) => ({ index: t.index, latencyMs: t.latencyMs, responded: t.responded })),
     },

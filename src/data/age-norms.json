@@ -1,0 +1,21 @@
+{
+  "version": "0.1.0",
+  "unvalidated": true,
+  "disclaimer": "Demo developmental-age reference bands, compiled from published milestone literature (see citations). Not clinically validated for individual diagnosis. A gap flagged here is a prompt to consult a qualified clinician, never a diagnosis.",
+  "citations": [
+    "Oller, D. K. (2000). The Emergence of the Speech Capacity. Lawrence Erlbaum Associates.",
+    "Owens, R. E. (2020). Language Development: An Introduction (10th ed.). Pearson.",
+    "Berk, L. E. (2018). Development Through the Lifespan (7th ed.). Pearson.",
+    "Paul, R., Norbury, C. F., & Gosse, C. (2018). Language Disorders from Infancy through Adolescence (5th ed.). Elsevier."
+  ],
+  "levels": [
+    { "level": 1, "minMonths": 0, "maxMonths": 4, "note": "Phonation stage — reflexive vocalisations, comfort sounds." },
+    { "level": 2, "minMonths": 4, "maxMonths": 8, "note": "Cooing/gooing/expansion — vocal play, squeals, raspberries." },
+    { "level": 3, "minMonths": 8, "maxMonths": 12, "note": "Canonical/variegated babbling — repeated and mixed syllables; clear pre-symbolic signals." },
+    { "level": 4, "minMonths": 12, "maxMonths": 18, "note": "Jargon and first conventional gestures — pointing, showing, first words." },
+    { "level": 5, "minMonths": 18, "maxMonths": 24, "note": "Concrete symbols — picture/object-based communication emerges." },
+    { "level": 6, "minMonths": 24, "maxMonths": 36, "note": "Abstract symbols — spoken/printed words with no physical resemblance to meaning." },
+    { "level": 7, "minMonths": 36, "maxMonths": 60, "note": "Language — grammatical, multi-word original statements." }
+  ],
+  "gapThresholdMonths": 4
+}

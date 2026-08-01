@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
+import { registerPlugin } from '@capacitor/core';
 import { useSessionState } from '../state/SessionContext.jsx';
+
+const Printer = registerPlugin('Printer');
 import { getChildProfile } from '../core/storage/index.js';
 import { matchRules, mergeCells, applySurpassed } from '../core/matrix/index.js';
 import { computeFlags } from '../core/matrix/flags.js';
@@ -12,6 +15,9 @@ import latencyBandsConfig from '../data/latency-bands.json';
 import taxonomy from '../data/matrix-taxonomy.json';
 import strings from '../i18n/en.json';
 
+import ShareButton from '../components/common/ShareButton.jsx';
+import SmsReportButton from '../components/common/SmsReportButton.jsx';
+
 export default function ReportPreviewPage() {
   const { session } = useSessionState();
   const [report, setReport] = useState(null);
@@ -19,9 +25,6 @@ export default function ReportPreviewPage() {
   useEffect(() => {
     if (!session?.activityRuns?.length) return;
     getChildProfile().then((child) => {
-      // Same session-wide aggregation as Session Results: match rules per
-      // activity run (no per-run surpassed), merge to the highest state per
-      // cell across the whole session, then apply surpassed once globally.
       const allTrials = session.activityRuns.flatMap((run) => run.trials);
       const cellsPerRun = session.activityRuns.map((run) =>
         matchRules(run.observations, rulesConfig, { sessionId: session.id, activityRunId: run.id })
@@ -75,6 +78,24 @@ export default function ReportPreviewPage() {
         <MatrixProfileGrid cells={report.sections.matrixProfile} taxonomy={taxonomy} />
       </div>
 
+      <div className="section card">
+        <h2 style={{ marginTop: 0 }}>🎯 Developmental age check</h2>
+        {report.sections.ageGap.status === 'insufficient-data' ? (
+          <p className="empty-note">Not enough observations yet to estimate a developmental level.</p>
+        ) : (
+          <p style={{ margin: 0 }}>
+            Strongest observed level: <strong>Level {report.sections.ageGap.functionalLevel}</strong> ({report.sections.ageGap.note}),
+            typically seen at {report.sections.ageGap.expectedRange.minMonths}–{report.sections.ageGap.expectedRange.maxMonths} months.{' '}
+            {report.sections.ageGap.status === 'delayed' &&
+              `~${report.sections.ageGap.gapMonths} months behind the typical range for stated age.`}
+            {report.sections.ageGap.status === 'ahead' &&
+              `~${report.sections.ageGap.gapMonths} months ahead of the typical range for stated age.`}
+            {report.sections.ageGap.status === 'on-track' && 'On track for stated age.'}
+          </p>
+        )}
+        <p className="matrix-caption" style={{ margin: '10px 0 0' }}>{report.sections.ageGap.disclaimer}</p>
+      </div>
+
       <div className="section">
         <h2>{strings.reportPreview.flagsTitle}</h2>
         {report.sections.flags.length === 0 ? (
@@ -88,9 +109,31 @@ export default function ReportPreviewPage() {
         )}
       </div>
 
-      <div className="actions">
-        <button className="btn btn-primary" onClick={() => window.print()}>{strings.reportPreview.printButton}</button>
+      <div className="actions inline">
+        <button
+          className="btn btn-primary"
+          onClick={async () => {
+            try {
+              await Printer.print();
+            } catch (error) {
+              console.warn('Native printing not available or failed, falling back to window.print()', error);
+              window.print();
+            }
+          }}
+        >
+          {strings.reportPreview.printButton}
+        </button>
+        <ShareButton
+          title={`SETU Report: ${report.sections.child.displayName}`}
+          text={`Clinician Report for ${report.sections.child.displayName} (${report.sections.child.ageMonths} months). Mapped to Communication Matrix.`}
+        />
+        <SmsReportButton
+          flags={report.sections.flags}
+          ageGap={report.sections.ageGap}
+          activityCount={session.activityRuns.length}
+        />
       </div>
     </main>
   );
 }
+
