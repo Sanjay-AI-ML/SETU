@@ -34,15 +34,14 @@ export default function AppHeader() {
 
         <nav className="nav-links">
           <select
-            className="nav-btn"
+            className="nav-lang-select"
             value={lang}
             onChange={(e) => setLanguage(e.target.value)}
             title="Language"
-            style={{ padding: '4px 6px', cursor: 'pointer', background: 'var(--surface-sunk)', border: '1px solid var(--border)' }}
           >
-            <option value="en">English</option>
-            <option value="ta">தமிழ் (Tamil)</option>
-            <option value="hi">हिंदी (Hindi)</option>
+            <option value="en">EN</option>
+            <option value="ta">தமிழ்</option>
+            <option value="hi">हिंदी</option>
           </select>
 
           <button
@@ -51,7 +50,7 @@ export default function AppHeader() {
             onClick={() => navigate('/')}
             title={strings.header?.home || 'Home'}
           >
-            🏠 {strings.header?.home || 'Home'}
+            🏠
           </button>
 
           <button
@@ -60,7 +59,7 @@ export default function AppHeader() {
             onClick={() => navigate('/session/history')}
             title={strings.header?.history || 'History'}
           >
-            📜 {strings.header?.history || 'History'}
+            📜
           </button>
 
           <button

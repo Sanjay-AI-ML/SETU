@@ -272,14 +272,14 @@ export default function HomePage() {
       </div>
 
       {/* ── Main Action Buttons ────────────────────────────────────────── */}
-      <div className="actions" style={{ gap: 12, marginTop: 16 }}>
-        {/* Resume Session Button (shows progress badge when session active) */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 20 }}>
+
+        {/* Resume — shown only when a session is in progress */}
         {activeSession && (
           <button
             type="button"
             className="btn btn-primary btn-pulse"
             onClick={handleResumeSession}
-            style={{ background: 'var(--accent)', color: '#fff', fontSize: '1.05rem', padding: '16px' }}
           >
             ▶️ {(strings.home?.resumeSessionProgress || 'Resume session ({completed}/{total} completed)')
               .replace('{completed}', completedActivitiesCount)
@@ -287,7 +287,7 @@ export default function HomePage() {
           </button>
         )}
 
-        {/* Start New Session */}
+        {/* Start new session — primary CTA */}
         <button
           type="button"
           className={activeSession ? 'btn btn-secondary' : 'btn btn-primary'}
@@ -297,19 +297,29 @@ export default function HomePage() {
           ✨ {strings.home.startSession}
         </button>
 
-        {/* Try Instant Demo */}
-        <button type="button" className="btn btn-secondary" onClick={handleTryDemo}>
-          ⚡ {strings.home.tryDemo}
-        </button>
-
-        {/* Standalone video screening check */}
-        <button type="button" className="btn btn-ghost" onClick={() => navigate('/video-check')}>
-          🎥 {strings.home?.quickVideoCheck || 'Quick video check (upload/record a short clip)'}
-        </button>
+        {/* Secondary row */}
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={handleTryDemo}
+            style={{ flex: 1 }}
+          >
+            ⚡ {strings.home.tryDemo}
+          </button>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => navigate('/video-check')}
+            style={{ flex: 1 }}
+          >
+            🎥 {strings.home?.quickVideoCheck?.split(' ').slice(0, 3).join(' ') || 'Quick Video Check'}
+          </button>
+        </div>
       </div>
 
-      <div className="callout plain" style={{ marginTop: 24, textAlign: 'center' }}>
-        <p style={{ fontSize: '0.82rem', margin: 0, color: 'var(--ink-soft)' }}>
+      <div style={{ marginTop: 24, padding: '12px 16px', textAlign: 'center', borderTop: '1px solid var(--border)' }}>
+        <p style={{ fontSize: '0.78rem', margin: 0, color: 'var(--ink-faint)', lineHeight: 1.5 }}>
           {strings.home?.matrixCredit || "SETU maps natural play observations to Charity Rowland's Communication Matrix framework (OHSU)."}
         </p>
       </div>
