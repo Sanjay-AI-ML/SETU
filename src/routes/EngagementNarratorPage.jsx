@@ -300,58 +300,67 @@ export default function EngagementNarratorPage() {
       const allFaces = faceResult?.faceLandmarks ?? [];
       const handLMs  = handResult?.landmarks ?? [];
 
-      // ── Filter to detect ONLY the Child's Face (ignore adult/parent) ──────
-      // Adult faces in parent-child clips are larger (larger bounding area)
-      // and sit higher in the frame (lower noseY).
-      // Child faces are smaller and sit lower down (higher noseY).
-      let faceLM = null;
-      if (allFaces.length > 0) {
-        if (allFaces.length === 1) {
-          faceLM = allFaces[0];
-        } else {
-          // Score each face: right side position (noseX >= 0.35) + lower in frame (higher noseY) + smaller area = Child
-          const scoredFaces = allFaces.map((f) => {
-            const xs = f.map((p) => p.x);
-            const ys = f.map((p) => p.y);
-            const width = Math.max(...xs) - Math.min(...xs);
-            const height = Math.max(...ys) - Math.min(...ys);
-            const area = width * height;
-            const noseX = f[NOSE_TIP]?.x ?? 0.5;
-            const noseY = f[NOSE_TIP]?.y ?? 0.5;
+      // ── Detect BOTH Child (right side) AND Parent (left side) ──────────────
+      let childLM = null;
+      let parentLM = null;
 
-            // Heavily prioritize faces positioned on the right side of the video frame (noseX >= 0.35)
-            const rightSideBonus = noseX >= 0.35 ? (noseX * 4.0) : (noseX * 0.2);
-            const childScore = rightSideBonus + (noseY * 2.0) - (area * 3.0);
-            return { f, childScore };
-          });
-          scoredFaces.sort((a, b) => b.childScore - a.childScore);
-          faceLM = scoredFaces[0].f;
+      if (allFaces.length === 1) {
+        // If only 1 face is present, determine if it's child or parent based on position
+        const noseX = allFaces[0][NOSE_TIP]?.x ?? 0.5;
+        if (noseX >= 0.35) {
+          childLM = allFaces[0];
+        } else {
+          parentLM = allFaces[0];
         }
-        lastValidFaceRef.current = faceLM;
-        lastValidFaceTimeRef.current = now;
-      } else if (now - lastValidFaceTimeRef.current < 1500) {
-        // Use last valid child face position within 1.5s grace window
-        faceLM = lastValidFaceRef.current;
+      } else if (allFaces.length >= 2) {
+        // Score faces to separate Child (right side / lower) vs Parent (left side / higher)
+        const scored = allFaces.map((f) => {
+          const xs = f.map((p) => p.x);
+          const ys = f.map((p) => p.y);
+          const width = Math.max(...xs) - Math.min(...xs);
+          const height = Math.max(...ys) - Math.min(...ys);
+          const area = width * height;
+          const noseX = f[NOSE_TIP]?.x ?? 0.5;
+          const noseY = f[NOSE_TIP]?.y ?? 0.5;
+          const childScore = (noseX >= 0.35 ? noseX * 4.0 : noseX * 0.2) + (noseY * 2.0) - (area * 3.0);
+          return { f, noseX, noseY, area, childScore };
+        });
+
+        scored.sort((a, b) => b.childScore - a.childScore);
+        childLM = scored[0].f; // Highest child score = Child (right side)
+        parentLM = scored[scored.length - 1].f; // Lowest child score = Parent (left side)
       }
 
-      // ── Draw canvas overlay ──────────────────────────────────────────
+      // Memory fallback for child face
+      if (childLM) {
+        lastValidFaceRef.current = childLM;
+        lastValidFaceTimeRef.current = now;
+      } else if (now - lastValidFaceTimeRef.current < 1500) {
+        childLM = lastValidFaceRef.current;
+      }
+
+      const faceLM = childLM; // Primary feature tracking maps to Child
+
+      // ── Draw canvas overlay for BOTH Child and Parent ──────────────────
       if (canvas) {
         const ctx = canvas.getContext('2d');
         canvas.width  = video.videoWidth  || 480;
         canvas.height = video.videoHeight || 360;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        if (faceLM) {
-          // Draw child bounding box
-          const xs = faceLM.map(p => p.x * canvas.width);
-          const ys = faceLM.map(p => p.y * canvas.height);
+        let childCenter = null;
+        let parentCenter = null;
+
+        // 1. Draw Child Face (Green)
+        if (childLM) {
+          const xs = childLM.map((p) => p.x * canvas.width);
+          const ys = childLM.map((p) => p.y * canvas.height);
           const minX = Math.min(...xs), maxX = Math.max(...xs);
           const minY = Math.min(...ys), maxY = Math.max(...ys);
-          const pad = 12;
-          const boxX = minX - pad;
-          const boxY = minY - pad;
-          const boxW = (maxX - minX) + pad * 2;
-          const boxH = (maxY - minY) + pad * 2;
+          const pad = 10;
+          const boxX = minX - pad, boxY = minY - pad;
+          const boxW = (maxX - minX) + pad * 2, boxH = (maxY - minY) + pad * 2;
+          childCenter = { x: (minX + maxX) / 2, y: (minY + maxY) / 2 };
 
           ctx.strokeStyle = 'rgba(36,107,82,0.95)';
           ctx.lineWidth = 3;
@@ -359,7 +368,7 @@ export default function EngagementNarratorPage() {
           ctx.roundRect(boxX, boxY, boxW, boxH, 12);
           ctx.stroke();
 
-          // Label badge over child face
+          // Child Badge
           ctx.fillStyle = 'rgba(36,107,82,0.92)';
           const badgeText = lang === 'ta' ? '👶 குழந்தை' : lang === 'hi' ? '👶 बच्चा' : '👶 Child Tracked';
           ctx.font = 'bold 12px sans-serif';
@@ -370,17 +379,68 @@ export default function EngagementNarratorPage() {
 
           setFaceBox({ x: boxX, y: boxY, w: boxW, h: boxH });
 
-          // Draw iris dots
-          [LEFT_EYE_CENTER, RIGHT_EYE_CENTER].forEach(idx => {
-            if (faceLM[idx]) {
+          // Iris dots
+          [LEFT_EYE_CENTER, RIGHT_EYE_CENTER].forEach((idx) => {
+            if (childLM[idx]) {
               ctx.fillStyle = 'rgba(185,111,24,0.9)';
               ctx.beginPath();
-              ctx.arc(faceLM[idx].x * canvas.width, faceLM[idx].y * canvas.height, 4, 0, Math.PI * 2);
+              ctx.arc(childLM[idx].x * canvas.width, childLM[idx].y * canvas.height, 4, 0, Math.PI * 2);
               ctx.fill();
             }
           });
         } else {
           setFaceBox(null);
+        }
+
+        // 2. Draw Parent Face (Amber/Gold)
+        if (parentLM) {
+          const xs = parentLM.map((p) => p.x * canvas.width);
+          const ys = parentLM.map((p) => p.y * canvas.height);
+          const minX = Math.min(...xs), maxX = Math.max(...xs);
+          const minY = Math.min(...ys), maxY = Math.max(...ys);
+          const pad = 10;
+          const boxX = minX - pad, boxY = minY - pad;
+          const boxW = (maxX - minX) + pad * 2, boxH = (maxY - minY) + pad * 2;
+          parentCenter = { x: (minX + maxX) / 2, y: (minY + maxY) / 2 };
+
+          ctx.strokeStyle = 'rgba(185,111,24,0.85)';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.roundRect(boxX, boxY, boxW, boxH, 12);
+          ctx.stroke();
+
+          // Parent Badge
+          ctx.fillStyle = 'rgba(185,111,24,0.9)';
+          const parentText = lang === 'ta' ? '🧑‍🤝‍🧑 பெற்றோர்' : lang === 'hi' ? '🧑‍🤝‍🧑 माता-पिता' : '🧑‍🤝‍🧑 Parent Tracked';
+          ctx.font = 'bold 12px sans-serif';
+          const pw = ctx.measureText(parentText).width;
+          ctx.fillRect(boxX, Math.max(0, boxY - 22), pw + 14, 20);
+          ctx.fillStyle = '#ffffff';
+          ctx.fillText(parentText, boxX + 7, Math.max(14, boxY - 7));
+        }
+
+        // 3. Draw Shared Attention Beam connecting Parent & Child
+        if (childCenter && parentCenter) {
+          ctx.save();
+          ctx.strokeStyle = 'rgba(185, 116, 28, 0.75)';
+          ctx.lineWidth = 2.5;
+          ctx.setLineDash([6, 6]);
+          ctx.beginPath();
+          ctx.moveTo(parentCenter.x, parentCenter.y);
+          ctx.lineTo(childCenter.x, childCenter.y);
+          ctx.stroke();
+
+          // Center beam badge
+          const midX = (parentCenter.x + childCenter.x) / 2;
+          const midY = (parentCenter.y + childCenter.y) / 2;
+          ctx.fillStyle = 'rgba(22, 34, 28, 0.85)';
+          ctx.font = 'bold 11px sans-serif';
+          const beamLabel = lang === 'ta' ? '🤝 பரஸ்பர கவனம்' : lang === 'hi' ? '🤝 साझा ध्यान' : '🤝 Mutual Engagement';
+          const bw = ctx.measureText(beamLabel).width;
+          ctx.fillRect(midX - bw / 2 - 6, midY - 10, bw + 12, 18);
+          ctx.fillStyle = '#f0ddb8';
+          ctx.fillText(beamLabel, midX - bw / 2, midY + 3);
+          ctx.restore();
         }
 
         // Draw hand skeleton dots
