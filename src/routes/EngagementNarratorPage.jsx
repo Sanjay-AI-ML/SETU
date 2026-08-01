@@ -15,45 +15,51 @@ import { useLanguage } from '../i18n/index.jsx';
 
 /* ── Rule-based description templates ──────────────────────────────────── */
 const RULES_EN = {
-  lookingAtCamera:   "Child is making eye contact with the camera 👀",
+  lookingAtParent:   "Child is looking at parent — shared attention 🧑‍🤝‍🧑",
+  lookingAtCamera:   "Child is making direct eye contact with camera 👀",
+  lookingAtToy:      "Child is focused down on the play object 🧸",
   lookingAway:       "Child is looking away 🔄",
-  handsRaised:       "Child is raising their hand(s) ✋",
-  handReaching:      "Child is reaching outward 🤲",
+  handsRaised:       "Child is raising their hand(s) in engagement ✋",
+  handReaching:      "Child is reaching out toward parent 🤲",
   handsAtRest:       "Child's hands are relaxed at rest",
-  mouthOpen:         "Child's mouth is open — possible vocalisation 🗣️",
+  mouthOpen:         "Child's mouth is open — vocalising to parent 🗣️",
   faceLost:          "Child moved out of frame — waiting to re-detect 🔍",
   faceDetected:      "Child's face detected ✅",
-  engagementHigh:    "Strong engagement detected! Child is oriented toward the activity 🌟",
+  engagementHigh:    "Strong parent-child engagement & shared attention! 🌟",
   engagementLow:     "Child appears distracted — try calling their name",
-  parentEngaged:     "Parent-child interaction window active 🧑‍🤝‍🧑",
+  parentEngaged:     "Parent-child interaction active 🧑‍🤝‍🧑",
 };
 
 const RULES_TA = {
-  lookingAtCamera:   "குழந்தை கேமராவை நோக்கி பார்க்கிறது 👀",
+  lookingAtParent:   "குழந்தை பெற்றாரை/அப்பாவை பார்க்கிறது — பகிர்ந்த கவனம் 🧑‍🤝‍🧑",
+  lookingAtCamera:   "குழந்தை நேரடி கண் தொடர்பு கொள்கிறது 👀",
+  lookingAtToy:      "குழந்தை விளையாட்டு பொருளை பார்க்கிறது 🧸",
   lookingAway:       "குழந்தை வேறு இடத்தை பார்க்கிறது 🔄",
-  handsRaised:       "குழந்தை கை(கள்) உயர்த்துகிறது ✋",
-  handReaching:      "குழந்தை கைகளை நீட்டுகிறது 🤲",
+  handsRaised:       "குழந்தை கைகளை உயர்த்துகிறது ✋",
+  handReaching:      "குழந்தை பெற்றாரை நோக்கி கைகளை நீட்டுகிறது 🤲",
   handsAtRest:       "குழந்தையின் கைகள் ஓய்வில் உள்ளன",
-  mouthOpen:         "குழந்தையின் வாய் திறந்துள்ளது — சத்தம் எழுப்பலாம் 🗣️",
+  mouthOpen:         "குழந்தை பெற்றாரிடம் சத்தமிட்டு பேசுகிறது 🗣️",
   faceLost:          "குழந்தை திரையில் இல்லை — மீண்டும் தேடுகிறோம் 🔍",
   faceDetected:      "குழந்தையின் முகம் கண்டறியப்பட்டது ✅",
-  engagementHigh:    "சிறந்த ஈடுபாடு! குழந்தை செயல்பாட்டை நோக்கி உள்ளது 🌟",
+  engagementHigh:    "பெற்றோர்-குழந்தை இடையே சிறந்த ஈடுபாடு & பகிர்ந்த கவனம்! 🌟",
   engagementLow:     "குழந்தை கவனம் திசைதிரும்பியது — பெயரை அழைக்கவும்",
-  parentEngaged:     "பெற்றோர்-குழந்தை தொடர்பு சாளரம் செயல்பாட்டில் உள்ளது 🧑‍🤝‍🧑",
+  parentEngaged:     "பெற்றோர்-குழந்தை தொடர்பு செயல்பாட்டில் உள்ளது 🧑‍🤝‍🧑",
 };
 
 const RULES_HI = {
-  lookingAtCamera:   "बच्चा कैमरे की ओर देख रहा है 👀",
+  lookingAtParent:   "बच्चा माता-पिता/पिता को देख रहा है — साझा ध्यान 🧑‍🤝‍🧑",
+  lookingAtCamera:   "बच्चा कैमरे से सीधा संपर्क बना रहा है 👀",
+  lookingAtToy:      "बच्चा खिलौने/सामग्री को देख रहा है 🧸",
   lookingAway:       "बच्चा दूसरी ओर देख रहा है 🔄",
-  handsRaised:       "बच्चा हाथ ऊपर उठा रहा है ✋",
-  handReaching:      "बच्चा हाथ आगे बढ़ा रहा है 🤲",
+  handsRaised:       "बच्चा उत्सुकता से हाथ उठा रहा है ✋",
+  handReaching:      "बच्चा माता-पिता/पिता की ओर हाथ बढ़ा रहा है 🤲",
   handsAtRest:       "बच्चे के हाथ आराम की स्थिति में हैं",
-  mouthOpen:         "बच्चे का मुँह खुला है — शायद आवाज़ निकाल रहा है 🗣️",
+  mouthOpen:         "बच्चा मुँह खोलकर माता-पिता से बोल रहा है 🗣️",
   faceLost:          "बच्चा फ्रेम से बाहर हो गया — पुनः खोज रहे हैं 🔍",
   faceDetected:      "बच्चे का चेहरा पहचाना गया ✅",
-  engagementHigh:    "उच्च सहभागिता! बच्चा गतिविधि की ओर उन्मुख है 🌟",
+  engagementHigh:    "उत्कृष्ट माता-पिता-बच्चा सहभागिता और साझा ध्यान! 🌟",
   engagementLow:     "बच्चा विचलित लगता है — नाम पुकारें",
-  parentEngaged:     "माता-पिता-बच्चा संपर्क विंडो सक्रिय है 🧑‍🤝‍🧑",
+  parentEngaged:     "माता-पिता-बच्चा संपर्क सक्रिय है 🧑‍🤝‍🧑",
 };
 
 const RULES_MAP = { en: RULES_EN, ta: RULES_TA, hi: RULES_HI };
@@ -340,24 +346,30 @@ export default function EngagementNarratorPage() {
         const mouthOpen = computeMouthOpen(faceLM);
         const handState = computeHandState(handLMs, faceLM);
 
-        setGazeScore(gaze);
+        // Normalize engagement score: looking at parent (0.30-0.65) or camera (>0.65) counts as high attention
+        const engagementScore = Math.min(1, gaze > 0.30 ? (gaze > 0.65 ? 1.0 : 0.85) : gaze * 2.5);
+        setGazeScore(engagementScore);
 
-        if (gaze > 0.65 && handState === 'raised') {
+        if (gaze >= 0.30 && handState === 'reaching') {
+          desc = rules.handReaching;
+        } else if (gaze >= 0.30 && handState === 'raised') {
           desc = rules.engagementHigh;
-        } else if (gaze > 0.65 && mouthOpen) {
+        } else if (gaze >= 0.30 && mouthOpen) {
           desc = rules.mouthOpen;
         } else if (gaze > 0.65) {
           desc = rules.lookingAtCamera;
+        } else if (gaze >= 0.30) {
+          desc = rules.lookingAtParent;
         } else if (handState === 'raised') {
           desc = rules.handsRaised;
         } else if (handState === 'reaching') {
           desc = rules.handReaching;
         } else if (mouthOpen) {
           desc = rules.mouthOpen;
-        } else if (gaze < 0.3) {
+        } else if (gaze < 0.18) {
           desc = rules.lookingAway;
         } else {
-          desc = rules.handsAtRest;
+          desc = rules.lookingAtToy;
         }
       }
 
