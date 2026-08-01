@@ -35,7 +35,7 @@ export default function ChildProfilePage() {
   return (
     <main>
       <div className="screen-head">
-        <p className="eyebrow">Child profile</p>
+        <p className="eyebrow">{strings.childProfile?.eyebrow || 'Child profile'}</p>
         <h1>{strings.childProfile.title}</h1>
       </div>
       <form onSubmit={handleSubmit}>

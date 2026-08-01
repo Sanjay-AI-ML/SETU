@@ -8,6 +8,7 @@
   },
   "childProfile": {
     "title": "Tell us about your child",
+    "eyebrow": "Child profile",
     "displayNameLabel": "Child's name or initials",
     "ageMonthsLabel": "Age in months",
     "homeLanguagesLabel": "Home languages",
@@ -19,16 +20,26 @@
     "subtitle": "A bridge between parents and specialists.",
     "startSession": "Start new session",
     "tryDemo": "Try demo (no child needed)",
-    "resumeSession": "Resume session"
+    "resumeSession": "Resume session",
+    "heroTag": "Pediatric Communication Screening",
+    "playTab": "Play Activities",
+    "routinesTab": "Daily Routines",
+    "playSectionTitle": "Play-Based Assessment Activities",
+    "playSectionSub": "{count} guided 2-minute games designed to capture natural communication intent.",
+    "resumeSessionProgress": "Resume session ({completed}/{total} completed)",
+    "quickVideoCheck": "Quick video check (upload/record a short clip)",
+    "matrixCredit": "SETU maps natural play observations to Charity Rowland's Communication Matrix framework (OHSU)."
   },
   "sessionOverview": {
     "title": "Today's session",
+    "eyebrow": "Session in progress",
     "progressLabel": "{completed} of {total} activities done",
     "continueButton": "Continue",
     "seeResultsButton": "See results",
     "doneLabel": "Done"
   },
   "activityPrebrief": {
+    "eyebrow": "Up next",
     "materialsLabel": "You'll need",
     "startButton": "Start activity",
     "calibratingLabel": "Listening to your room…"
@@ -44,18 +55,25 @@
   },
   "activityReview": {
     "title": "What did you notice?",
+    "eyebrow": "Activity complete",
     "instructions": "Check anything your child did during the activity.",
     "confirmButton": "Confirm and see results",
     "visionSuggestedLabel": "(camera suggested)"
   },
   "sessionResults": {
     "title": "Session results",
+    "eyebrow": "Session complete",
+    "ageCheckTitle": "Developmental age check",
+    "matrixTitle": "Communication Matrix profile",
     "flagsTitle": "Points to review with a clinician",
     "noFlags": "No concerns flagged by the demo heuristics.",
-    "reportButton": "View report"
+    "reportButton": "View report",
+    "shareSpecialist": "Share with Specialist"
   },
   "reportPreview": {
     "title": "Clinician report",
+    "eyebrow": "Clinician-facing document",
+    "ageCheckTitle": "Developmental age check",
     "generatedLabel": "Generated {date}",
     "printButton": "Print / Save as PDF",
     "disclaimersTitle": "Important notes",
@@ -63,5 +81,34 @@
     "matrixTitle": "Communication Matrix profile",
     "flagsTitle": "Points to review with a clinician",
     "noFlags": "No concerns flagged by the demo heuristics."
+  },
+  "header": {
+    "home": "Home",
+    "history": "History",
+    "account": "Account"
+  },
+  "sessionHistory": {
+    "title": "Session History",
+    "eyebrow": "Assessment records",
+    "subtitle": "Review and inspect previously saved assessment runs.",
+    "loading": "Loading past sessions...",
+    "noSessions": "No past sessions found yet.",
+    "noSessionsSub": "Complete an assessment session to automatically save it here.",
+    "backHome": "Back to Home",
+    "viewMatrix": "View Matrix Results",
+    "viewReport": "View Report",
+    "delete": "Delete",
+    "activities": "{count} Activities",
+    "trials": "{count} Trials"
+  },
+  "settings": {
+    "title": "Profile & Preferences",
+    "eyebrow": "Settings & Account",
+    "subtitle": "Manage child profile, export clinical assessment logs, or log out.",
+    "edit": "Edit",
+    "notes": "Notes:",
+    "backupData": "Backup JSON Data",
+    "logout": "Log Out (Switch Child)",
+    "clearAll": "Clear All App Data"
   }
 }

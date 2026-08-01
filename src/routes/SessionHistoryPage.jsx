@@ -44,9 +44,9 @@ export default function SessionHistoryPage() {
   return (
     <main>
       <div className="screen-head">
-        <p className="eyebrow">Assessment records</p>
-        <h1>Session History</h1>
-        <p className="subtitle">Review and inspect previously saved assessment runs.</p>
+        <p className="eyebrow">{strings.sessionHistory?.eyebrow || 'Assessment records'}</p>
+        <h1>{strings.sessionHistory?.title || 'Session History'}</h1>
+        <p className="subtitle">{strings.sessionHistory?.subtitle || 'Review and inspect previously saved assessment runs.'}</p>
       </div>
 
       {/* ── Longitudinal Progress Card ──────────────────────────────── */}
@@ -55,12 +55,12 @@ export default function SessionHistoryPage() {
       )}
 
       {loading ? (
-        <p className="notice">Loading past sessions...</p>
+        <p className="notice">{strings.sessionHistory?.loading || 'Loading past sessions...'}</p>
       ) : sessions.length === 0 ? (
         <div className="section card" style={{ textAlign: 'center', padding: '32px 16px' }}>
-          <p className="empty-note" style={{ margin: 0 }}>No past sessions found yet.</p>
+          <p className="empty-note" style={{ margin: 0 }}>{strings.sessionHistory?.noSessions || 'No past sessions found yet.'}</p>
           <p style={{ fontSize: '0.86rem', color: 'var(--ink-soft)', marginTop: 8 }}>
-            Complete an assessment session to automatically save it here.
+            {strings.sessionHistory?.noSessionsSub || 'Complete an assessment session to automatically save it here.'}
           </p>
         </div>
       ) : (
@@ -114,13 +114,13 @@ export default function SessionHistoryPage() {
                       style={{ padding: '4px 8px', color: 'var(--concern)', fontSize: '0.8rem' }}
                       title="Delete session"
                     >
-                      Delete
+                      {strings.sessionHistory?.delete || 'Delete'}
                     </button>
                   </div>
 
                   <div style={{ display: 'flex', gap: '12px', fontSize: '0.84rem', color: 'var(--ink-soft)' }}>
-                    <span>📋 {runsCount} Activities</span>
-                    <span>⏱️ {totalTrials} Trials</span>
+                    <span>📋 {(strings.sessionHistory?.activities || '{count} Activities').replace('{count}', runsCount)}</span>
+                    <span>⏱️ {(strings.sessionHistory?.trials || '{count} Trials').replace('{count}', totalTrials)}</span>
                   </div>
 
                   <div style={{ display: 'flex', gap: '8px', marginTop: 4 }}>
@@ -129,14 +129,14 @@ export default function SessionHistoryPage() {
                       onClick={() => handleViewResults(session)}
                       style={{ flex: 1, padding: '8px 12px', fontSize: '0.86rem' }}
                     >
-                      View Matrix Results
+                      {strings.sessionHistory?.viewMatrix || 'View Matrix Results'}
                     </button>
                     <button
                       className="btn btn-secondary"
                       onClick={() => handleViewReport(session)}
                       style={{ flex: 1, padding: '8px 12px', fontSize: '0.86rem' }}
                     >
-                      View Report
+                      {strings.sessionHistory?.viewReport || 'View Report'}
                     </button>
                   </div>
                 </div>
@@ -148,7 +148,7 @@ export default function SessionHistoryPage() {
 
       <div className="actions" style={{ marginTop: 24 }}>
         <button className="btn btn-ghost" onClick={() => navigate('/')}>
-          Back to Home
+          {strings.sessionHistory?.backHome || 'Back to Home'}
         </button>
       </div>
     </main>

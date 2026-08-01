@@ -94,7 +94,7 @@ export default function HomePage() {
       <div className="home-hero-card card">
         <img src="/hero.jpg" alt="SETU Parent & Child Assessment" className="home-hero-img" />
         <div className="home-hero-content">
-          <span className="hero-pill-tag">Pediatric Communication Screening</span>
+          <span className="hero-pill-tag">{strings.home?.heroTag || 'Pediatric Communication Screening'}</span>
           <h1>{strings.home.title}</h1>
           <p className="subtitle">{strings.home.subtitle}</p>
         </div>
@@ -107,14 +107,14 @@ export default function HomePage() {
           className={`home-tab ${activeTab === 'play' ? 'active' : ''}`}
           onClick={() => setActiveTab('play')}
         >
-          🎮 Play Activities
+          🎮 {strings.home?.playTab || 'Play Activities'}
         </button>
         <button
           type="button"
           className={`home-tab ${activeTab === 'routines' ? 'active' : ''}`}
           onClick={() => setActiveTab('routines')}
         >
-          🏠 Daily Routines
+          🏠 {strings.home?.routinesTab || 'Daily Routines'}
         </button>
       </div>
 
@@ -125,10 +125,10 @@ export default function HomePage() {
             <img src="/activity.jpg" alt="Play activities" className="preview-thumb" />
             <div>
               <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 750 }}>
-                Play-Based Assessment Activities
+                {strings.home?.playSectionTitle || 'Play-Based Assessment Activities'}
               </h3>
               <p className="preview-sub">
-                {ACTIVITIES_EXPLANATION.length} guided 2-minute games designed to capture natural communication intent.
+                {(strings.home?.playSectionSub || '{count} guided 2-minute games designed to capture natural communication intent.').replace('{count}', ACTIVITIES_EXPLANATION.length)}
               </p>
             </div>
           </div>
@@ -271,7 +271,9 @@ export default function HomePage() {
             onClick={handleResumeSession}
             style={{ background: 'var(--accent)', color: '#fff', fontSize: '1.05rem', padding: '16px' }}
           >
-            ▶️ Resume session ({completedActivitiesCount}/{activities.length} completed)
+            ▶️ {(strings.home?.resumeSessionProgress || 'Resume session ({completed}/{total} completed)')
+              .replace('{completed}', completedActivitiesCount)
+              .replace('{total}', activities.length)}
           </button>
         )}
 
@@ -292,13 +294,13 @@ export default function HomePage() {
 
         {/* Standalone video screening check */}
         <button type="button" className="btn btn-ghost" onClick={() => navigate('/video-check')}>
-          🎥 Quick video check (upload/record a short clip)
+          🎥 {strings.home?.quickVideoCheck || 'Quick video check (upload/record a short clip)'}
         </button>
       </div>
 
       <div className="callout plain" style={{ marginTop: 24, textAlign: 'center' }}>
         <p style={{ fontSize: '0.82rem', margin: 0, color: 'var(--ink-soft)' }}>
-          SETU maps natural play observations to Charity Rowland's <strong>Communication Matrix</strong> framework (OHSU).
+          {strings.home?.matrixCredit || "SETU maps natural play observations to Charity Rowland's Communication Matrix framework (OHSU)."}
         </p>
       </div>
     </main>

@@ -62,7 +62,7 @@ export default function SessionResultsPage() {
   return (
     <main className="screen-wide">
       <div className="screen-head">
-        <p className="eyebrow">Session complete</p>
+        <p className="eyebrow">{strings.sessionResults?.eyebrow || 'Session complete'}</p>
         <h1>{strings.sessionResults.title}</h1>
       </div>
 
@@ -76,7 +76,7 @@ export default function SessionResultsPage() {
 
       {/* ── Age-referenced developmental gap ─────────────────────────── */}
       <div className="section card">
-        <h2 style={{ marginTop: 0 }}>🎯 Developmental age check</h2>
+        <h2 style={{ marginTop: 0 }}>🎯 {strings.sessionResults?.ageCheckTitle || 'Developmental age check'}</h2>
         {ageGap.status === 'insufficient-data' ? (
           <p className="empty-note">Not enough observations yet to estimate a developmental level.</p>
         ) : (
@@ -105,7 +105,7 @@ export default function SessionResultsPage() {
 
       {/* ── Communication Matrix profile ─────────────────────────────── */}
       <div className="section">
-        <h2>Communication Matrix profile</h2>
+        <h2>{strings.sessionResults?.matrixTitle || 'Communication Matrix profile'}</h2>
         <MatrixProfileGrid cells={cells} taxonomy={taxonomy} />
       </div>
 
@@ -189,7 +189,7 @@ export default function SessionResultsPage() {
           className="btn btn-secondary"
           onClick={() => setShowClinicianModal(true)}
         >
-          🩺 Share with Specialist
+          🩺 {strings.sessionResults?.shareSpecialist || 'Share with Specialist'}
         </button>
         <ShareButton
           title="SETU Communication Assessment Results"

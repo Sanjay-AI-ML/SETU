@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getChildProfile, clearChildProfile, clearActiveSession, clearAllData, getSessions } from '../core/storage/index.js';
+import { useLanguage } from '../i18n/index.jsx';
 import ShareButton from '../components/common/ShareButton.jsx';
 
 export default function SettingsPage() {
   const navigate = useNavigate();
+  const { strings } = useLanguage();
   const [profile, setProfile] = useState(null);
   const [sessionCount, setSessionCount] = useState(0);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -46,9 +48,9 @@ export default function SettingsPage() {
   return (
     <main className="screen-wide">
       <div className="screen-head">
-        <p className="eyebrow">Settings & Account</p>
-        <h1>Profile & Preferences</h1>
-        <p className="subtitle">Manage child profile, export clinical assessment logs, or log out.</p>
+        <p className="eyebrow">{strings.settings?.eyebrow || 'Settings & Account'}</p>
+        <h1>{strings.settings?.title || 'Profile & Preferences'}</h1>
+        <p className="subtitle">{strings.settings?.subtitle || 'Manage child profile, export clinical assessment logs, or log out.'}</p>
       </div>
 
       {/* Profile Card */}
@@ -65,13 +67,13 @@ export default function SettingsPage() {
             </p>
           </div>
           <button type="button" className="btn btn-secondary btn-sm" onClick={() => navigate('/child-profile')}>
-            Edit
+            {strings.settings?.edit || 'Edit'}
           </button>
         </div>
 
         {profile?.notes && (
           <div className="profile-notes">
-            <span className="notes-label">Notes:</span>
+            <span className="notes-label">{strings.settings?.notes || 'Notes:'}</span>
             <p>{profile.notes}</p>
           </div>
         )}
@@ -86,7 +88,7 @@ export default function SettingsPage() {
 
         <div className="actions inline">
           <button type="button" className="btn btn-secondary" onClick={handleExportBackup}>
-            📥 Backup JSON Data
+            📥 {strings.settings?.backupData || 'Backup JSON Data'}
           </button>
           <ShareButton
             title="SETU Assessment Data"
@@ -104,10 +106,10 @@ export default function SettingsPage() {
 
         <div className="actions inline">
           <button type="button" className="btn btn-secondary" onClick={handleLogOut}>
-            🚪 Log Out (Switch Child)
+            🚪 {strings.settings?.logout || 'Log Out (Switch Child)'}
           </button>
           <button type="button" className="btn btn-danger-outline" onClick={() => setShowConfirmModal(true)}>
-            🗑️ Clear All App Data
+            🗑️ {strings.settings?.clearAll || 'Clear All App Data'}
           </button>
         </div>
       </div>

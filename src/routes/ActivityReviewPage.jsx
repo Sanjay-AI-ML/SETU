@@ -56,7 +56,7 @@ export default function ActivityReviewPage() {
   return (
     <main>
       <div className="screen-head">
-        <p className="eyebrow">Activity complete</p>
+        <p className="eyebrow">{strings.activityReview?.eyebrow || 'Activity complete'}</p>
         <h1>{strings.activityReview.title}</h1>
         <p className="subtitle">{strings.activityReview.instructions}</p>
       </div>

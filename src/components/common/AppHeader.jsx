@@ -7,7 +7,7 @@ export default function AppHeader() {
   const navigate = useNavigate();
   const location = useLocation();
   const [profile, setProfile] = useState(null);
-  const { lang, setLanguage } = useLanguage();
+  const { lang, setLanguage, strings } = useLanguage();
 
   useEffect(() => {
     getChildProfile().then(setProfile);
@@ -49,28 +49,28 @@ export default function AppHeader() {
             type="button"
             className={`nav-btn ${location.pathname === '/' ? 'active' : ''}`}
             onClick={() => navigate('/')}
-            title="Home"
+            title={strings.header?.home || 'Home'}
           >
-            🏠 Home
+            🏠 {strings.header?.home || 'Home'}
           </button>
 
           <button
             type="button"
             className={`nav-btn ${location.pathname === '/session/history' ? 'active' : ''}`}
             onClick={() => navigate('/session/history')}
-            title="History"
+            title={strings.header?.history || 'History'}
           >
-            📜 History
+            📜 {strings.header?.history || 'History'}
           </button>
 
           <button
             type="button"
             className={`nav-profile-btn ${location.pathname === '/settings' ? 'active' : ''}`}
             onClick={() => navigate('/settings')}
-            title="Settings & Profile"
+            title={strings.header?.account || 'Account'}
           >
             <span className="profile-avatar">{childInitial}</span>
-            <span className="profile-label">Account</span>
+            <span className="profile-label">{strings.header?.account || 'Account'}</span>
           </button>
         </nav>
       </div>

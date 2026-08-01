@@ -18,7 +18,7 @@ export default function SessionOverviewPage() {
   return (
     <main>
       <div className="screen-head">
-        <p className="eyebrow">Session in progress</p>
+        <p className="eyebrow">{strings.sessionOverview?.eyebrow || 'Session in progress'}</p>
         <h1>{strings.sessionOverview.title}</h1>
         <p className="subtitle">
           {strings.sessionOverview.progressLabel

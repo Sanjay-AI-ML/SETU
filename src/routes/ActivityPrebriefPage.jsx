@@ -73,7 +73,7 @@ export default function ActivityPrebriefPage() {
   return (
     <main>
       <div className="screen-head">
-        <p className="eyebrow">Up next</p>
+        <p className="eyebrow">{strings.activityPrebrief?.eyebrow || 'Up next'}</p>
         <h1>{currentActivity.name}</h1>
       </div>
       <div className="callout plain section">

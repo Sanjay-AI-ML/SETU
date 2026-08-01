@@ -48,7 +48,7 @@ export default function ReportPreviewPage() {
   return (
     <main className="screen-wide">
       <div className="screen-head">
-        <p className="eyebrow">Clinician-facing document</p>
+        <p className="eyebrow">{strings.reportPreview?.eyebrow || 'Clinician-facing document'}</p>
         <h1>{strings.reportPreview.title}</h1>
         <p className="subtitle">
           {report.sections.child.displayName}, {report.sections.child.ageMonths} months
@@ -81,7 +81,7 @@ export default function ReportPreviewPage() {
       </div>
 
       <div className="section card">
-        <h2 style={{ marginTop: 0 }}>🎯 Developmental age check</h2>
+        <h2 style={{ marginTop: 0 }}>🎯 {strings.reportPreview?.ageCheckTitle || 'Developmental age check'}</h2>
         {report.sections.ageGap.status === 'insufficient-data' ? (
           <p className="empty-note">Not enough observations yet to estimate a developmental level.</p>
         ) : (
