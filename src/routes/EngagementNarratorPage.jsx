@@ -161,7 +161,10 @@ export default function EngagementNarratorPage() {
               delegate: 'GPU',
             },
             runningMode: 'VIDEO',
-            numFaces: 1,
+            numFaces: 4,
+            minFaceDetectionConfidence: 0.15,
+            minFacePresenceConfidence: 0.15,
+            minTrackingConfidence: 0.15,
             outputFaceBlendshapes: false,
             outputFacialTransformationMatrixes: false,
           }),
@@ -172,7 +175,10 @@ export default function EngagementNarratorPage() {
               delegate: 'GPU',
             },
             runningMode: 'VIDEO',
-            numHands: 2,
+            numHands: 4,
+            minHandDetectionConfidence: 0.2,
+            minHandPresenceConfidence: 0.2,
+            minTrackingConfidence: 0.2,
           }),
         ]);
 
@@ -273,6 +279,9 @@ export default function EngagementNarratorPage() {
     speak(desc);
   }, 2500), [speak]);
 
+  const lastValidFaceRef = useRef(null);
+  const lastValidFaceTimeRef = useRef(0);
+
   useEffect(() => {
     if (status !== 'running') return;
 
@@ -288,8 +297,27 @@ export default function EngagementNarratorPage() {
       const faceResult = flRef.current.detectForVideo(video, now);
       const handResult = hlRef.current.detectForVideo(video, now);
 
-      const faceLM = faceResult?.faceLandmarks?.[0];
-      const handLMs = handResult?.landmarks ?? [];
+      const allFaces = faceResult?.faceLandmarks ?? [];
+      const handLMs  = handResult?.landmarks ?? [];
+
+      // ── Isolate child's face ──────────────────────────────────────────
+      // In parent-child interaction, if multiple faces are present,
+      // select the lower/smaller face or the face closest to the hands.
+      let faceLM = null;
+      if (allFaces.length > 0) {
+        if (allFaces.length === 1) {
+          faceLM = allFaces[0];
+        } else {
+          // Sort by nose y-position (lower in frame = child)
+          const sorted = [...allFaces].sort((a, b) => (b[NOSE_TIP]?.y ?? 0) - (a[NOSE_TIP]?.y ?? 0));
+          faceLM = sorted[0];
+        }
+        lastValidFaceRef.current = faceLM;
+        lastValidFaceTimeRef.current = now;
+      } else if (now - lastValidFaceTimeRef.current < 1500) {
+        // Use last valid face position within 1.5s grace window
+        faceLM = lastValidFaceRef.current;
+      }
 
       // ── Draw canvas overlay ──────────────────────────────────────────
       if (canvas) {
