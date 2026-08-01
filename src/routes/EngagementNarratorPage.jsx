@@ -188,7 +188,7 @@ export default function EngagementNarratorPage() {
   const startCamera = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'user', width: { ideal: 480 }, height: { ideal: 360 } },
+        video: { facingMode: 'environment', width: { ideal: 480 }, height: { ideal: 360 } },
         audio: false,
       });
       streamRef.current = stream;
