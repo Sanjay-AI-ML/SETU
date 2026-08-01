@@ -58,19 +58,22 @@ export function createVisionDetector() {
       acquiredStream.getTracks().forEach((track) => track.stop());
       return;
     }
-    stream = acquiredStream;
-    videoEl = videoElement;
-    onFrame = onFrameCallback;
-    videoEl.srcObject = stream;
-    await videoEl.play();
+
+    // Stay on locally-scoped handles through every remaining await — never
+    // write to the shared stream/videoEl/onFrame until this generation is
+    // confirmed still current, otherwise a stale call resuming here after a
+    // newer start() has already taken over would stop/null the NEWER
+    // generation's live stream and element instead of its own.
+    videoElement.srcObject = acquiredStream;
+    await videoElement.play();
     if (myGeneration !== generation) {
-      stream.getTracks().forEach((track) => track.stop());
-      stream = null;
-      videoEl = null;
-      onFrame = null;
+      acquiredStream.getTracks().forEach((track) => track.stop());
       return;
     }
 
+    stream = acquiredStream;
+    videoEl = videoElement;
+    onFrame = onFrameCallback;
     lastVideoTime = -1;
     prevHandLandmarks = null;
     loop();
